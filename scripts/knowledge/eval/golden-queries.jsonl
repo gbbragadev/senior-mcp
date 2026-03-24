@@ -1,0 +1,4 @@
+# Example dataset. Adjust expected signals/chunk ids to your ground-truth.
+{"id":"docs-sql-criar","query":"SQL_Criar com MAX e COUNT","domain":"lsp","priority":"high","expected_signals_any":["sql_criar","max(","count("]}
+{"id":"docs-rest-json","query":"HTTP API REST JSON","domain":"docs","priority":"high","expected_signals_any":["api","json","rest"]}
+{"id":"lsp-r034fun","query":"R034FUN campos colaborador","domain":"lsp","priority":"high","expected_signals_any":["r034fun","nomfun","numcad","cpf"]}
