@@ -1,0 +1,125 @@
+@ Regra para ser associada aos processos: 007-Inserir Histórico de Cargo e 756-Inserir Histórico de Posto - Trabalha em conjunto com o processo 888@
+
+Definir Alfa xComandoSelectReservas;
+Definir Alfa xCursorSelectReservas;
+Definir Alfa xComandoSelectRequisitos;
+Definir Alfa xCursorSelectRequisitos;
+Definir Alfa xComandoDeleteReservas;
+Definir Alfa xCursorDeleteReservas;
+Definir Data xDatRes;
+Definir Alfa xPosTra;
+Definir Alfa xCodCar;
+
+Se (vExecucaoRegra = 1) @ Se a regra estiver sendo executada ap?s incluir hist?rico @
+Inicio
+  Se (R000RPP.CodPro = 7) @ Inclus?o de hist?rico de cargo @
+  Inicio
+    xNumEmp = R038HCA.NumEmp;
+    xTipCol = R038HCA.TipCol;
+    xNumCad = R038HCA.NumCad;
+  Fim
+  Senao
+  Se (R000RPP.CodPro = 756) @ Inclus?o de hist?rico de posto de trabalho @
+  Inicio
+    xNumEmp = R038HPO.NumEmp;
+    xTipCol = R038HPO.TipCol;
+    xNumCad = R038HPO.NumCad;
+  Fim
+  
+  xComandoSelectReservas = "SELECT * \
+                              FROM R132RPA \ 
+                             WHERE NUMEMP = :NumEmp \
+                               AND TIPCOL = :TipCol \
+                               AND NUMCAD = :NumCad \
+                               AND (TMACUA = 0 OR TMACUA IS NULL) \
+                               AND (CODEVN = 0 OR TMACUA IS NULL) \
+                               AND ORIRES = 9";
+  
+  xComandoSelectRequisitos = "SELECT * \
+                                FROM R145COL \
+                               WHERE NUMEMP = :NumEmp \
+                                 AND TIPCOL = :TipCol \
+                                 AND NUMCAD = :NumCad \
+                                 AND DATLNT = :DatLnt";
+                                 
+  xComandoDeleteReservas = "DELETE FROM R132RPA \
+                             WHERE CODCUA = :CodCua \
+                               AND NUMEMP = :NumEmp \
+                               AND TIPCOL = :TipCol \
+                               AND NUMCAD = :NumCad \
+                               AND DATRES = :DatRes";                               
+  
+  SQL_Criar(xCursorSelectReservas);
+  SQL_DefinirComando(xCursorSelectReservas, xComandoSelectReservas);
+  SQL_DefinirInteiro(xCursorSelectReservas, "NumEmp", xNumEmp);
+  SQL_DefinirInteiro(xCursorSelectReservas, "TipCol", xTipCol);
+  SQL_DefinirInteiro(xCursorSelectReservas, "NumCad", xNumCad);
+  
+  SQL_AbrirCursor(xCursorSelectReservas);
+  Se (SQL_EOF(xCursorSelectReservas) = 0)
+  Inicio
+    SQL_Criar(xCursorSelectRequisitos);
+    SQL_DefinirComando(xCursorSelectRequisitos, xComandoSelectRequisitos);
+    
+    SQL_Criar(xCursorDeleteReservas);
+    SQL_DefinirComando(xCursorDeleteReservas, xComandoDeleteReservas);
+    
+    Enquanto (SQL_EOF(xCursorSelectReservas) = 0)
+    Inicio
+      SQL_RetornarData(xCursorSelectReservas, "DatRes", xDatRes);
+      SQL_RetornarInteiro(xCursorSelectReservas, "CodCua", xCodCua);
+  
+      SQL_DefinirInteiro(xCursorSelectRequisitos, "NumEmp", xNumEmp);
+      SQL_DefinirInteiro(xCursorSelectRequisitos, "TipCol", xTipCol);
+      SQL_DefinirInteiro(xCursorSelectRequisitos, "NumCad", xNumCad);
+      SQL_DefinirData(xCursorSelectRequisitos, "DatLnt", xDatRes);
+      SQL_AbrirCursor(xCursorSelectRequisitos);
+      Se (SQL_EOF(xCursorSelectRequisitos) = 0)
+      Inicio
+        @ Busca o posto de trabalho e cargo do colaborador na data do processamento do LNT @
+        SQL_RetornarInteiro(xCursorSelectRequisitos, "EstPos", xEstPos);
+        SQL_RetornarAlfa(xCursorSelectRequisitos, "PosTra", xPosTra);
+        SQL_RetornarInteiro(xCursorSelectRequisitos, "EstCar", xEstCar);
+        SQL_RetornarAlfa(xCursorSelectRequisitos, "CodCar", xCodCar);
+        
+        Se (R000RPP.CodPro = 7)
+        Inicio
+          Se ((R038HCA.EstCar <> xEstCar) ou (R038HCA.CodCar <> xCodCar))
+          Inicio
+            @ Exclui a reserva caso o novo cargo for diferente do cargo na data do processamento do LNT @
+            SQL_DefinirInteiro(xCursorDeleteReservas, "CodCua", xCodCua);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "NumEmp", xNumEmp);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "TipCol", xTipCol);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "NumCad", xNumCad);
+            SQL_DefinirData(xCursorDeleteReservas, "DatRes", xDatRes);
+            SQL_AbrirCursor(xCursorDeleteReservas);
+            SQL_FecharCursor(xCursorDeleteReservas);
+          Fim
+        Fim
+        Senao
+        Se (R000RPP.CodPro = 756)
+        Inicio
+          Se ((R038HPO.EstPos <> xEstPos) ou (R038HPO.PosTra <> xPosTra))
+          Inicio
+            @ Exclui a reserva caso o novo posto de trabalho for diferente do posto na data do processamento do LNT @
+            SQL_DefinirInteiro(xCursorDeleteReservas, "CodCua", xCodCua);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "NumEmp", xNumEmp);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "TipCol", xTipCol);
+            SQL_DefinirInteiro(xCursorDeleteReservas, "NumCad", xNumCad);
+            SQL_DefinirData(xCursorDeleteReservas, "DatRes", xDatRes);
+            SQL_AbrirCursor(xCursorDeleteReservas);
+            SQL_FecharCursor(xCursorDeleteReservas);
+          Fim
+        Fim    
+      Fim
+      SQL_FecharCursor(xCursorSelectRequisitos);
+  
+      SQL_Proximo(xCursorSelectReservas);
+    Fim
+  
+    SQL_Destruir(xCursorDeleteReservas);
+    SQL_Destruir(xCursorSelectRequisitos);
+  Fim
+  
+  SQL_FecharCursor(xCursorSelectReservas);
+  SQL_Destruir(xCursorSelectReservas);

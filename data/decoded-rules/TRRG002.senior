@@ -1,0 +1,93 @@
+/******************************************************************************************
+ * Regra utilizada na Certificação WEB.                                                   *
+ * Processo 262 para corrigir a questão do teste simulado ou efetivo.                     *
+ * - Não é previsto resposta com equivalência;                                            *
+ * - Resposta incorreta que NÃO é assinalada é considerada como mérito no percentual      *
+ *   de acerto da questão;                                                                *
+ * - Se for assinalada pelo menos uma resposta incorreta a questão é dada como errada;    *
+ * - Se nem todas as respostas corretas forem assinaladas, a questão é dada como parcial. *
+ * ENTRADA:                                                                               *
+ *    R202PER = Registro da Questão (Pergunta)                                            *
+ *    ResAssTeste[índice] = Passa para a regra as respostas que o usuário assinalou       *
+ *                          ou não da questão, onde o "índice" é o código da resposta.    *
+ *                          "S" = Respostas Assinalada; "N" = Respostas Não Assinalada    *
+ * RETORNO:                                                                               *
+ *    PercAcertoQue = Percentual de acerto da questão.                                    *
+ *    QtdResCerTes = Quantidade de Respostas Certas.                                      *
+ *    QtdResIncTes = Quantidade de Respostas Incorretas.                                  *
+ ******************************************************************************************/
+
+Definir Cursor CRes;
+Definir Alfa xResCor;
+
+PercAcertoQue = 100;
+QtdResCerTes = 0;
+QtdResIncTes = 0;
+
+xGruPer = R202PER.GruPer;
+xCodPer = R202PER.CodPer;
+
+CRes.SQL "SELECT CODRES,RESCOR FROM R202RES WHERE GRUPER = :xGruPer AND CODPER = :xCodPer ORDER BY CODRES";
+CRes.AbrirCursor();
+
+xQtdeResCor = 0;
+xQtdeResInc = 0;
+xQtdeRespostas = 0;
+xHouveAssinalamento = 0;
+Enquanto (CRes.Achou)
+  {
+  xCodRes = CRes.CodRes;
+  xResCor = CRes.ResCor;
+
+  /* Verifica se houve assinalamento. Só corrige a questão se pelo menos uma resposta for assinalada. 
+     Isso é feito pois uma resposta incorreta não assinalada é considerada como correta. E para
+     evitar que ao simplesmente passar de uma questão para outra, sem assinalar qualquer resposta, 
+     seja corrigida indevidamente a questão. 
+     Exemplo: Digamos que o usuário não terminou todas as questões do teste, as questões não 
+              respondidas não podem ser corrigidas.  */
+  Se (ResAssTeste[xCodRes] = "S")
+    xHouveAssinalamento = 1;
+
+  Se (ResAssTeste[xCodRes] <> xResCor)
+    PercAcertoQue = 0;
+
+  Se (ResAssTeste[xCodRes] = xResCor)
+    xQtdeResCor = xQtdeResCor + 1;
+  Se ((ResAssTeste[xCodRes] = "S") e (xResCor = "N"))
+    xQtdeResInc = xQtdeResInc + 1;
+
+  xQtdeRespostas = xQtdeRespostas + 1;
+  CRes.Proximo();
+  }
+CRes.FecharCursor();
+
+Se (xHouveAssinalamento = 0)
+  {
+  PercAcertoQue = 0;
+  QtdResCerTes = 0;
+  QtdResIncTes = 0;
+  Cancel(0);
+  }
+
+Se (xQtdeResInc > 0)
+  {
+/*  PercAcertoQue = 0; */
+  QtdResCerTes = 0;
+  QtdResIncTes = xQtdeResInc;
+  Cancel(0);
+  }
+
+Se (xQtdeRespostas > 0)
+  {
+/*  PercAcertoQue = ((xQtdeResCor / xQtdeRespostas) * 100); */
+  QtdResCerTes = xQtdeResCor;
+  QtdResIncTes = xQtdeResInc;
+  Cancel(0);
+  }
+
+/*
+auxarredonda = PercAcertoQue;
+ArredondarValor(auxarredonda,0);
+
+PercAcertoQue = auxarredonda;
+*/

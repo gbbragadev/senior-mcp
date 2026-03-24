@@ -1,0 +1,727 @@
+{
+  "filename": "bsbs001.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Este modelo de relatório não tem o leiaute/conteúdo regulamentado por uma exigência legal.  Caso o relatório não atenda exatamente às necessidades da empresa, ele pode servir de exemplo para o desenvolvimento de um modelo customizado pelo cliente.",
+  "description": [
+    "Este modelo de relatório não tem o leiaute/conteúdo regulamentado por uma exigência legal. ",
+    "Caso o relatório não atenda exatamente às necessidades da empresa, ele pode servir de exemplo para o desenvolvimento de um modelo customizado pelo cliente."
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir Alfa auxsql[150];\n\nauxsql = \"ORIMOV = 'B'\"; \nInsClauSQLWhere(\"Detalhe_MOV\",auxsql);\n\n\n\n\n\n\n\n\n\n",
+    "selection": "",
+    "initialization": "FlgImpEve = 0;\n\n\n\n\n\n\n\n\n\n",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 183,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema007",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 774,
+            "height": 14
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 18,
+        "left": 0,
+        "width": 6000,
+        "height": 78
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 48,
+            "left": 0,
+            "width": 773,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 18,
+            "left": 237,
+            "width": 366,
+            "height": 24
+          },
+          "caption": "Relação Para Desconto em Folha",
+          "onPrint": "Definir Alfa ENomRel[30];\n\nse   (ENomRel <> \"\")\n     inicio\n     ValStr = ENomRel;\n     Cancel(2);\n     fim;\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 60,
+            "left": 633,
+            "width": 63,
+            "height": 14
+          },
+          "caption": "Referência",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 60,
+            "left": 732,
+            "width": 33,
+            "height": 14
+          },
+          "caption": "Valor",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 60,
+            "left": 123,
+            "width": 40,
+            "height": 14
+          },
+          "caption": "Evento",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 60,
+            "left": 6,
+            "width": 89,
+            "height": 14
+          },
+          "caption": "Cód. Cálculo",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 729,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "numpag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 3,
+            "left": 693,
+            "width": 32,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 33,
+            "height": 15
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 3,
+            "left": 39,
+            "width": 6,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 48,
+            "width": 420,
+            "height": 17
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 60,
+            "left": 345,
+            "width": 72,
+            "height": 14
+          },
+          "caption": "Colaborador",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_MOV",
+      "bandType": "DETALHE",
+      "tag": 203,
+      "position": {
+        "top": 127,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [
+        "R044MOV.CODEVE"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "FlgImpEve = R044MOV.CodEve;\n\n\n\n\n\n\n\n\n\n",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 855,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "NumEmp",
+          "caption": "R044MOV.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 792,
+            "width": 18,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "CodCal",
+          "caption": "R044MOV.CodCal",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 888,
+            "width": 6,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "TipCol",
+          "caption": "R044MOV.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 822,
+            "width": 18,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "TabEve",
+          "caption": "R044MOV.TabEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 7,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "OriMov",
+          "caption": "R044MOV.OriMov",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 708,
+            "width": 57,
+            "height": 14
+          },
+          "table": "R044MOV",
+          "field": "ValEve",
+          "caption": "R044MOV.ValEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 636,
+            "width": 59,
+            "height": 14
+          },
+          "table": "R044MOV",
+          "field": "RefEve",
+          "caption": "R044MOV.RefEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 0,
+            "left": 426,
+            "width": 200,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 123,
+            "width": 34,
+            "height": 14
+          },
+          "table": "R044MOV",
+          "field": "CodEve",
+          "caption": "R044MOV.CodEve",
+          "onPrint": "Se   (FlgImpEve = R044MOV.Codeve)\n     Cancel(1);\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 345,
+            "width": 71,
+            "height": 14
+          },
+          "table": "R044MOV",
+          "field": "NumCad",
+          "caption": "R044MOV.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 162,
+            "width": 177,
+            "height": 14
+          },
+          "table": "R008EVC",
+          "field": "DesEve",
+          "caption": "R008EVC.DesEve",
+          "onPrint": "Se   (FlgImpEve = R044MOV.Codeve)\n     Cancel(1);\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_1",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 96,
+        "left": 0,
+        "width": 6000,
+        "height": 31
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 6,
+            "left": 444,
+            "width": 12,
+            "height": 14
+          },
+          "table": "R044CAL",
+          "field": "TipCal",
+          "caption": "R044CAL.TipCal",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 12,
+            "left": 6,
+            "width": 38,
+            "height": 15
+          },
+          "table": "R044MOV",
+          "field": "CodCal",
+          "caption": "R044MOV.CodCal",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 12,
+            "left": 123,
+            "width": 247,
+            "height": 15
+          },
+          "caption": "Descricao011",
+          "fieldList": "R044CAL.TipCal - Cadastro012",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 12,
+            "left": 114,
+            "width": 5,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 12,
+            "left": 51,
+            "width": 5,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 12,
+            "left": 60,
+            "width": 52,
+            "height": 14
+          },
+          "table": "R044CAL",
+          "field": "PerRef",
+          "caption": "R044CAL.PerRef",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_1",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 142,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 0,
+            "left": 702,
+            "width": 63,
+            "height": 14
+          },
+          "caption": "Total001",
+          "fieldName": "Detalhe_MOV.Cadastro004",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_2",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 163,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "Total002",
+          "position": {
+            "top": 0,
+            "left": 699,
+            "width": 67,
+            "height": 15
+          },
+          "caption": "Total002",
+          "fieldName": "Detalhe_MOV.Cadastro004",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 0,
+            "left": 663,
+            "width": 33,
+            "height": 14
+          },
+          "caption": "Total:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_emp",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "FlgImpEve = 0;",
+      "children": []
+    },
+    {
+      "name": "Subtotal_emp",
+      "bandType": "SUBTOTAL",
+      "tag": 303,
+      "position": {
+        "top": 198,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    }
+  ],
+  "tablesReferenced": [
+    "R008EVC",
+    "R034FUN",
+    "R044CAL",
+    "R044MOV",
+    "R044MOV.CODEVE"
+  ],
+  "sqlFragments": [
+    "Where(\"Detalhe_MOV\",auxsql);"
+  ],
+  "_stats": {
+    "parsedBytes": 9569,
+    "totalBytes": 535804,
+    "parseComplete": true,
+    "bandCount": 8,
+    "fieldCount": 33,
+    "errorCount": 3,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 132,
+        "skippedTo": 204,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 749,
+        "skippedTo": 2382,
+        "note": "Skipped 1633 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 6658,
+        "skippedTo": 7338,
+        "note": "Skipped 666 bytes (classification+relations)"
+      }
+    ]
+  }
+}

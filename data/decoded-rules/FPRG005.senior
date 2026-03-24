@@ -1,0 +1,47 @@
+/* // Regra Gerar Ficha Médica // */
+
+/*********************************************************/
+/* Regra Exemplo, deve ser utilizada quando for gerar a  */
+/* Ficha Médica do Candidato                             */
+/*********************************************************/
+/* Objetivos:                                            */
+/*                                                       */
+/* . Gerar Ficha Médica p/ Dependentes, Colaboradores    */
+/* . Terceiros, Parceiros                                */
+/* É aplicada somente para Candidatos Externos           */
+/*********************************************************/
+
+/* GERAÇÃO DE FICHA MÉDICA PARA DEPENDENTES      */
+/* Obs: Para Gerar o Código da Ficha utiliza o   */
+/* Cadastro do Colaborador e acrescenta no final */
+/* e 2 posições com o Código do Dependente       */
+
+
+
+Definir Numero xnumcad;
+Definir Numero xcoddep;
+Definir Numero xcodfic;
+Definir Numero xLength;
+Definir Alfa xcodfic1;
+Definir Alfa xcodfic2;
+
+
+  Se   (R036DEP.CodDep <> 0)
+  {
+    xnumcad = R036DEP.NumCad;
+    xcoddep = R036DEP.CodDep;
+    IntParaAlfa(xnumcad,xcodfic1);
+    xcodfic2 = Formatar(xcoddep,"%2.0f");
+    ConverteMascara(5,0,xcodfic2,"99");
+    xcodfic1 = xcodfic1 + xcodfic2;
+    TamanhoAlfa (xcodfic1, xLength);
+    Se (xLength <= 9)
+    {  
+      AlfaParaInt(xcodfic1,xcodfic);     
+      R110FIC.CODFIC = xcodfic;
+    }
+    Senao
+      R110FIC.CODFIC = xnumcad;  
+  }
+  Senao
+    R110FIC.CODFIC = R034FUN.NumCad;

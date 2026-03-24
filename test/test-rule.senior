@@ -1,0 +1,30 @@
+@ Regra: Antes Salvar Funcionario @
+@ Valida dados e notifica chefe imediato via e-mail @
+
+Definir Numero xNumEmp;
+Definir Alfa xNomFun;
+Definir Alfa xEmail;
+Definir Alfa xMsg;
+Definir Alfa xNomChe;
+
+Definir Cursor cChefe;
+
+Se (xNumEmp = 0) {
+  Mensagem(Retorna, "Número do empregado inválido.");
+  Cancel;
+}
+
+MensagemLog("Salvando funcionário: " + xNomFun);
+
+cChefe.SQL "SELECT NumEmp, NomFun FROM R034FUN WHERE R034FUN.NumEmp = :xNumEmp AND R034FUN.NomFun <> ''";
+cChefe.AbrirCursor;
+cChefe.Proximo;
+
+Se (cChefe.NaoAchou) {
+  MensagemLog("Chefe não encontrado.");
+} Senao {
+  xNomChe = cChefe.NomFun;
+  EnviaEMail(xEmail, "Atualização cadastral", "O funcionário " + xNomFun + " foi atualizado.");
+}
+
+cChefe.FecharCursor;

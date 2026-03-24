@@ -1,0 +1,140 @@
+@ Regra para ser associada ao processo 885- Geração de Solicitação de Exames @
+
+Definir Alfa xAbrTipCol;
+Definir Alfa xAbrNumCad;
+Definir Alfa xAbrCodExa;
+Definir Alfa xAbrCodFic;
+Definir Alfa xOrigem;
+Definir Data xDatIni;
+Definir Data xDatTer;
+Definir Alfa xPosTra;
+Definir Alfa xCodCar;
+Definir Alfa xAbrGHE;
+Definir Alfa xSolAbe;
+Definir Alfa xConSit;
+Definir Alfa xExaOri;
+Definir Alfa xConExa;
+
+Definir Data xDatSol;
+Definir Data xDatNas;
+Definir Alfa xCursor;
+Definir Alfa xSQL;
+
+/* Variáveis de sistema disponíveis com abrangências informadas na tela de geração de solicitação de exames */
+xAbrTipCol = AbrSolExa_TipCol;
+xAbrNumCad = AbrSolExa_NumCad;
+xAbrCodFic = AbrSolExa_CodFic;
+xAbrCodExa = AbrSolExa_CodExa;
+/*
+AbrSolExa_CodCar
+AbrSolExa_CodEsc
+AbrSolExa_CodFil
+AbrSolExa_CodLoc
+AbrSolExa_CodLot
+AbrSolExa_CodSit
+AbrSolExa_CodTrb
+AbrSolExa_CodVin
+AbrSolExa_TmaCua
+*/
+
+/* Variáveis de sistema disponíveis com campos/filtros informados na tela de geração de solicitação de exames */
+xOrigem = GerSolExa_Origem;
+xDatIni = GerSolExa_PeriodoInicio;
+xDatTer = GerSolExa_PeriodoTermino;
+xConExa = GerSolExa_ConsiderarExames;
+xDatExa = GerSolExa_DataExame;
+xVenExa = GerSolExa_VencimentoExame;
+xCodAte = GerSolExa_Atendente;
+xCodOem = GerSolExa_Convenio;
+xOemExa = GerSolExa_EntidadeExame;
+xSolAbe = GerSolExa_SolicitacoesAberto;
+xDiaSol = GerSolExa_DiasSolicitacao;
+xCodRqu = GerSolExa_Requisicao;
+xEstPos = GerSolExa_EstruturaPostos;
+xPosTra = GerSolExa_PostoTrabalho;
+xCodFil = GerSolExa_Filial;
+xTabOrg = GerSolExa_Organograma;
+xNumLoc = GerSolExa_Local;
+xEstCar = GerSolExa_EstruturaCargos;
+xCodCar = GerSolExa_Cargo;
+xCodAtv = GerSolExa_Atividade;
+xCodPRA = GerSolExa_PPRA;
+xAbrGHE = GerSolExa_AbrangenciaGHE;
+xConSit = GerSolExa_ConsiderarSituacao;
+xExaOri = GerSolExa_GerarExamesOrigem;
+xConExa = GerSolExa_ConsiderarExamesMesmoTipo;
+
+/* Funções disponíveis */
+/*
+- GerSolExa_AdicionarExameLista(Numero NumEmp, Numero CodFic, Numero CodExa, Numero DatSol, Numero DatRes, Numero OriExa, Numero CodOem, Numero OemExa, Numero CodAte);
+- GerSolExa_ConsultarListaExames(Alfa aTipoOperacao, Numero End aNumEmp, Numero End aCodFic, Numero End aCodExa, Data End aDatSol);
+- GerSolExa_LimparListaExames();
+- GerSolExa_RemoverExameLista();
+*/
+
+xTem = GerSolExa_ConsultarListaExames("I", xNumEmp, xCodFic, xCodExa, xDatSol);
+Enquanto (xTem = 0) {
+  Se ((xNumEmp = 1) e (xCodFic = 1010003)) {
+    GerSolExa_RemoverExameLista();
+  }
+  xTem = GerSolExa_ConsultarListaExames("P", xNumEmp, xCodFic, xCodExa, xDatSol);
+}
+
+DesmontaData(xDatIni, xDiaIni, xMesIni, xAnoIni);
+DesmontaData(xDatTer, xDiaTer, xMesTer, xAnoTer);
+
+xSQL = "SELECT R110FIC.CODFIC, R034FUN.DATNAS \
+          FROM R034FUN, R110FIC \
+         WHERE R034FUN.NUMEMP = R110FIC.NUMEMP \
+           AND R034FUN.TIPCOL = R110FIC.TIPCOL \
+           AND R034FUN.NUMCAD = R110FIC.NUMCAD \
+           AND R034FUN.NUMEMP = :NumEmp \
+           AND R110FIC.TIPATN = 1";
+
+EstaNulo(xAbrTipCol, xNulo);
+Se (xNulo = 0) {
+  MontaAbrangencia("R034FUN.TipCol", xAbrTipCol, xAbrTipCol);                              
+  xSQL = xSQL + " AND " + xAbrTipCol;
+}
+
+EstaNulo(xAbrNumCad, xNulo);
+Se (xNulo = 0) {
+  MontaAbrangencia("R034FUN.NumCad", xAbrNumCad, xAbrNumCad);
+  xSQL = xSQL + " AND " + xAbrNumCad;
+}
+
+EstaNulo(xAbrCodFic, xNulo);
+Se (xNulo = 0) {
+  MontaAbrangencia("R110FIC.CodFic", xAbrCodFic, xAbrCodFic);                              
+  xSQL = xSQL + " AND " + xAbrCodFic;
+}
+
+SQL_Criar(xCursor);
+SQL_DefinirComando(xCursor, xSQL);
+SQL_DefinirInteiro(xCursor, "NumEmp", EmpAtu);
+SQL_AbrirCursor(xCursor);
+Enquanto (SQL_EOF(xCursor) = 0) {
+  SQL_RetornarInteiro(xCursor, "CodFic", xCodFic);
+  SQL_RetornarData(xCursor, "DatNas", xDatNas);
+  
+  Se (xCodFic <> 1010003) {
+    DesmontaData(xDatNas, xDiaNas, xMesNas, xAnoNas);
+    Se ((xDiaNas >= xDiaIni) e (xDiaNas <= xDiaTer) e (xMesNas >= xMesIni) e (xMesNas <= xMesTer)) {
+    MontaData(xDiaNas, xMesNas, xAnoTer, xDatSol);     @ quando usa origem Admissional, transferência  desativar a linha    @
+    
+      MontaAbrangencia("R108EXA.CodExa", xAbrCodExa, xAbrCodExa);
+    
+      /* GerSolExa_AdicionarExameLista(Numero NumEmp, Numero CodFic, Numero CodExa, Numero DatSol, Numero DatRes, Numero OriExa, Numero CodOem, Numero OemExa, Numero CodAte); */
+      GerSolExa_AdicionarExameLista(EmpAtu, xCodFic, 100, xDatSol, xDatSol, 2, xCodOem, xOemExa, xCodAte);
+      GerSolExa_AdicionarExameLista(EmpAtu, xCodFic, 100, xDatSol, xDatSol, 2, xCodOem, xOemExa, xCodAte);      
+    }
+  }
+  
+  SQL_Proximo(xCursor);
+}
+
+SQL_FecharCursor(xCursor);
+SQL_Destruir(xCursor);
+
+xCodFic = 1010004;
+GerSolExa_AdicionarExameLista(EmpAtu, xCodFic, 1, xDatSol, xDatSol, 2, xCodOem, xOemExa, xCodAte);

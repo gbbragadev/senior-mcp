@@ -1,0 +1,778 @@
+{
+  "filename": "bscl002.GER",
+  "title": "",
+  "orientation": "Unknown(undefined)",
+  "sections": {},
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 18,
+        "left": 0,
+        "width": 6000,
+        "height": 81
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 57,
+            "left": 0,
+            "width": 774,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 36,
+            "height": 15
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 18,
+            "left": 279,
+            "width": 235,
+            "height": 24
+          },
+          "caption": "Relação das Promoções",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema007",
+          "position": {
+            "top": 3,
+            "left": 51,
+            "width": 379,
+            "height": 15
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 741,
+            "width": 29,
+            "height": 17
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 3,
+            "left": 708,
+            "width": 30,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 42,
+            "left": 6,
+            "width": 54,
+            "height": 17
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatIni",
+          "position": {
+            "top": 42,
+            "left": 66,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "FDatIni",
+          "onPrint": "FDatIni = EDatIni;\n\n\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatFim",
+          "position": {
+            "top": 42,
+            "left": 156,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "FDatFim",
+          "onPrint": "FDatFim = EDatRef;\n\n\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 63,
+            "left": 6,
+            "width": 55,
+            "height": 14
+          },
+          "caption": "Cadastro",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 63,
+            "left": 729,
+            "width": 33,
+            "height": 14
+          },
+          "caption": "Nível",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 63,
+            "left": 72,
+            "width": 77,
+            "height": 14
+          },
+          "caption": "Colaborador",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 63,
+            "left": 429,
+            "width": 102,
+            "height": 14
+          },
+          "caption": "Tipo Promoção",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 63,
+            "left": 381,
+            "width": 36,
+            "height": 14
+          },
+          "caption": "Data",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 63,
+            "left": 576,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "Perman.",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 63,
+            "left": 636,
+            "width": 28,
+            "height": 14
+          },
+          "caption": "Estr.",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 63,
+            "left": 678,
+            "width": 40,
+            "height": 14
+          },
+          "caption": "Classe",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 42,
+            "left": 138,
+            "width": 11,
+            "height": 17
+          },
+          "caption": "a",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Det168Pro",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 99,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 774,
+            "width": 68,
+            "height": 17
+          },
+          "table": "R038HFI",
+          "field": "DatAlt",
+          "caption": "R038HFI.DatAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 68,
+            "height": 17
+          },
+          "table": "R038HCC",
+          "field": "DatAlt",
+          "caption": "R038HCC.DatAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 990,
+            "width": 68,
+            "height": 17
+          },
+          "table": "R038HCA",
+          "field": "DatAlt",
+          "caption": "R038HCA.DatAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 1065,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R168PRO",
+          "field": "NumEmp",
+          "caption": "R168PRO.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial001",
+          "position": {
+            "top": 0,
+            "left": 918,
+            "width": 68,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 729,
+            "width": 34,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "NivSal",
+          "caption": "R168PRO.NivSal",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 1092,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "TabOrg",
+          "caption": "R016HIE.TabOrg",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 0,
+            "left": 1161,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "NUMLOC",
+          "caption": "R016HIE.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 0,
+            "left": 1230,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R038HLO",
+          "field": "TabOrg",
+          "caption": "R038HLO.TabOrg",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 0,
+            "left": 1296,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R038HLO",
+          "field": "NUMLOC",
+          "caption": "R038HLO.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 60,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "NumCad",
+          "caption": "R168PRO.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 72,
+            "width": 268,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 348,
+            "width": 69,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "DatPro",
+          "caption": "R168PRO.DatPro",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 429,
+            "width": 12,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "TipPro",
+          "caption": "R168PRO.TipPro",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 127,
+            "height": 14
+          },
+          "caption": "#R168PRO.TipPro - Lista",
+          "fieldList": "R168PRO.TipPro - Cadastro004",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 606,
+            "width": 19,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "PerPro",
+          "caption": "R168PRO.PerPro",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 639,
+            "width": 25,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "EstSal",
+          "caption": "R168PRO.EstSal",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 678,
+            "width": 40,
+            "height": 14
+          },
+          "table": "R168PRO",
+          "field": "ClaSal",
+          "caption": "R168PRO.ClaSal",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "SubtotLoc",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 147,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSEspecial",
+          "name": "Especial003",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 447,
+            "height": 15
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Total da Empresa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 3,
+            "left": 459,
+            "width": 84,
+            "height": 15
+          },
+          "caption": "Total001",
+          "fieldName": "Det168Pro.Cadastro011",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 168,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 769,
+            "height": 13
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "SubtitEmp",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "SubtitLoc",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 117,
+        "left": 0,
+        "width": 6000,
+        "height": 30
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se (EspNivTot = 0)\n     Cancel(1);\n\n\n\n\n\n\n",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSEspecial",
+          "name": "Especial002",
+          "position": {
+            "top": 9,
+            "left": 6,
+            "width": 715,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": " ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R016HIE",
+    "R034FUN",
+    "R038HCA",
+    "R038HCC",
+    "R038HFI",
+    "R038HLO",
+    "R168PRO"
+  ],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 13488,
+    "totalBytes": 542878,
+    "parseComplete": true,
+    "bandCount": 6,
+    "fieldCount": 40,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "header",
+        "note": "Header skipped — bands-only fallback"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 10443,
+        "skippedTo": 11968,
+        "note": "Skipped 1511 bytes (classification+relations)"
+      }
+    ]
+  }
+}

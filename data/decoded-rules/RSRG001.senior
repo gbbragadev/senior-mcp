@@ -1,0 +1,26 @@
+/* // Regra Antes Efetivar Candidato Externo // */
+
+/*********************************************************/
+/* Regra Exemplo, deve ser utilizada somente Antes       */
+/* Efetivar o Candidato                                  */
+/*********************************************************/
+/* Objetivos:                                            */
+/*                                                       */
+/* . Gerar Histórico de Crachá (Módulo Ronda)            */
+/* . Setar Código Ficha Registro (Módulo Rubi)           */
+/*                                                       */
+/* É aplicada somente para Candidatos Externos           */
+/*********************************************************/
+
+
+/* Obs: O crachá será gerado com o mesmo código  */
+/* do cadastro do colaborador.                   */
+Se   (r126CAN.OriCan = 2)
+     R034FUN.NumCra = R034FUN.NumCad;
+
+
+/* Obs: Caso não utilize a regra abaixo o sistema */
+/* ira gerar automaticamente o Número da Ficha    */
+/* Registro com o primeiro que estiver livre.     */
+Se   (r126CAN.OriCan = 2)
+     R034CPL.FicReg = R034FUN.NumCad;

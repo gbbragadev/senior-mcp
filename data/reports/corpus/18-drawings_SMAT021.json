@@ -1,0 +1,3623 @@
+{
+  "filename": "SMAT021.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Relatório de Absenteísmo  Neste modelo serão considerados os atendimentos médicos internos que tiverem código de CID e atestados médicos informados. Também serão  considerados os atestados médicos externos com CID. Na entrada do modelo permite informar uma abrangência de CID(máximo 18) e no campo  CID a agrupar, informar os CIDs que serão agrupados na coluna Outros do modelo.  A informação de \"Qtd Afast.Dias\" apresenta uma coluna com os 15 dias de atestado médico e para cada dia que existir um atestado será  acrescentado um afastamento. Por exemplo, se na competência informada existirem dois atestados de 1 dia e um atestado de 15 dias, na linha \"01\"  do respectivo CID aparecerá o algarismo 2 que corresponde a dois afastamentos e na linha da quantidade \"15\" mostrará 1 afastamento.   Na linha \"Qtd.Afast.Horas\" será apresentado o total de afastamentos quando em horas para cada CID ou da coluna Outros.  Exemplo: Em determinado mês, para o CID G442(cefaléia tensional) houve um atestado externo de 3 horas de afastamento e outro atestado externo  de 5 horas em decorrência de um G932(hipertensão intracraniana), então nesta linha será apresentado 1 para cada CID ou 2 na coluna Outros quando  não for especificado os CIDs.  Na linha \"Qtd.Total Afast.\", será apresentado o total de afastamentos(quantidade)em dias e em horas. Exemplo: Em determinado  mês ocorreu um atestado de 15 dias e outro de 4 horas. Se coincidirem de serem do mesmo CID nesta linha será apresentado o número 2.  Na linha \"Total Dias Afast.\", será apresentado o total de dias afastados. Considerando o exemplo do segundo parágrafo serão 17 dias.   Na linha \"Total Horas Afast.\", será apresentado o total de horas afastadas que compreende:  .No somatório das horas informadas no campo Tempo em Horas para atestados externos. As horas fracionadas serão somadas. .No afastamento interno, ou seja, quando pelo Atendimento Médico, pasta Afastamento, se for de 1 dia, será considerado a diferença entre a hora  do afastamento e a hora de saída. Exemplo: No afastamento de um dia com início as 15:00 até 16:30 será considerado 01:30(uma hora e trinta minutos). ",
+  "description": [
+    "Relatório de Absenteísmo",
+    "",
+    "Neste modelo serão considerados os atendimentos médicos internos que tiverem código de CID e atestados médicos informados. Também serão ",
+    "considerados os atestados médicos externos com CID. Na entrada do modelo permite informar uma abrangência de CID(máximo 18) e no campo ",
+    "CID a agrupar, informar os CIDs que serão agrupados na coluna Outros do modelo.",
+    "",
+    "A informação de \"Qtd Afast.Dias\" apresenta uma coluna com os 15 dias de atestado médico e para cada dia que existir um atestado será ",
+    "acrescentado um afastamento. Por exemplo, se na competência informada existirem dois atestados de 1 dia e um atestado de 15 dias, na linha \"01\" ",
+    "do respectivo CID aparecerá o algarismo 2 que corresponde a dois afastamentos e na linha da quantidade \"15\" mostrará 1 afastamento. ",
+    "",
+    "Na linha \"Qtd.Afast.Horas\" será apresentado o total de afastamentos quando em horas para cada CID ou da coluna Outros. ",
+    "Exemplo: Em determinado mês, para o CID G442(cefaléia tensional) houve um atestado externo de 3 horas de afastamento e outro atestado externo ",
+    "de 5 horas em decorrência de um G932(hipertensão intracraniana), então nesta linha será apresentado 1 para cada CID ou 2 na coluna Outros quando ",
+    "não for especificado os CIDs.",
+    "",
+    "Na linha \"Qtd.Total Afast.\", será apresentado o total de afastamentos(quantidade)em dias e em horas. Exemplo: Em determinado ",
+    "mês ocorreu um atestado de 15 dias e outro de 4 horas. Se coincidirem de serem do mesmo CID nesta linha será apresentado o número 2.",
+    "",
+    "Na linha \"Total Dias Afast.\", será apresentado o total de dias afastados. Considerando o exemplo do segundo parágrafo serão 17 dias. ",
+    "",
+    "Na linha \"Total Horas Afast.\", será apresentado o total de horas afastadas que compreende: ",
+    ".No somatório das horas informadas no campo Tempo em Horas para atestados externos. As horas fracionadas serão somadas.",
+    ".No afastamento interno, ou seja, quando pelo Atendimento Médico, pasta Afastamento, se for de 1 dia, será considerado a diferença entre a hora ",
+    "do afastamento e a hora de saída. Exemplo: No afastamento de um dia com início as 15:00 até 16:30 será considerado 01:30(uma hora e trinta minutos). "
+  ],
+  "orientation": "Landscape",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir Cursor CMat;\nDefinir Cursor CMam;\n\n\nxind = 1;   /* indice de CIDs */\n\nlPos1 = 0;\nPosicaoAlfa (\"-\",EAbrCid,lPos1);\n\nlPos2 = 0;\nPosicaoAlfa (\"-\",EAbrOut,lPos2);\n\n\nSe (EDatCmp = 0)\n  {\n  Mensagem (Retorna, \"É necessário Informar Competência.[&Ok]\");\n  Cancel(1);\n  }\nFDatCmp = EDatCmp;\n\nSe ((lPos1 > 0) ou (lPos2 > 0))\n  {\n  Mensagem (Retorna, \"Não é aceito '-' ao informar a abrangência![&Ok]\");\n  Cancel(1);\n  }\n\nValidaCID (lNumCID, lValida);\n\n/* MAIS DE 18 CIDS */\nSe (lNumCID = 1)\n  {\n  Mensagem (Retorna, \"É permitido no máximo 18 CIDs![&Ok]\");\n  Cancel(1);\n  }\n\n/* MESMO CID NOS 2 CAMPOS DE ABRANGENCIA */\nSe (lValida = 1)\n  {\n  Mensagem (Retorna, \"Mesmo CID foi informado nos itens Considerar e Agrupar.[&Ok]\");\n  Cancel(1);\n  }\n\n\nDecodData(EDatCmp, lDia, lMes, lAno);\nMontaData(01, lMes, lAno, lDatIni);\nMontaData(01, lMes, lAno, lDatFim);\n\n\nUltimoDia (lDatFim);\n\nConverteDataBanco(lDatIni, lAlfDat);\nlSQLWhere = \" DATAFA >= \" + lAlfDat;\n\nIntParaAlfa (EmpAtu, sql_tmp);\n\nConverteDataBanco(lDatFim, lAlfDat);\nlSQLWhere = lSQLWhere + \" AND DATAFA <= \" + lAlfDat + \" AND NUMEMP = \" + sql_tmp;\nlSQLData = lSQLWhere;\nsql_tmp = \" \";\n\nEncMat = 0;  /* ENCONTROU REGISTROS NA R110MAT */\nEncMam = 0;  /* ENCONTROU REGISTROS NA R110MAM */\n\n  /**************************\n          ATENDIMENTOS\n   **************************/\n\n  /* CONSIDERAR TODOS OU NAO */\n  Se (EAbrOut <> \"\")\n  {\n    /* ABRANGENCIA DE CIDs */\n    sql_tmp = EAbrOut;\n    Se (EAbrCid <> \"\")\n      sql_tmp = EAbrCid + \",\" + sql_tmp;\n    MontaAbrangencia (\"R110MAT.CODDOE\", sql_tmp , sql_abrcid);\n    sql_abrcid = \" AND \" + sql_abrcid;\n  }\n\n  lSQLWhere = \"AND \" + lSQLWhere + sql_abrcid;       /* DATA REFERENCIA */\n  \n  CMat.SQL \"SELECT DIAATE FROM R110MAT WHERE DIAATE <> 0 __Inserir(:lSQLWhere)\";\n  CMat.AbrirCursor();\n\n  Se (CMat.Achou)\n    EncMat = 1;      /* EXISTEM REGISTROS */\n\n  CMat.FecharCursor();\n  lSQLWhere = lSQLData;\n\n  /*******************************\n          ATESTADO EXTERNO\n   *******************************/\n  /* CONSIDERAR TODOS OU NAO */\n  Se (EAbrOut <> \"\")\n  {\n    /* ABRANGENCIA DE CIDs */\n    sql_tmp = EAbrOut;\n    Se (EAbrCid <> \"\")\n      sql_tmp = EAbrCid + \",\" + sql_tmp;\n    MontaAbrangencia (\"R110MAM.CODDOE\", sql_tmp , sql_abrcid);\n    sql_abrcid = \" AND \" + sql_abrcid;\n  }\n\n  lSQLWhere = \"AND \" + lSQLWhere + sql_abrcid;       /* DATA REFERENCIA */\n\n  CMam.SQL \"SELECT DIAATE, HORATE FROM R110MAM WHERE (DIAATE <> 0 OR HORATE <> 0) __Inserir(:lSQLWhere)\";\n  CMam.AbrirCursor();\n\n  Se (CMam.Achou)\n    EncMam = 1;    /* EXISTEM REGISTROS */\n  \n  CMam.FecharCursor();\n\n\nlSQLWhere = lSQLData;\n\n/*  NAO EXISTEM REGISTROS */\nSe ((EncMat = 0) E (EncMam = 0))\n  {\n  Mensagem (Retorna, \"Não ha registros ha listar. [&Ok]\");\n  Cancel(1);\n  }",
+    "selection": "",
+    "initialization": "Definir Alfa EAbrCid;\nDefinir Alfa EAbrOut;\nDefinir Alfa lAlfDat;\nDefinir Alfa lSQLData;\nDefinir Alfa lSQLWhere;\nDefinir Alfa sql_tmp;\nDefinir Alfa sql_abrcid; \nDefinir Alfa AbrSql;\nDefinir Alfa strdia;\n\nDefinir Data EDatCmp;\nDefinir Data lDatIni;\nDefinir Data lDatFim;\n",
+    "finalization": "",
+    "functionRule": "/*-----------------------------------------\n   FUNÇÃO QUE VALIDA OS CIDS APRESENTADOS  \n   NAS DUAS ABRANGENCIAS!\n  ----------------------------------------- */\nDefinir Alfa lAbrTmp;\nDefinir Alfa lStrA;\nDefinir Alfa lStrB;\nDefinir Alfa EAbrCid;\nDefinir Alfa EAbrOut;\nDefinir Tabela TCid[20] = {Alfa xCodCid;};\nDefinir Funcao ValidaCID (Numero End NumCID, Numero End Valida);\nDefinir Funcao AddValor (Numero IndCampo, Numero IndDia, Numero Valor);\nDefinir Funcao GetHoras (Numero HorAfa, Numero HorTer, Numero End Valor);\nDefinir Funcao TotalizaHoras(Numero IndHor, Numero ValHor);\nDefinir Funcao ZeraValores ();\nDefinir Funcao ConverteHoras();\n\nFuncao ValidaCID (Numero End NumCID, Numero End Valida);\n{\n  NumCid = 0;\n  Valida = 0;\n  lStrA = EAbrCid;\n\n  TamanhoAlfa (lStrA, lTam);\n\n  lind = 1;\n  lTotCid = 0;\n  Enquanto (lind < 19)\n  {\n    lAbrTmp = lStrA;\n    TiraEspacos (lAbrTmp, lStrA);\n\n    PosicaoAlfa (\",\", lStrA, lPos);\n    lStrB = lStrA;\n    /* AINDA HA CIDS E AINDA NAO EXISTEM 18 ITENS... */\n    Se ((lPos <> 0) e (lind < 18))\n    {\n      CopiarAlfa (lStrB, 2, lPos-3);\n      CopiarAlfa (lStrA, lPos+1, lTam);\n    }\n    Senao\n    {\n      lAbrTmp = lStrB;\n      TiraEspacos (lAbrTmp, lStrB);\n\n      CopiarAlfa (lStrB, 2, lTam-2);\n      lTotCid = lInd;\n\n      /* VERIFICA SE EXISTEM MAIS DE 18 CODIGOS */\n      Se ((lind >= 18) e (lPos <> 0))\n        NumCid = 1;\n    }\n    TCid[lind].xCodCid = lStrB;\n\n    /* ACABOU OS CIDs */\n    Se (lTotCid = lInd)\n    {\n      TCid[lind+1].xCodCid = \"Outros\";\n      TCid[lind+2].xCodCid = \"Total\";\n      lInd = 20;\n    }\n    \n    lind = lind + 1;\n    TamanhoAlfa (lStrA, lTam);\n  }\n  \n  \n  Se (NumCid <> 1)\n  {\n    /* COMPARA AS DUAS ABRANGENCIAS */\n    lStrA = EAbrOut;\n\n    TamanhoAlfa (lStrA, lTam);\n\n    Enquanto (lTam > 4)\n    {\n      PosicaoAlfa (\",\", lStrA, lPos);\n      lStrB = lStrA;\n      Se (lPos <> 0)\n      {\n        lAbrTmp = lStrB;\n        TiraEspacos (lAbrTmp, lStrB);\n        CopiarAlfa (lStrB, 2, lPos-3);\n        CopiarAlfa (lStrA, lPos+1, lTam);\n        TamanhoAlfa (lStrA, lTam);\n      }\n      Senao\n      {\n        lAbrTmp = lStrB;\n        TiraEspacos (lAbrTmp, lStrB);\n        CopiarAlfa (lStrB, 2, lTam-2);\n        lTam = 1;\n      }\n      \n      /* VERIFICA A EXISTENCIA DO ITEM */\n      lind = 1;\n      Enquanto (lind < 19)\n      {\n        Se (TCid[lind].xCodCid = lStrB)\n        {\n          lind = 18;\n          Valida = 1;\n        }\n        lind = lind + 1;\n      }\n    }\n  }\n    \n}\n\nFuncao AddValor (Numero IndCampo, Numero IndDia, Numero Valor);\n{\n  Se (IndCampo = 1)\n  {\n    FValCid1 = FValCid1 + Valor;\n    FTotDia1 = FTotDia1 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 2)\n  {\n    FValCid2 = FValCid2 + Valor;\n    FTotDia2 = FTotDia2 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 3)\n  {\n    FValCid3 = FValCid3 + Valor;\n    FTotDia3 = FTotDia3 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 4)\n  {\n    FValCid4 = FValCid4 + Valor;\n    FTotDia4 = FTotDia4 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 5)\n  {\n    FValCid5 = FValCid5 + Valor;\n    FTotDia5 = FTotDia5 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 6)\n  {\n    FValCid6 = FValCid6 + Valor;\n    FTotDia6 = FTotDia6 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 7)\n  {\n    FValCid7 = FValCid7 + Valor;\n    FTotDia7 = FTotDia7 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 8)\n  {\n    FValCid8 = FValCid8 + Valor;\n    FTotDia8 = FTotDia8 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 9)\n  {\n    FValCid9 = FValCid9 + Valor;\n    FTotDia9 = FTotDia9 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 10)\n  {\n    FValCid10 = FValCid10 + Valor;\n    FTotDia10 = FTotDia10 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 11)\n  {\n    FValCid11 = FValCid11 + Valor;\n    FTotDia11 = FTotDia11 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 12)\n  {\n    FValCid12 = FValCid12 + Valor;\n    FTotDia12 = FTotDia12 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 13)\n  {\n    FValCid13 = FValCid13 + Valor;\n    FTotDia13 = FTotDia13 + (IndDia * Valor);\n  }\n\n\n  Senao\n  Se (IndCampo = 14)\n  {\n    FValCid14 = FValCid14 + Valor;\n    FTotDia14 = FTotDia14 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 15)\n  {\n    FValCid15 = FValCid15 + Valor;\n    FTotDia15 = FTotDia15 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 16)\n  {\n    FValCid16 = FValCid16 + Valor;\n    FTotDia16 = FTotDia16 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 17)\n  {\n    FValCid17 = FValCid17 + Valor;\n    FTotDia17 = FTotDia17 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 18)\n  {\n    FValCid18 = FValCid18+ Valor;\n    FTotDia18 = FTotDia18 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 19)\n  {\n    FValCid19 = FValCid19 + Valor;\n    FTotDia19 = FTotDia19 + (IndDia * Valor);\n  }\n  Senao\n  Se (IndCampo = 20)\n  {\n    FValCid20 = FValCid20 + Valor;\n    FTotDia20 = FTotDia20 + (IndDia * Valor);\n  }\n  \n}\n\nFuncao GetHoras (Numero HorAfa, Numero HorTer, Numero End Valor);\n{\n  Se (HorTer <> 0)\n    {\n      Se (HorTer < HorAfa)\n        {\n          ValorHor = 1440 - HorAfa;\n          Valor = ValorHor + HorTer;        \n        }\n      Senao\n        Valor = HorTer - HorAfa;    \n    }  \n  Senao\n    Valor = 0; \n}\n\n\nFuncao ZeraValores();\n{\n  FValCid1  = 0;\n  FValCid2  = 0;\n  FValCid3  = 0;\n  FValCid4  = 0;\n  FValCid5  = 0;\n  FValCid6  = 0;\n  FValCid7  = 0;\n  FValCid8  = 0;\n  FValCid9  = 0;\n  FValCid10 = 0;\n  FValCid11 = 0;\n  FValCid12 = 0;\n  FValCid13 = 0;\n  FValCid14 = 0;\n  FValCid15 = 0;\n  FValCid16 = 0;\n  FValCid17 = 0;\n  FValCid18 = 0;\n  FValCid19 = 0;\n  FValCid20 = 0;\n}\n\nFuncao TotalizaHoras(Numero IndHor, Numero ValHor);\n{\n  Se (IndHor = 1)    \n    FValHor1 = FValHor1 + ValHor;\n  Senao\n  Se (IndHor = 2)  \n    FValHor2 = FValHor2 + ValHor;\n  Senao\n  Se (IndHor = 3)   \n    FValHor3 = FValHor3 + ValHor;    \n  Senao\n  Se (IndHor = 4)  \n    FValHor4 = FValHor4 + ValHor; \n  Senao\n  Se (IndHor = 5)\n    FValHor5 = FValHor5 + ValHor;          \n  Senao\n  Se (IndHor = 6)\n    FValHor6 = FValHor6 + ValHor;                       \n  Senao\n  Se (IndHor = 7)\n    FValHor7 = FValHor7 + ValHor;        \n  Senao\n  Se (IndHor = 8)\n    FValHor8 = FValHor8 + ValHor;         \n  Senao\n  Se (IndHor = 9)\n    FValHor9 = FValHor9 + ValHor;        \n  Senao\n  Se (IndHor = 10)\n    FValHor10 = FValHor10 + ValHor;      \n  Senao\n  Se (IndHor = 11)\n    FValHor11 = FValHor11 + ValHor;    \n  Senao\n  Se (IndHor = 12)\n    FValHor12 = FValHor12 + ValHor;       \n  Senao\n  Se (IndHor = 13)\n    FValHor13 = FValHor13 + ValHor;     \n  Senao\n  Se (IndHor= 14)\n    FValHor14 = FValHor14 + ValHor;       \n  Senao\n  Se (IndHor = 15)\n    FValHor15 = FValHor15 + ValHor;         \n  Senao\n  Se (IndHor = 16)\n    FValHor16 = FValHor16 + ValHor;      \n  Senao\n  Se (IndHor = 17)\n    FValHor17 = FValHor17 + ValHor;   \n  Senao\n  Se (IndHor = 18)\n    FValHor18 = FValHor18+ ValHor;    \n  Senao\n  Se (IndHor = 19)\n    FValHor19 = FValHor19 + ValHor;    \n  Senao\n  Se (IndHor= 20)\n    FValHor20 = FValHor20 + ValHor;     \n}\n\nFuncao ConverteHoras();\n{   \n  Se (FValHor1 > 0)\n    AlteraControle(\"FValHor1\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor2 > 0)\n    AlteraControle(\"FValHor2\", \"Edição Campo\", \"HHH:MM\");\n  Se (FValHor3 > 0)\n    AlteraControle(\"FValHor3\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor4 > 0)  \n    AlteraControle(\"FValHor4\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor5 > 0)\n    AlteraControle(\"FValHor5\", \"Edição Campo\", \"HHH:MM\"); \n  Se (FValHor6 > 0)  \n    AlteraControle(\"FValHor6\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor7 > 0)\n    AlteraControle(\"FValHor7\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor8 > 0)\n    AlteraControle(\"FValHor8\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor9 > 0)  \n    AlteraControle(\"FValHor9\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor10 > 0)  \n    AlteraControle(\"FValHor10\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor11 > 0)\n    AlteraControle(\"FValHor11\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor12 > 0)\n    AlteraControle(\"FValHor12\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor13 > 0)  \n    AlteraControle(\"FValHor13\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor14 > 0)\n    AlteraControle(\"FValHor14\", \"Edição Campo\", \"HHH:MM\");  \n  Se (FValHor15 > 0)  \n    AlteraControle(\"FValHor15\", \"Edição Campo\", \"HHH:MM\"); \n  Se (FValHor16 > 0)\n    AlteraControle(\"FValHor16\", \"Edição Campo\", \"HHH:MM\");\n  Se (FValHor17 > 0)\n    AlteraControle(\"FValHor17\", \"Edição Campo\", \"HHH:MM\"); \n  Se (FValHor18 > 0)\n    AlteraControle(\"FValHor18\", \"Edição Campo\", \"HHH:MM\"); \n  Se (FValHor19 > 0) \n    AlteraControle(\"FValHor19\", \"Edição Campo\", \"HHH:MM\"); \n  Se (FValHor20 > 0)  \n    AlteraControle(\"FValHor20\", \"Edição Campo\", \"HHH:MM\");        \n}\n",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Adicional_CabCID",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 115,
+        "left": 0,
+        "width": 6000,
+        "height": 109
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "/************************************************************************\nEsse modelo de absenteísmo lista as ocorrências de 15 dias de atestado e \nna 16º ocorrência lista a quantidade de atestados em horas. Ele é listado\nassim: para cada dia lista a quantidade de afastamentos naquele dia e na\n16º ocorrência lista a quantidade de afastamento em horas. O toal de afastamentos\né o somatório dos afastamentos em dia e afastamentos em horas. E a Qtd. de\nDias Afast. são o total de dias afastados e a Qtd. Horas Afast. são o total\nde horas afastadas. O Afastamento de dias e Horas são listados na seção:\nAdicional_Dias. Existe nas abrangências a abrangência de CID que se for \ninformada, lista de acordo com o CID informado.\n*************************************************************************/\n\nAlteraControle (\"DTotHor\", \"Imprimir\", \"Falso\");\n\nind = 1;\nEnquanto (ind < 17)\n  {\n \n  Se (ind < 16)\n    FNumDia = ind;\n  Senao\n    {\n    FNumDia = 0;\n    AlteraControle (\"FNumDia\", \"Imprimir\", \"Falso\");\n    AlteraControle (\"DTotHor\", \"Imprimir\", \"Verdadeiro\");\n    }\n\n  ZeraValores();\n\n  xTotal = 0;\n  xHoras = 0;\n  xTotHor = 0;\n\n  Se (ind = 16)\n    xdia = 1;\n  Senao\n    xdia = ind;\n\n  /*********************************\n      AFASTAMENTOS - ATENDIMENTOS\n   *********************************/\n\n  Se (EncMat = 1)\n    {\n    sql_abrcid = \" 1=1 \";\n    /* PROCURA PELOS CIDS A CONSIDERAR */\n    EstaNulo (EAbrCid, cid_estanulo);\n    Se (cid_estanulo = 0)\n      MontaAbrangencia (\"R110MAT.CODDOE\", EAbrCid , sql_abrcid);\n    \n    sql_abrcid = \" AND \" + sql_abrcid;                  /* ABRANGENCIA */\n    sql_abrcid = \" AND \" + lSQLWhere + sql_abrcid;       /* DATA REFERENCIA */\n    \n    CMat.SQL \"SELECT CODDOE, HORAFA, HORTER FROM R110MAT WHERE DIAATE = :xdia __Inserir(:sql_abrcid) ORDER BY 2,1\";\n    CMat.AbrirCursor();\n    \n    /* ADICIONARA A TODOS OS CAMPOS OS DIAS DE AFASTAMENTO */\n    Enquanto (CMat.Achou)\n      {\n      /* PROCURAR O CAMPO A SER INFORMADO */\n      xind = 1;\n      Enquanto (xind <= lTotCid)\n        {\n        Se (TCid[xind].xCodCid = CMat.CodDoe)\n          {\n          /* SE FOR APENAS 1 DIA, ENTAO CALCULA AS HORAS */\n          Se (ind = 16)\n            GetHoras (CMat.HorAfa, CMat.HorTer, xHoras);\n          \n          /* SE FOR APENAS 1 DIA NÃO CONTABILIZA PARA DIAS, SOMENTE CONTABILIZA EM HORAS */\n          Se (ind < 16)\n          {\n            Se (xdia > 1)\n              AddValor (xind, xdia, 1);\n          }\n          Senao\n            {\n            AddValor (xind, 0, 1);\n            TotalizaHoras(xind, xHoras);\n            }\n\n          xind = 20;\n\n          /* ADICIONA AS HORAS OU DIAS DE ACORDO COM O INDICE */\n          Se (ind = 16)\n          {\n            xTotal = xTotal + 1;\n            xTotHor = xTotHor + xHoras;\n          }  \n          Senao\n          {\n            Se (xdia > 1)\n              xTotal = xTotal + 1;\n          }\n\n          }\n        xind = xind + 1;\n        }\n        \n      CMat.Proximo();\n      }\n  \n    CMat.FecharCursor();\n  \n    /* OUTROS  */\n    sql_abrcid = \"\";\n    EstaNulo (EAbrOut, out_estanulo);\n    Se (out_estanulo = 0)\n      {\n      MontaAbrangencia (\"R110MAT.CODDOE\", EAbrOut, sql_abrcid);\n      sql_abrcid = \" AND \" + sql_abrcid;\n      }\n    Senao\n      {\n      EstaNulo (EAbrCid, cid_estanulo);\n      Se (cid_estanulo = 0)\n        {\n        MontaAbrangencia (\"R110MAT.CODDOE\", EAbrCid, sql_abrcid);\n        sql_abrcid = \" AND NOT \" + sql_abrcid;\n        }\n      }\n\n    sql_abrcid = \" AND \" + lSQLWhere + sql_abrcid;   /* DATA REFERENCIA */\n\n    CMat.SQL \"SELECT CODDOE, HORAFA, HORTER FROM R110MAT WHERE DIAATE = :xdia __Inserir(:sql_abrcid) ORDER BY 2,1\";\n    CMat.AbrirCursor();\n\n    Enquanto (CMat.Achou)\n      {\n      /* SE FOR APENAS 1 DIA, ENTAO CALCULA AS HORAS */\n      Se (ind = 16)\n        GetHoras (CMat.HorAfa, CMat.HorTer, xHoras);\n\n      Se (ind < 16)\n      {\n        Se (xdia > 1)\n          AddValor (lTotCid+1, xdia, 1);\n      }\n      Senao\n        {     \n          AddValor (lTotCid+1, 0, 1);\n          TotalizaHoras(lTotCid+1, xHoras);\n        }\n\n      /* ADICIONA AS HORAS OU DIAS DE ACORDO COM O INDICE */\n      Se (ind = 16)\n      {\n        xTotHor = xTotHor + xHoras;\n        xTotal = xTotal + 1;\n      }\n      Senao\n      {\n        Se (xdia > 1)\n          xTotal = xTotal + 1;\n      }\n\n      CMat.Proximo();\n      }\n  \n    /* TOTAL DE AFASTAMENTOS NO DIA/HORA */\n    Se (ind < 16)\n    {\n      Se (xdia > 1)\n        AddValor (lTotCid+2, xdia, xTotal);\n    }\n    Senao\n      {     \n      AddValor (lTotCid+2, 0, xTotal);\n      TotalizaHoras(lTotCid+2, xTotHor);\n      }\n    \n    CMat.FecharCursor();\n    }\n\n  xTotal = 0;\n  xTotHor = 0;\n  xHoras = 0;\n  /*********************************\n          ATESTADOS EXTERNOS\n   *********************************/\n  sql_abrcid = \" 1=1 \";\n  IntParaAlfa (xdia, strdia);\n  Se (EncMam = 1)\n    {\n    /* PROCURA PELOS CIDS A CONSIDERAR */\n    EstaNulo (EAbrCid, cid_estanulo);\n    Se (cid_estanulo = 0)\n      MontaAbrangencia (\"R110MAM.CODDOE\", EAbrCid , sql_abrcid);\n    \n    sql_abrcid = \" AND \" + sql_abrcid;                 /* ABRANGENCIA          */\n    sql_abrcid = \" AND \" + lSQLWhere + sql_abrcid;     /* DATA REFERENCIA      */\n    Se (ind = 16)\n      sql_abrcid = \" AND TIPMAM = 1\" + sql_abrcid;                    /* TEMPO DE AFASTAMENTO - HORAS */ \n    Senao\n      sql_abrcid = \" AND TIPMAM = 2 AND DIAATE = \" + strdia + sql_abrcid; /* TEMPO DE AFASTAMENTO - DIAS */\n\n    CMam.SQL \"SELECT CODDOE, TIPMAM, DIAATE, HORAFA, HORTER, HORATE FROM R110MAM WHERE TIPASO = 0 AND ORIATE = 'E' __Inserir(:sql_abrcid) ORDER BY 2,1\";\n    CMam.AbrirCursor();\n    \n    /* ADICIONARA A TODOS OS CAMPOS OS DIAS DE AFASTAMENTO */\n    Enquanto (CMam.Achou)\n      {\n      /* PROCURAR O CAMPO A SER INFORMADO */\n      xind = 1;\n      Enquanto (xind <= lTotCid)\n        {\n        Se (TCid[xind].xCodCid = CMam.CodDoe)\n          {\n          /* SE FOR APENAS 1 DIA, ENTAO CALCULA AS HORAS */\n          Se (ind = 16)\n            xHoras = CMam.HorAte;         \n          \n          Se (ind < 16)\n            AddValor (xind, xdia, 1);\n          Senao\n          {\n            AddValor (xind, 0, 1);\n            TotalizaHoras(xind, xHoras);\n          }\n\n          /* ADICIONA AS HORAS OU DIAS DE ACORDO COM O INDICE */\n          Se (ind = 16)\n          {\n            xTotal = xTotal + 1;\n            xTotHor = xTotHor + xHoras;\n          }\n          Senao\n            xTotal = xTotal + 1;\n          \n          xind = 20;\n\n          }\n        xind = xind + 1;\n        }\n\n        \n    CMam.Proximo();\n      }\n  \n    CMam.FecharCursor();\n  \n    /* OUTROS  */\n    sql_abrcid = \"\";\n    EstaNulo (EAbrOut, out_estanulo);\n    Se (out_estanulo = 0)\n      {\n      MontaAbrangencia (\"R110MAM.CODDOE\", EAbrOut, sql_abrcid);\n      sql_abrcid = \" AND \" + sql_abrcid;\n      }\n    Senao\n      {\n      EstaNulo (EAbrCid, cid_estanulo);\n      Se (cid_estanulo = 0)\n        {\n        MontaAbrangencia (\"R110MAM.CODDOE\", EAbrCid , sql_abrcid);\n        sql_abrcid = \" AND NOT \" + sql_abrcid;\n        }\n    }\n\n    sql_abrcid = \" AND \" + lSQLWhere + sql_abrcid;     /* DATA REFERENCIA      */\n    Se (ind = 16)\n      sql_abrcid = \" AND TIPMAM = 1\" + sql_abrcid;                    /* TEMPO DE AFASTAMENTO - HORAS */ \n    Senao\n      sql_abrcid = \" AND TIPMAM = 2 AND DIAATE = \" + strdia + sql_abrcid; /* TEMPO DE AFASTAMENTO - DIAS */\n\n\n    CMam.SQL \"SELECT CODDOE, TIPMAM, DIAATE, HORAFA, HORTER, HORATE FROM R110MAM WHERE TIPASO = 0 AND ORIATE = 'E' __Inserir(:sql_abrcid) ORDER BY 2,1\";\n    CMam.AbrirCursor();\n\n    Enquanto (CMam.Achou)\n      {\n      /* SE FOR APENAS 1 DIA, ENTAO CALCULA AS HORAS */\n      Se (ind = 16)\n        xHoras = CMam.HorAte;   \n\n      Se (ind < 16)\n        AddValor (lTotCid+1, xdia, 1);\n      Senao\n      {    \n        AddValor (lTotCid+1, 0, 1);\n        TotalizaHoras(lTotCid+1, xHoras);\n      }\n\n      /* ADICIONA AS HORAS OU DIAS DE ACORDO COM O INDICE */\n      Se (ind = 16)\n      {      \n        xTotal = xTotal + 1;\n        xTotHor = xTotHor + xHoras;\n      }  \n      Senao\n        xTotal = xTotal + 1;\n\n      CMam.Proximo();\n      }\n    Se (ind < 16)\n      AddValor (lTotCid+2, xdia, xTotal);\n    Senao\n    {\n      AddValor (lTotCid+2, 0, xTotal);     \n      TotalizaHoras (lTotCid+2, xTotHor);\n    }\n\n    CMam.FecharCursor();\n    }\n\n  ListaSecao (\"Adicional_Dias\");\n  ind = ind + 1;\n  }\n\nListaSecao (\"Adicional_TotAfa\");",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "DesCidCab",
+          "position": {
+            "top": 78,
+            "left": 105,
+            "width": 782,
+            "height": 16
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCab",
+          "position": {
+            "top": 63,
+            "left": 105,
+            "width": 782,
+            "height": 16
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho002",
+          "position": {
+            "top": 63,
+            "left": 0,
+            "width": 106,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho014",
+          "position": {
+            "top": 78,
+            "left": 0,
+            "width": 106,
+            "height": 32
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid1",
+          "position": {
+            "top": 93,
+            "left": 105,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid6",
+          "position": {
+            "top": 93,
+            "left": 300,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid5",
+          "position": {
+            "top": 93,
+            "left": 261,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid4",
+          "position": {
+            "top": 93,
+            "left": 222,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid3",
+          "position": {
+            "top": 93,
+            "left": 183,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid2",
+          "position": {
+            "top": 93,
+            "left": 144,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid7",
+          "position": {
+            "top": 93,
+            "left": 339,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid8",
+          "position": {
+            "top": 93,
+            "left": 378,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid9",
+          "position": {
+            "top": 93,
+            "left": 417,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid10",
+          "position": {
+            "top": 93,
+            "left": 456,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid11",
+          "position": {
+            "top": 93,
+            "left": 495,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid12",
+          "position": {
+            "top": 93,
+            "left": 534,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid13",
+          "position": {
+            "top": 93,
+            "left": 573,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid14",
+          "position": {
+            "top": 93,
+            "left": 612,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid16",
+          "position": {
+            "top": 93,
+            "left": 690,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid15",
+          "position": {
+            "top": 93,
+            "left": 651,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid18",
+          "position": {
+            "top": 93,
+            "left": 768,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid17",
+          "position": {
+            "top": 93,
+            "left": 729,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid19",
+          "position": {
+            "top": 93,
+            "left": 807,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid20",
+          "position": {
+            "top": 93,
+            "left": 846,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 81,
+            "left": 3,
+            "width": 89,
+            "height": 14
+          },
+          "caption": "Qtd. Afast. Dias",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid17",
+          "position": {
+            "top": 96,
+            "left": 732,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid16",
+          "position": {
+            "top": 96,
+            "left": 693,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid15",
+          "position": {
+            "top": 96,
+            "left": 654,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid14",
+          "position": {
+            "top": 96,
+            "left": 615,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid13",
+          "position": {
+            "top": 96,
+            "left": 576,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid12",
+          "position": {
+            "top": 96,
+            "left": 537,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid11",
+          "position": {
+            "top": 96,
+            "left": 498,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid10",
+          "position": {
+            "top": 96,
+            "left": 459,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid9",
+          "position": {
+            "top": 96,
+            "left": 420,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid8",
+          "position": {
+            "top": 96,
+            "left": 381,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid7",
+          "position": {
+            "top": 96,
+            "left": 342,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid6",
+          "position": {
+            "top": 96,
+            "left": 303,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid5",
+          "position": {
+            "top": 96,
+            "left": 264,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid4",
+          "position": {
+            "top": 96,
+            "left": 225,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid20",
+          "position": {
+            "top": 96,
+            "left": 849,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "Total",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid3",
+          "position": {
+            "top": 96,
+            "left": 186,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid2",
+          "position": {
+            "top": 96,
+            "left": 147,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid18",
+          "position": {
+            "top": 96,
+            "left": 771,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid19",
+          "position": {
+            "top": 96,
+            "left": 810,
+            "width": 36,
+            "height": 14
+          },
+          "caption": "Outros",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DDatRel",
+          "position": {
+            "top": 63,
+            "left": 6,
+            "width": 83,
+            "height": 14
+          },
+          "caption": "DDatRel",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Dias",
+          "position": {
+            "top": 93,
+            "left": 18,
+            "width": 64,
+            "height": 14
+          },
+          "caption": "Dias",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid1",
+          "position": {
+            "top": 96,
+            "left": 108,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "A002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCabCid",
+          "position": {
+            "top": 78,
+            "left": 105,
+            "width": 782,
+            "height": 14
+          },
+          "caption": "CID",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCabRel",
+          "position": {
+            "top": 63,
+            "left": 105,
+            "width": 782,
+            "height": 14
+          },
+          "caption": "Relatório de Absenteísmo",
+          "font": {
+            "name": "Arial",
+            "size": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Dias",
+      "bandType": "OUTRO",
+      "tag": 601,
+      "position": {
+        "top": 224,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "DesCid21",
+          "position": {
+            "top": 0,
+            "left": 105,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid24",
+          "position": {
+            "top": 0,
+            "left": 222,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid23",
+          "position": {
+            "top": 0,
+            "left": 183,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid22",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid26",
+          "position": {
+            "top": 0,
+            "left": 300,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid25",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid27",
+          "position": {
+            "top": 0,
+            "left": 339,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid28",
+          "position": {
+            "top": 0,
+            "left": 378,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid29",
+          "position": {
+            "top": 0,
+            "left": 417,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid30",
+          "position": {
+            "top": 0,
+            "left": 456,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid31",
+          "position": {
+            "top": 0,
+            "left": 495,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid32",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid33",
+          "position": {
+            "top": 0,
+            "left": 573,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid34",
+          "position": {
+            "top": 0,
+            "left": 612,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid35",
+          "position": {
+            "top": 0,
+            "left": 651,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid36",
+          "position": {
+            "top": 0,
+            "left": 690,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid37",
+          "position": {
+            "top": 0,
+            "left": 729,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid38",
+          "position": {
+            "top": 0,
+            "left": 768,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid39",
+          "position": {
+            "top": 0,
+            "left": 807,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid40",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 106,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DTotHor",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 104,
+            "height": 14
+          },
+          "caption": "Qtd. Afast. Horas",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid20",
+          "position": {
+            "top": 0,
+            "left": 849,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid20",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid19",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid19",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid18",
+          "position": {
+            "top": 0,
+            "left": 771,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid18",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid17",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid17",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid16",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid16",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid15",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid15",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid14",
+          "position": {
+            "top": 0,
+            "left": 615,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid14",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid13",
+          "position": {
+            "top": 0,
+            "left": 576,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid13",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid12",
+          "position": {
+            "top": 0,
+            "left": 537,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid11",
+          "position": {
+            "top": 0,
+            "left": 498,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid2",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid3",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid4",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid5",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid6",
+          "position": {
+            "top": 0,
+            "left": 303,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid7",
+          "position": {
+            "top": 0,
+            "left": 342,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid8",
+          "position": {
+            "top": 0,
+            "left": 381,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid9",
+          "position": {
+            "top": 0,
+            "left": 420,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid10",
+          "position": {
+            "top": 0,
+            "left": 459,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumDia",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 104,
+            "height": 14
+          },
+          "caption": "FNumDia",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValCid1",
+          "position": {
+            "top": 0,
+            "left": 108,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValCid1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_AfaHor",
+      "bandType": "OUTRO",
+      "tag": 602,
+      "position": {
+        "top": 240,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "DesCid41",
+          "position": {
+            "top": 0,
+            "left": 105,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid44",
+          "position": {
+            "top": 0,
+            "left": 222,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid43",
+          "position": {
+            "top": 0,
+            "left": 183,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid42",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid46",
+          "position": {
+            "top": 0,
+            "left": 300,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid45",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid47",
+          "position": {
+            "top": 0,
+            "left": 339,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid48",
+          "position": {
+            "top": 0,
+            "left": 378,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid49",
+          "position": {
+            "top": 0,
+            "left": 417,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid50",
+          "position": {
+            "top": 0,
+            "left": 456,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid51",
+          "position": {
+            "top": 0,
+            "left": 495,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid52",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid53",
+          "position": {
+            "top": 0,
+            "left": 573,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid54",
+          "position": {
+            "top": 0,
+            "left": 612,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid55",
+          "position": {
+            "top": 0,
+            "left": 651,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid56",
+          "position": {
+            "top": 0,
+            "left": 690,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid57",
+          "position": {
+            "top": 0,
+            "left": 729,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid58",
+          "position": {
+            "top": 0,
+            "left": 768,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid59",
+          "position": {
+            "top": 0,
+            "left": 807,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid60",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho024",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 106,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 104,
+            "height": 14
+          },
+          "caption": "Total  Horas Afast.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor3",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor4",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor5",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor6",
+          "position": {
+            "top": 0,
+            "left": 303,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor7",
+          "position": {
+            "top": 0,
+            "left": 342,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor8",
+          "position": {
+            "top": 0,
+            "left": 381,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor9",
+          "position": {
+            "top": 0,
+            "left": 420,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor10",
+          "position": {
+            "top": 0,
+            "left": 459,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor11",
+          "position": {
+            "top": 0,
+            "left": 498,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor12",
+          "position": {
+            "top": 0,
+            "left": 537,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor13",
+          "position": {
+            "top": 0,
+            "left": 576,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor13",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor14",
+          "position": {
+            "top": 0,
+            "left": 615,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor14",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor15",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor15",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor16",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor16",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor17",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor17",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor18",
+          "position": {
+            "top": 0,
+            "left": 771,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor18",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor19",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor19",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor20",
+          "position": {
+            "top": 0,
+            "left": 849,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor20",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor1",
+          "position": {
+            "top": 0,
+            "left": 108,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValHor2",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FValHor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_TotDia",
+      "bandType": "OUTRO",
+      "tag": 604,
+      "position": {
+        "top": 272,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "DesCid81",
+          "position": {
+            "top": 0,
+            "left": 105,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid84",
+          "position": {
+            "top": 0,
+            "left": 222,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid83",
+          "position": {
+            "top": 0,
+            "left": 183,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid82",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid86",
+          "position": {
+            "top": 0,
+            "left": 300,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid85",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid87",
+          "position": {
+            "top": 0,
+            "left": 339,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid88",
+          "position": {
+            "top": 0,
+            "left": 378,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid89",
+          "position": {
+            "top": 0,
+            "left": 417,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid90",
+          "position": {
+            "top": 0,
+            "left": 456,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid91",
+          "position": {
+            "top": 0,
+            "left": 495,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid92",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid93",
+          "position": {
+            "top": 0,
+            "left": 573,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid94",
+          "position": {
+            "top": 0,
+            "left": 612,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid95",
+          "position": {
+            "top": 0,
+            "left": 651,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid96",
+          "position": {
+            "top": 0,
+            "left": 690,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid97",
+          "position": {
+            "top": 0,
+            "left": 729,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid98",
+          "position": {
+            "top": 0,
+            "left": 768,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid99",
+          "position": {
+            "top": 0,
+            "left": 807,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid100",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho065",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 106,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia20",
+          "position": {
+            "top": 0,
+            "left": 849,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia20",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia18",
+          "position": {
+            "top": 0,
+            "left": 771,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia18",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia17",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia17",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia16",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia16",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia15",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia15",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia14",
+          "position": {
+            "top": 0,
+            "left": 615,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia14",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia12",
+          "position": {
+            "top": 0,
+            "left": 537,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia11",
+          "position": {
+            "top": 0,
+            "left": 498,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia2",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia6",
+          "position": {
+            "top": 0,
+            "left": 303,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia8",
+          "position": {
+            "top": 0,
+            "left": 381,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia9",
+          "position": {
+            "top": 0,
+            "left": 420,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia19",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia19",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia10",
+          "position": {
+            "top": 0,
+            "left": 459,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia7",
+          "position": {
+            "top": 0,
+            "left": 342,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia1",
+          "position": {
+            "top": 0,
+            "left": 108,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia4",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia3",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia5",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDia13",
+          "position": {
+            "top": 0,
+            "left": 576,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "FTotDia13",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 103,
+            "height": 14
+          },
+          "caption": "Total Dias Afast.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 83
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 975,
+            "width": 30,
+            "height": 14
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 3,
+            "left": 948,
+            "width": 29,
+            "height": 14
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 36,
+            "width": 280,
+            "height": 14
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 28,
+            "height": 14
+          },
+          "caption": "EmpAtu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 33,
+            "left": 351,
+            "width": 195,
+            "height": 23
+          },
+          "caption": "Absenteísmo",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatCmp",
+          "position": {
+            "top": 54,
+            "left": 462,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "FDatCmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 54,
+            "left": 384,
+            "width": 79,
+            "height": 14
+          },
+          "caption": "Competência:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 288,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 1053,
+            "height": 12
+          },
+          "caption": "DesRodapePa",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Titulo",
+      "bandType": "CABECALHO",
+      "tag": 1,
+      "position": {
+        "top": 83,
+        "left": 0,
+        "width": 6000,
+        "height": 32
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Data EDatCmp;\nDefinir Alfa lDatRef;\nDefinir Alfa lConta;\nDefinir Alfa lControle;\nDefinir Alfa lDesc;\nDefinir Alfa EConVaz;\nDefinir Alfa sql_abrcid;\nDefinir Alfa AbrSQL;\nDefinir Tabela TMes[12] = {Alfa xNomMes;};\nDefinir Cursor CMat;\n\n  TMes[1].xNomMes = \"Jan\";\n  TMes[2].xNomMes = \"Fev\";\n  TMes[3].xNomMes = \"Mar\";\n  TMes[4].xNomMes = \"Abr\";\n  TMes[5].xNomMes = \"Mai\";\n  TMes[6].xNomMes = \"Jun\";\n  TMes[7].xNomMes = \"Jul\";\n  TMes[8].xNomMes = \"Ago\";\n  TMes[9].xNomMes = \"Set\";\n  TMes[10].xNomMes = \"Out\";\n  TMes[11].xNomMes = \"Nov\";\n  TMes[12].xNomMes = \"Dez\";\n  \n  \n  /*   CRIAR A DESCRIÇÃO MES/ANO   */\n  Se (lMes <> 0)\n  {     \n\n  IntParaAlfa (lAno, lDatRef);\n  lDatRef = TMes[lMes].xNomMes + \" / \" + lDatRef;\n  AlteraControle (\"DDatRel\", \"Descrição\", lDatRef);\n  }\n  Senao \n    AlteraControle (\"DDatRel\", \"Descrição\", \"\");\n\n  \n  \n  /*****************************************\n     OCULTAR TODOS OS ITENS E APAGAR GRADE.\n   *****************************************/\n  lind = 1;\n  Enquanto (lind < 21)\n    {\n    /* ITENS CID  */\n    IntParaAlfa(lind, lConta);\n    lControle = \"DCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    /* GRADE DE CID */  \n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    /* GRADE DE DIAS */\n    IntParaAlfa(lind + 20, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    /* GRADE DE HORAS */\n    IntParaAlfa(lind + 40, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    /* GRADE TOTAL DE AFASTAM. */\n    IntParaAlfa(lind + 60, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    /* GRADE TOTAL DE DIAS */\n    IntParaAlfa(lind + 80, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Falso\");\n    \n    lind = lInd + 1;\n    }\n  \n  \n  /****************************************\n     CRIAR ITENS CID  -  APRESENTAR GRADE\n   ****************************************/\n  lind = 1;\n  ltmp = lTotCid + 2;\n  Enquanto (lind <= lTmp)\n    {\n    /* ITENS CID  */\n    IntParaAlfa(lind, lConta);\n    lControle = \"DCid\" + lConta;\n      \n    lDesc = TCid[lind].xCodCid;\n    AlteraControle (lControle, \"Descrição\", lDesc);\n      \n    Se ((lind) = lTotCid+1)\n      AlteraControle(lControle,\"Fonte\",\";;7;\");\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    /* GRADE DE CID */\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    /* GRADE DE DIAS */\n    IntParaAlfa(lind + 20, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    /* GRADE DE HORAS */\n    IntParaAlfa(lind + 40, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    /* GRADE TOTAL DE AFASTAM. */\n    IntParaAlfa(lind + 60, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    /* GRADE TOTAL DE DIAS */\n    IntParaAlfa(lind + 80, lConta);\n    lControle = \"DesCid\" + lConta;\n    AlteraControle (lControle, \"Imprimir\", \"Verdadeiro\");\n    \n    lind = lInd + 1;\n    }\n  \n  /* GARANTIR UM TAMANHO MINIMO */\n  Se (lTmp < 6)\n    lSize = 6;\n  Senao\n    lSize = lTmp;\n  /* ALTERAR DIMENSOES DO CABEÇALHO  */\n  lTamControle = (lSize * 36) + 1;\n  IntParaAlfa(lTamControle, lConta);\n  AlteraControle (\"DCabRel\", \"Comprimento\", lConta);\n  AlteraControle (\"DCabCid\", \"Comprimento\", lConta);\n\n  AlteraControle (\"DesCab\", \"Comprimento\", lConta);\n  AlteraControle (\"DesCidCab\", \"Comprimento\", lConta);\n  \n  ListaSecao (\"Adicional_CabCID\");",
+      "children": []
+    },
+    {
+      "name": "Adicional_TotAfa",
+      "bandType": "OUTRO",
+      "tag": 603,
+      "position": {
+        "top": 256,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "ListaSecao (\"Adicional_TotDia\");\nConverteHoras();\nListaSecao (\"Adicional_AfaHor\");",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho026",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 106,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid61",
+          "position": {
+            "top": 0,
+            "left": 105,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid62",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid63",
+          "position": {
+            "top": 0,
+            "left": 183,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid64",
+          "position": {
+            "top": 0,
+            "left": 222,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid65",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid66",
+          "position": {
+            "top": 0,
+            "left": 300,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid67",
+          "position": {
+            "top": 0,
+            "left": 339,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid68",
+          "position": {
+            "top": 0,
+            "left": 378,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid69",
+          "position": {
+            "top": 0,
+            "left": 417,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid70",
+          "position": {
+            "top": 0,
+            "left": 456,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid71",
+          "position": {
+            "top": 0,
+            "left": 495,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid72",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid73",
+          "position": {
+            "top": 0,
+            "left": 573,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid74",
+          "position": {
+            "top": 0,
+            "left": 612,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid75",
+          "position": {
+            "top": 0,
+            "left": 651,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid76",
+          "position": {
+            "top": 0,
+            "left": 690,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid77",
+          "position": {
+            "top": 0,
+            "left": 729,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid78",
+          "position": {
+            "top": 0,
+            "left": 768,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid79",
+          "position": {
+            "top": 0,
+            "left": 807,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "DesCid80",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid19",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid19",
+          "fieldName": "Adicional_Dias.FValCid19",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid17",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid17",
+          "fieldName": "Adicional_Dias.FValCid17",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid14",
+          "position": {
+            "top": 0,
+            "left": 615,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid14",
+          "fieldName": "Adicional_Dias.FValCid14",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid13",
+          "position": {
+            "top": 0,
+            "left": 576,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid13",
+          "fieldName": "Adicional_Dias.FValCid13",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid11",
+          "position": {
+            "top": 0,
+            "left": 498,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid11",
+          "fieldName": "Adicional_Dias.FValCid11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid3",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid3",
+          "fieldName": "Adicional_Dias.FValCid3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid5",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid5",
+          "fieldName": "Adicional_Dias.FValCid5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid6",
+          "position": {
+            "top": 0,
+            "left": 303,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid6",
+          "fieldName": "Adicional_Dias.FValCid6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid7",
+          "position": {
+            "top": 0,
+            "left": 342,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid7",
+          "fieldName": "Adicional_Dias.FValCid7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid10",
+          "position": {
+            "top": 0,
+            "left": 459,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid10",
+          "fieldName": "Adicional_Dias.FValCid10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid2",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid2",
+          "fieldName": "Adicional_Dias.FValCid2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid8",
+          "position": {
+            "top": 0,
+            "left": 381,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid8",
+          "fieldName": "Adicional_Dias.FValCid8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid12",
+          "position": {
+            "top": 0,
+            "left": 537,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid12",
+          "fieldName": "Adicional_Dias.FValCid12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid15",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid15",
+          "fieldName": "Adicional_Dias.FValCid15",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid16",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid16",
+          "fieldName": "Adicional_Dias.FValCid16",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid18",
+          "position": {
+            "top": 0,
+            "left": 771,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid18",
+          "fieldName": "Adicional_Dias.FValCid18",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid20",
+          "position": {
+            "top": 0,
+            "left": 849,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid20",
+          "fieldName": "Adicional_Dias.FValCid20",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid9",
+          "position": {
+            "top": 0,
+            "left": 420,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid9",
+          "fieldName": "Adicional_Dias.FValCid9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid4",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid4",
+          "fieldName": "Adicional_Dias.FValCid4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotCid1",
+          "position": {
+            "top": 0,
+            "left": 108,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "TotCid1",
+          "fieldName": "Adicional_Dias.FValCid1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 103,
+            "height": 14
+          },
+          "caption": "Qtd. Total Afast.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R110MAM",
+    "R110MAT"
+  ],
+  "sqlFragments": [
+    "Where = \" DATAFA >= \" + lAlfDat;",
+    "Where = lSQLWhere + \" AND DATAFA <= \" + lAlfDat + \" AND NUMEMP = \" + sql_tmp;",
+    "Where;",
+    "Where = \"AND \" + lSQLWhere + sql_abrcid;",
+    "SELECT DIAATE FROM R110MAT WHERE DIAATE <> 0 __Inserir(:lSQLWhere)\";",
+    "Where = lSQLData;",
+    "Where = \"AND \" + lSQLWhere + sql_abrcid;",
+    "SELECT DIAATE, HORATE FROM R110MAM WHERE (DIAATE <> 0 OR HORATE <> 0) __Inserir(:lSQLWhere)\";",
+    "Where = lSQLData;",
+    "Where;"
+  ],
+  "_stats": {
+    "parsedBytes": 59052,
+    "totalBytes": 632205,
+    "parseComplete": true,
+    "bandCount": 8,
+    "fieldCount": 226,
+    "errorCount": 1,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 14559,
+        "skippedTo": 15842,
+        "note": "Skipped 1283 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      }
+    ]
+  }
+}

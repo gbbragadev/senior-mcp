@@ -1,0 +1,93 @@
+/***************************************************************************************************************************************
+O objetivo desta regra é apresentar as diferentes formas de acessar os dados da avaliação de resultado nas regras por processo
+515, 516 e 517 dependendo do ambiente em que está sendo executada, CSWeb ou CS. 
+Apresenta também exemplo de quais são as operações disponíveis que podem ser consultados na variável de sistema TipOpeAva.
+Nesta regra não estão sendo feitas consistências, apenas lendo os dados para variáveis, as consistências poderão ser feitas 
+conforme o valor das variáveis versus o tipo de operação efetuada.
+Os campos da tabela R101AVA estão disponíveis apenas para consulta, as alterações feitas sobre eles serão desprezadas no final da regra.
+Para cancelar o processo deve-se usar Mensagem(Erro, "Texto da Mensagem"); Cancel(1);
+***************************************************************************************************************************************/
+
+definir alfa xPlaDes;
+definir alfa xComChe;
+definir alfa xComEmp;
+definir alfa xConObj;
+definir alfa xConAva;
+
+Se (VerWeb = 0) @ Executando regra pelo CS @
+Inicio
+  Se (TipOpeAva = 1)
+    Mensagem(Retorna, "Regra por processo - operação: Bloquear. [&OK]");
+  Senao
+  Se (TipOpeAva = 2)
+    Mensagem(Retorna, "Regra por processo - operação: Liberar. [&OK]");
+  Senao
+  Se (TipOpeAva = 3)
+    Mensagem(Retorna, "Regra por processo - operação: Cancelar. [&OK]");
+  Senao
+  Se (TipOpeAva = 4)
+    Mensagem(Retorna, "Regra por processo - operação: Concluir. [&OK]");
+  Senao
+  Se (TipOpeAva = 5)
+    Mensagem(Retorna, "Regra por processo - operação: Reabrir. [&OK]");
+
+  xNumEmp = R101AVA.NumEmp;
+  xTipCol = R101AVA.TipCol;
+  xNumCad = R101AVA.NumCad;
+  xCodCic = R101AVA.CodCic;
+  xTipAva = R101AVA.TipAva;
+  xSeqAva = R101AVA.SeqAva;
+  xEmpAvl = R101AVA.EmpAvl;
+  xTipAvl = R101AVA.TipAvl;
+  xCadAvl = R101AVA.CadAvl;
+  xSitAva = R101AVA.SitAva;
+  xDatObj = R101AVA.DatObj;
+  xDatAva = R101AVA.DatAva;
+  xProObj = R101AVA.ProObj;
+  xProAva = R101AVA.ProAva;
+  xComChe = R101AVA.ComChe;
+  xPlaDes = R101AVA.PlaDes;
+  xComEmp = R101AVA.ComEmp;
+  xNumLot = R101AVA.NumLot;
+  xNotObj = R101AVA.NotObj;
+  xNotCom = R101AVA.NotCom;
+  xNotAva = R101AVA.NotAva;
+  xPerObj = R101AVA.PerObj;
+  xPerCom = R101AVA.PerCom;
+  xPerAva = R101AVA.PerAva;
+  xConObj = R101AVA.ConObj;
+  xConAva = R101AVA.ConAva;
+  xSitAnt = R101AVA.SitAnt;
+  xCodUsu = R101AVA.CodUsu;
+Fim;
+Senao  @ VerWeb = 1, Executando regra pelo CSWEB @
+Inicio
+  WCheckValInteger("NumEmp", "Empresa"                                  , xNumEmp, "N", 9999);
+  WCheckValInteger("TipCol", "Tipo de colaborador"                      , xTipCol, "N", 9);
+  WCheckValInteger("NumCad", "Colaborador"                              , xNumCad, "N", 999999999);
+  WCheckValInteger("CodCic", "Ciclo"                                    , xCodCic, "N", 999);
+  WCheckValInteger("TipAva", "Tipo de Avaliação"                        , xTipAva, "N", 99);
+  WCheckValInteger("SeqAva", "Seqüência"                                , xSeqAva, "N", 999999999);
+  WCheckValInteger("EmpAvl", "Empresa Avaliador"                        , xEmpAvl, "S", 9999);
+  WCheckValInteger("TipAvl", "Tipo de Avaliador"                        , xTipAvl, "S", 9);
+  WCheckValInteger("CadAvl", "Cadastro Avaliador"                       , xCadAvl, "S", 999999999);
+  WCheckValInteger("SitAva", "Situação"                                 , xSitAva, "S", 9);
+  WCheckValData   ("DatObj", "Data limite para definição de objetivos"  , xDatObj, "S");
+  WCheckValData   ("DatAva", "Data limite para efetuar a avaliação"     , xDatAva, "S");
+  WCheckValData   ("ProObj", "Data prorrogação de definição"            , xProObj, "S");
+  WCheckValData   ("ProAva", "Data prorrogação de avaliação"            , xProAva, "S");
+  WCheckValString ("ComChe", "Comentário do avaliador"                  , xComChe, "S", 1500);
+  WCheckValString ("PlaDes", "Plano de desenvolvimento"                 , xPlaDes, "S", 2000);
+  WCheckValString ("ComEmp", "Comentário do avaliado"                   , xComEmp, "S", 1500);
+  WCheckValInteger("NumLot", "Número do Lote"                           , xNumLot, "S", 999999999);
+  WCheckValDouble ("NotObj", "Resultado da avaliação"                   , xNotObj, "S", 999);
+  WCheckValDouble ("NotCom", "Resultado da avaliação de comportamentos" , xNotCom, "S", 999);
+  WCheckValDouble ("NotAva", "Resultado geral da avaliação"             , xNotAva, "S", 999);
+  WCheckValDouble ("PerObj", "% atingido na avaliação de objetivos"     , xPerObj, "S", 99);
+  WCheckValDouble ("PerCom", "% atingido na avaliação de comportamentos", xPerCom, "S", 99);
+  WCheckValDouble ("PerAva", "% geral atingido na avaliação"            , xPerAva, "S", 99);
+  WCheckValString ("ConObj", "Avaliado tomou conhecimento dos objetivos", xConObj, "S", 1);
+  WCheckValString ("ConAva", "Avaliado tomou conhecimento da avaliação" , xConAva, "S", 1);
+  WCheckValInteger("SitAnt", "Situação anterior"                        , xSitAnt, "S", 9);
+  WCheckValInteger("CodUsu", "Usuário"                                  , xCodUsu, "S", 999999999);
+Fim;

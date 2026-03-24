@@ -1,0 +1,143 @@
+g;**/* ---------------------------------------------------------------------------------------- *
+ | Regra para Conferência do Quadro Efetivo.                                                |
+ | Esta regra utiliza as funções ConferirQuadroEfetivo para verificar se há inconsistência  |
+ | na qtde de vagas de cada local ou centro de custo e cargo (e também por tipo de vaga).   |
+ | Se houver inconsistência, estas são retornadas pela função RetornaConferenciaQuaEfe e    |
+ | será enviado um e-mail com o resultado para o e-mail informado na variável vDstEma.      |
+ | A conferência é feita comparando a qtde de vagas da tabela do efetivo, que é alimentada  |
+ | via trigger, com a qtde de colaboradores ativos cadastrados.                             |
+ * ---------------------------------------------------------------------------------------- */
+
+Definir Data xDatRef;
+Definir Alfa vCcpEma;
+Definir Alfa vAssEma;
+Definir Alfa vTxtEma;
+Definir Alfa vRmtEma;
+Definir Alfa vDstEma;
+Definir Alfa vCcoEma;
+Definir Alfa vAnxEma;
+
+/* REMETENTE */
+vRmtEma = "confere.quadro@regra.com.br";
+
+/* DESTINATÁRIO */
+vDstEma = "xxx@xxx.com.br";
+
+/* CÓPIA */
+vCcpEma = "";
+
+Definir Alfa xQuebraLinha;
+Definir Alfa xVar1;
+Definir Alfa xVar2;
+RetornaAscII(13,xVar1);
+RetornaAscII(10,xVar2);
+xQuebraLinha = xVar1 + xVar2;
+
+xNumEmp = EmpAtu;
+DataHoje(xDatRef);
+
+xRet = ConferirQuadroEfetivo(xNumEmp, xDatRef, "", "", "");
+
+Se (xRet > 0)
+  {
+  Definir Alfa xOrigem;
+  Definir Numero xTabOrg;
+  Definir Numero xNumLoc;
+  Definir Alfa xLocal;
+  Definir Alfa xCodCCu;
+  Definir Alfa xCCusto;
+  Definir Numero xEstCar;
+  Definir Alfa xCodCar;
+  Definir Alfa xCargo;
+  Definir Numero xTipVag;
+  Definir Alfa xDesTpV;
+  Definir Numero xQtdVag;
+  Definir Alfa xStrQtdVag;
+  Definir Cursor CAux;
+
+  xRet = RetornaConferenciaQuaEfe("PRIMEIRO", xOrigem, xTabOrg, xNumLoc, xCodCCu, xEstCar, xCodCar, xTipVag, xQtdVag);
+
+  Se (xRet = 0)
+    {
+    Definir Alfa xConTpV;
+
+    CAux.SQL "SELECT CTLQUA,CONTPV FROM R030EMP WHERE NUMEMP = :xNumEmp";
+    CAux.AbrirCursor();
+    Se (CAux.Achou)
+      {
+      xCtlQua = CAux.CtlQua; 
+      xConTpV = CAux.ConTpV;
+      }
+    CAux.FecharCursor();
+    }
+
+  vTxtEma = "";
+
+  Enquanto (xRet = 0)
+    { 
+    Se (xCtlQua = 0)
+      {
+      /* LOCAL */
+      RetornaCodLoc(xNumLoc, xLocal);
+      CAux.SQL "SELECT NOMLOC FROM R016ORN WHERE TABORG = :xTabOrg AND NUMLOC = :xNumLoc";
+      CAux.AbrirCursor();
+      Se (CAux.Achou)
+        xLocal = xLocal + " " + CAux.NomLoc;
+      CAux.FecharCursor();
+      }
+    Senao
+    Se (xCtlQua = 1)
+      {
+      /* CENTRO DE CUSTO */
+      CAux.SQL "SELECT NOMCCU FROM R018CCU WHERE NUMEMP = :xNumEmp AND CODCCU = :xCodCCu";
+      CAux.AbrirCursor();
+      Se (CAux.Achou)
+        xCCusto = xCodCCu + " " + CAux.NomCCu;
+      CAux.FecharCursor();
+      }
+
+    /* CARGO */
+    CAux.SQL "SELECT TITRED FROM R024CAR WHERE ESTCAR = :xEstCar AND CODCAR = :xCodCar";
+    CAux.AbrirCursor();
+    Se (CAux.Achou)
+      xCargo = xCodCar + " " + CAux.TitRed;
+    CAux.FecharCursor();
+
+    /* TIPO DE VAGA */
+    Se (xConTpV = "S")
+      {
+      IntParaAlfa(xTipVag, xDesTpV);
+      CAux.SQL "SELECT DESTIP FROM R022VAG WHERE TIPVAG = :xTipVag";
+      CAux.AbrirCursor();
+      Se (CAux.Achou)
+        xDesTpV = xDesTpV + " " + CAux.DesTip;
+      CAux.FecharCursor();
+      }
+
+    vTxtEma = vTxtEma + "Origem: " + xOrigem;
+    Se (xCtlQua = 0)
+      vTxtEma = vTxtEma + " - Local: " + xLocal;
+    Senao
+    Se (xCtlQua = 1)
+      vTxtEma = vTxtEma + " - C.Custo: " + xCCusto;
+    vTxtEma = vTxtEma + " - Cargo: " + xCargo;
+    Se (xConTpV = "S") 
+      vTxtEma = vTxtEma + " - Tipo de Vaga: " + xDesTpV;
+    IntParaAlfa(xQtdVag, xStrQtdVag);
+    vTxtEma = vTxtEma + " - Qtde de Vagas: " + xStrQtdVag;
+    vTxtEma = vTxtEma + xQuebraLinha;
+
+    xRet = RetornaConferenciaQuaEfe("PROXIMO", xOrigem, xTabOrg, xNumLoc, xCodCCu, xEstCar, xCodCar, xTipVag, xQtdVag);
+    }
+  RetornaConferenciaQuaEfe("LIBERA", xOrigem, xTabOrg, xNumLoc, xCodCCu, xEstCar, xCodCar, xTipVag, xQtdVag);
+  }
+
+Definir Alfa xDatExt; 
+
+DataExtenso(xDatRef, xDatExt);
+
+vAssEma = "Conferência do Quadro Efetivo - " + xDatExt;
+Se (vTxtEma = "")
+  vTxtEma = "Conferëncia OK - Não houve informações a enviar.";
+
+EnviaEMail(vRmtEma, vDstEma, vCcpEma, vCcoEma, vAssEma, vTxtEma, vAnxEma, 1);

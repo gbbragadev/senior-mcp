@@ -1,0 +1,1250 @@
+{
+  "filename": "CCCC002.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "",
+  "description": [],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 1,
+  "sections": {
+    "preambleSelect": "/*********** Definição de Variáveis ***********/\nDefinir Cursor Cur_E031Moe;\nDefinir Cursor Cur_E070Fil;\nDefinir Alfa vCodEmpAlfa;\nDefinir Alfa vNivCtaAlfa;\nDefinir Alfa vDefGruAlfa;\nDefinir Alfa vCond;\nDefinir Alfa vDesMoe;\nDefinir Alfa vCodMoe;\nDefinir Data vDatRef;\nDefinir Alfa vNumCgcAlfa;\n\nDefinir Alfa ECodFil;\nDefinir Alfa ECodMoe;\nDefinir Numero vQtdRegistros; \nDefinir Numero Res;\n\n/*********** Inicializações ***********/\nFNumPag = ENumFol;\nFNumLiv = ENumLiv;\nEQtdMax--;\n\nFCodFil = 0;\nvNivelAnterior = 0;\nFSaldoAnt = 0;\nFSalMes = 0;\nFDebMes = 0;\nFCreMes = 0;\n\nSe (ECodMoe <> \"\")\n   Inicio\n   AlteraControle(\"DMoeda\",\"Imprimir\",\"Verdadeiro\");\n   AlteraControle(\"DesMoe\",\"Imprimir\",\"Verdadeiro\");\n   AlteraControle(\"DDatRef\",\"Imprimir\",\"Verdadeiro\");\n   AlteraControle(\"EDatRef\",\"Imprimir\",\"Verdadeiro\");\n   AlteraControle(\"DVlrCot\",\"Imprimir\",\"Verdadeiro\");\n   AlteraControle(\"EVlrCot\",\"Imprimir\",\"Verdadeiro\");\n\n   vCodMoe = ECodMoe;\n   Cur_E031Moe.Sql \"SELECT DESMOE FROM E031MOE WHERE CODMOE =:vCodMoe\";\n   Cur_E031Moe.AbrirCursor();\n\n   vDesMoe = \"\";\n   Se (Cur_E031Moe.Achou)\n      vDesMoe = Cur_E031Moe.DesMoe;\n   Senao\n      Inicio\n      Mensagem (Retorna,\"Código da Moeda inválido![&OK]\");\n      Cur_E031Moe.FecharCursor();\n      Cancel(1);\n      Fim;\n   Cur_E031Moe.FecharCursor();\n\n   AlteraControle(\"DesMoe\",\"Descrição\",vDesMoe);\n   Fim;\n\nMMCria();\nvDatRef = EDatRef;\nMMBuscaCotacaoMoeda(vCodMoe,vDatRef,0,vCotPre);\nMMLibera();\n\nAlfaParaInt(ECodFil, FCodFil);\nEDatFim=EDatIni;\nUltimoDia(EDatFim); \n\nSe (EConLct = 'S') {\n   ConsistirLctoAContabilizar(ECodEmp,ECodFil,EDatIni,EDatFim,\"\",vQtdRegistros);\n   Se (vQtdRegistros > 0) {\n      Res = Mensagem(Retorna, \"Existem lançamentos que não foram contabilizados no período informado! Deseja Continuar? [&Sim, &Não]\");\n      Se (Res > 0)\n         Cancel(1);\n   }\n}\n\nDesmontaData(EDatini,vDia,vMes,vAno);\nMontaData(01,01,vAno,xDatini);\nAtualizaSaldoContabilAbr(ECodEmp,ECodFil,xDatIni,EDatFim);\n\nCarregaSaldoContabilAbr(ECodEmp,ECodFil,EDatIni,EDatFim,1);      @ com saldo anterior @\n\nEVlrCot = vCotPre;\n\n/* Busca o CNPJ a ser exibido no relatório */ \nPosicaoAlfa(\",\",ECodFil,vPosAbr1);\nPosicaoAlfa(\"-\",ECodFil,vPosAbr2);\n\nvAbrangencia = 0;\nSe ((vPosAbr1 > 0) ou (vPosAbr2 > 0))\n   Inicio\n   vAbrangencia = 1;\n   AlteraControle(\"DescConsolidado\",\"Imprimir\",\"Verdadeiro\");\n   BuscarFilialMaiorRelevancia(ECodEmp, ECodFil, \"\", FCodFil);        \n   Fim;\n \nvNumCgc = 0;\nCur_E070Fil.Sql \"SELECT CODFIL, NUMCGC FROM E070FIL WHERE CODEMP = :ECodEmp AND CODFIL = :FCodFil\";\nCur_E070Fil.AbrirCursor();         \nSe (Cur_E070Fil.Achou) \n    vNumCgc = Cur_E070fil.NumCgc;             \nCur_E070Fil.FecharCursor();\n\nVNumCgcAlfa=\"\";\nSe (vNumCgc <> 0)\n     Convertemascara(1, vNumCgc, VNumCgcAlfa, \"99.999.999/9999-99\");\n/* Atribui o CNPJ localizado */     \nAlteraControle(\"DescCNPJ\",\"Descrição\",VNumCgcAlfa);   \n/*********** Condições SQL ***********/\n\nIntParaAlfa(ECodEmp,vCodEmpAlfa);\nIntParaAlfa(ENivCta,vNivCtaAlfa);\nvCond = \"(E045PLA.CODEMP=\" + vCodEmpAlfa + \") AND (E045PLA.NIVCTA <= \" + vNivCtaAlfa + \")\";\n\nSe (ESitCta = 'A')    \n   vCond = vCond + \" AND (E045PLA.SITCTA='A')\";\nSenao\n   Se (ESitCta = 'I')    \n      vCond = vCond + \" AND (E045PLA.SITCTA='I')\";\n\nSe (EAnaSin = 'N')    \n   vCond = vCond + \" AND (E045PLA.ANASIN='S')\";\n\nSe (EDefGru <> \"\")\n   Inicio\n   MontaAbrangencia(\"E045PLA.DEFGRU\",EDefGru,vDefGruAlfa);\n   vCond = vCond + \" AND \" + vDefGruAlfa;\n   Fim;\n\nInsClauSqlWhere(\"Detalhe_Contas\",vCond);",
+    "selection": "",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 52,
+        "left": 0,
+        "width": 6000,
+        "height": 130
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "vNivelAnterior = 0;\nSe (FNumPag > EQtdMax) {\n  FNumLiv++;\n  FNumPag=02;\n}\n",
+      "onAfterPrint": "FNumPag++;",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 13,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 26,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao018",
+          "position": {
+            "top": 39,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 52,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao024",
+          "position": {
+            "top": 65,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao023",
+          "position": {
+            "top": 78,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao021",
+          "position": {
+            "top": 91,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesMoe",
+          "position": {
+            "top": 104,
+            "left": 72,
+            "width": 192,
+            "height": 13
+          },
+          "caption": "DesMoe",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao028",
+          "position": {
+            "top": 26,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao027",
+          "position": {
+            "top": 39,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao026",
+          "position": {
+            "top": 52,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao025",
+          "position": {
+            "top": 65,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 78,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao030",
+          "position": {
+            "top": 91,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EVlrCot",
+          "position": {
+            "top": 104,
+            "left": 920,
+            "width": 64,
+            "height": 13
+          },
+          "caption": "EVlrCot",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DVlrCot",
+          "position": {
+            "top": 104,
+            "left": 832,
+            "width": 80,
+            "height": 13
+          },
+          "caption": "Cotação:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DMoeda",
+          "position": {
+            "top": 104,
+            "left": 16,
+            "width": 56,
+            "height": 13
+          },
+          "caption": "Moeda:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 52,
+            "left": 16,
+            "width": 56,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "CodEmp",
+          "caption": "E045PLA.CodEmp",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 65,
+            "left": 16,
+            "width": 56,
+            "height": 13
+          },
+          "table": "E070FIL",
+          "field": "CodFil",
+          "caption": "E070FIL.CodFil",
+          "onPrint": "Se  (vAbrangencia = 1)\n    Cancel(1);\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 52,
+            "left": 72,
+            "width": 776,
+            "height": 13
+          },
+          "table": "E070EMP",
+          "field": "NomEmp",
+          "caption": "E070EMP.NomEmp",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 65,
+            "left": 72,
+            "width": 776,
+            "height": 13
+          },
+          "table": "E070FIL",
+          "field": "SigFil",
+          "caption": "E070FIL.SigFil",
+          "onPrint": "Se  (vAbrangencia = 1)\n    Cancel(1);\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 78,
+            "left": 16,
+            "width": 56,
+            "height": 13
+          },
+          "caption": "CNPJ:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 1088,
+            "height": 13
+          },
+          "caption": "+--------------------------------------------------------------------------------------------------------------------------------------+",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 13,
+            "left": 480,
+            "width": 168,
+            "height": 13
+          },
+          "caption": "Balancete Mensal",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumPag",
+          "position": {
+            "top": 13,
+            "left": 1040,
+            "width": 40,
+            "height": 13
+          },
+          "caption": "FNumPag",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumLiv",
+          "position": {
+            "top": 52,
+            "left": 1040,
+            "width": 40,
+            "height": 13
+          },
+          "caption": "FNumLiv",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DLivro",
+          "position": {
+            "top": 52,
+            "left": 992,
+            "width": 48,
+            "height": 13
+          },
+          "caption": "Livro:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 13,
+            "left": 1000,
+            "width": 32,
+            "height": 13
+          },
+          "caption": "Pag.:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescConsolidado",
+          "position": {
+            "top": 91,
+            "left": 48,
+            "width": 208,
+            "height": 13
+          },
+          "caption": "Consolidado",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DDatRef",
+          "position": {
+            "top": 104,
+            "left": 448,
+            "width": 120,
+            "height": 13
+          },
+          "caption": "Data Cotação:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDatRef",
+          "position": {
+            "top": 104,
+            "left": 576,
+            "width": 88,
+            "height": 13
+          },
+          "caption": "EDatRef",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 26,
+            "left": 456,
+            "width": 104,
+            "height": 13
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 117,
+            "left": 0,
+            "width": 1088,
+            "height": 13
+          },
+          "caption": "+--------------------------------------------------------------------------------------------------------------------------------------+",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao029",
+          "position": {
+            "top": 13,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDAtIni",
+          "position": {
+            "top": 26,
+            "left": 568,
+            "width": 88,
+            "height": 13
+          },
+          "caption": "EDAtIni",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao035",
+          "position": {
+            "top": 104,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao036",
+          "position": {
+            "top": 104,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescCNPJ",
+          "position": {
+            "top": 78,
+            "left": 72,
+            "width": 160,
+            "height": 13
+          },
+          "caption": "DescCNPJ",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 221,
+        "left": 0,
+        "width": 6000,
+        "height": 39
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao031",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 1088,
+            "height": 13
+          },
+          "caption": "+--------------------------------------------------------------------------------------------------------------------------------------+",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 13,
+            "left": 8,
+            "width": 720,
+            "height": 13
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao033",
+          "position": {
+            "top": 13,
+            "left": 0,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao034",
+          "position": {
+            "top": 13,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "caption": "|",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 13,
+            "left": 760,
+            "width": 64,
+            "height": 13
+          },
+          "caption": "Usuário:",
+          "onPrint": "Se   (EMosUsu = 'N')\n     Cancel(1);\n\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 13,
+            "left": 832,
+            "width": 240,
+            "height": 13
+          },
+          "caption": "NomUsu",
+          "onPrint": "Se   (EMosUsu = 'N')\n     Cancel(1);\n\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao032",
+          "position": {
+            "top": 26,
+            "left": 0,
+            "width": 1088,
+            "height": 13
+          },
+          "caption": "+--------------------------------------------------------------------------------------------------------------------------------------+",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_Contas",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 480,
+            "width": 108,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "CodEmp",
+          "caption": "E045PLA.CodEmp",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 360,
+            "width": 104,
+            "height": 13
+          },
+          "table": "E070FIL",
+          "field": "CodFil",
+          "caption": "E070FIL.CodFil",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 224,
+            "width": 116,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "CtaRed",
+          "caption": "E045PLA.CtaRed",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 120,
+            "width": 91,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "ClaCta",
+          "caption": "E045PLA.ClaCta",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_GrupoContas",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 26,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Adicional_LinhaBranco",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 208,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Adicional_Contas",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 195,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": true,
+      "tableList": [
+        "E045PLA.CTARED",
+        "E045PLA.CLACTA",
+        "E045PLA.NIVCTA",
+        "E045PLA.MSKGCC",
+        "E045PLA.DESCTA"
+      ],
+      "onBeforePrint": "Definir Alfa VClaAnterior;\nDefinir Alfa VClaAtual;\n\nvCtaRed = E045Pla.CtaRed;\nFDebMes = 0;\nFCreMes = 0;\nFSalMes = 0;\nSaldoCompleto(vCtaRed,FDebMes,FCreMes,FSalMes);\nSe ((FDebMes > 0) e (vCotPre > 0))\n     FDebMes = FDebMes/vCotPre;\nSe ((FCreMes > 0) e (vCotPre > 0))\n     FCreMes = FCreMes/vCotPre;\nSe ((FSalMes > 0) e (vCotPre > 0))\n     FSalMes = FSalMes/vCotPre;\nFSaldoAnt = (FSalMes - FDebMes + FCreMes);\n\n/* Conta sem movimento */\nSe  (ETipMov = 2) \n    inicio\n    Se  ((FDebMes = 0) e (FCreMes = 0)) \n        Cancel(1);\n    fim;\nsenao\nSe  (ETipMov = 3)\n    inicio\n    Se  ((FSaldoAnt = 0) e (FDebMes = 0) e (FCreMes = 0)) \n        Cancel(1); \n    fim;\n\n\n/* Salto página para grupo de contas */\nvSaltouPagina = 0;\n\nSe  (ESalPag = 'S')\n    inicio\n    Se  (vClaAnterior = \"\")\n        inicio\n        vClaAnterior = E045Pla.ClaCta;\n        CopiarStr(vClaAnterior,1,1);\n        fim;\n\n    /* verifica se tem espaço na página. Retorna Zero se tem */\n    ProximaPagina(\"Adicional_GrupoContas\",vProximaPagina);  \n\n    vClaAtual = E045Pla.ClaCta;\n    CopiarStr(vClaAtual,1,1);\n    Se  (vClaAtual <> vClaAnterior)\n        inicio\n        Se  (vProximaPagina = 0)\n            ListaSecao(\"Adicional_GrupoContas\");\n        vClaAnterior = vClaAtual;\n        vSaltouPagina = 1;\n        fim;\n    fim;\n\n/**** trata linha em branco para cada nível de conta ****/\nSe   (ESalLin = 'S')\n     inicio\n     Se   (vNivelAnterior = 0)\n          vNivelAnterior = E045Pla.NivCta; \n     senao\n          inicio\n          /* verifica se tem espaço na página. Retorna Zero se tem */\n          ProximaPagina(\"Adicional_LinhaBranco\",vProximaPagina);  \n\n          vNivelAtual = E045Pla.NivCta;\n          Se  (vNivelAtual <> vNivelAnterior)       \n              inicio\n              Se   ((vSaltouPagina = 0) e (vProximaPagina = 0))\n                   ListaSecao(\"Adicional_LinhaBranco\");\n              vNivelAnterior = vNivelAtual;\n              fim; \n          fim;\n     fim;\n\n",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 1080,
+            "width": 8,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "DesCta",
+          "caption": "E045PLA.DesCta",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro019",
+          "position": {
+            "top": 0,
+            "left": 1072,
+            "width": 8,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "ClaCta",
+          "caption": "E045PLA.ClaCta",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 1064,
+            "width": 8,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "NivCta",
+          "caption": "E045PLA.NivCta",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalMes",
+          "position": {
+            "top": 0,
+            "left": 960,
+            "width": 104,
+            "height": 13
+          },
+          "caption": "FSalMes",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FCreMes",
+          "position": {
+            "top": 0,
+            "left": 848,
+            "width": 96,
+            "height": 13
+          },
+          "caption": "FCreMes",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDebMes",
+          "position": {
+            "top": 0,
+            "left": 736,
+            "width": 96,
+            "height": 13
+          },
+          "caption": "FDebMes",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSaldoAnt",
+          "position": {
+            "top": 0,
+            "left": 592,
+            "width": 128,
+            "height": 13
+          },
+          "caption": "FSaldoAnt",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 64,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "CtaRed",
+          "caption": "E045PLA.CtaRed",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 0,
+            "left": 8,
+            "width": 128,
+            "height": 13
+          },
+          "caption": "Descricao005",
+          "onPrint": "Definir Numero vNivel;\nDefinir Alfa   vPlaCta;\nDefinir Alfa   vMaskGen;\nDefinir Alfa   vValorStr;\nDefinir Numero xCtaRed;\n\nvNivel = E045PLA.NivCta;\nvPlaCta = E045PLA.ClaCta;\nvMaskGen = E045PLA.MskGcc;\nvValorStr = \" \";\n\nxCtaRed = E045PLA.CTARED; @ Para testes @\n\nse (vMaskGen = \" \") \n   inicio\n   Mensagem(erro,\"Mascara não definida no plano de contas E045PLAMSKGCC\");\n   fim;\n\nConverteMaskContab(vNivel,vPlaCta,vMaskGen, vValorStr);\nValStr = vVaLorStr;\nCancel(2);\n\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 0,
+            "left": 224,
+            "width": 352,
+            "height": 13
+          },
+          "caption": "Descricao007",
+          "onPrint": "Definir Alfa vDesCta;\n\nvDesCta = E045Pla.DesCta;\nvNivCta = E045Pla.NivCta;\n\nSe  (vNivCta = 2)\n    ValStr = \"    \" + vDesCta;  \nSenao se (vNivCta = 3)\n         ValStr = \"        \" + vDesCta;    \n      Senao se (vNivCta = 4)\n               ValStr = \"            \" + vDesCta;  \n            Senao se (vNivCta = 5)\n                     ValStr = \"                \" + vDesCta; \n                  Senao se (vNivCta = 6)\n                           ValStr = \"                    \" + vDesCta; \n                        Senao se (vNivCta = 7)\n                                 ValStr = \"                        \" + vDesCta; \n                              Senao Se (vNivCta = 8)\n                                       ValStr = \"                            \" + vDesCta; \n                                    Senao Se (vNivCta = 9)\n                                             ValStr = \"                                \" + vDesCta;\n                                          Senao Se (vNivCta = 10)\n                                                   ValStr = \"                                    \" + vDesCta;\n                                                 Senao Se (vNivCta = 11)\n                                                          ValStr = \"                                       \" + vDesCta;\n                                                       Senao Se (vNivCta = 12)\n                                                                ValStr = \"                                           \" + vDesCta;\n                                                             Senao Se (vNivCta = 13)\n                                                                      ValStr = \"                                               \" + vDesCta;\n                                                                   Senao Se (vNivCta = 14)\n                                                                            ValStr = \"                                                   \" + vDesCta;\n                                                                         Senao Se (vNivCta = 15)\n                                                                                  ValStr = \"                                                       \" + vDesCta;\n                                                                              senao\n                                                                                  ValStr = vDesCta;\nCancel(2); \n\n",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Contas",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 13,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "/**** Lista Seção das contas ****/\nListaSecao(\"Adicional_Contas\");\n\n",
+      "onAfterPrint": "/**** inicializa valores de soma ****/\n\nFSaldoAnt = 0;\nFSalMes = 0;\nFDebMes = 0;\nFCreMes = 0;\n\n",
+      "children": []
+    },
+    {
+      "name": "Cabecalho_Colunas",
+      "bandType": "CABECALHO",
+      "tag": 3,
+      "position": {
+        "top": 182,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao022",
+          "position": {
+            "top": 0,
+            "left": 8,
+            "width": 120,
+            "height": 13
+          },
+          "caption": "Classificação",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 0,
+            "left": 960,
+            "width": 104,
+            "height": 13
+          },
+          "caption": "Saldo Atual",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 0,
+            "left": 848,
+            "width": 96,
+            "height": 13
+          },
+          "caption": "Crédito",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 0,
+            "left": 736,
+            "width": 96,
+            "height": 13
+          },
+          "caption": "Débito",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 0,
+            "left": 592,
+            "width": 128,
+            "height": 13
+          },
+          "caption": "Saldo Anterior",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 0,
+            "left": 144,
+            "width": 64,
+            "height": 13
+          },
+          "caption": "Conta",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 0,
+            "left": 224,
+            "width": 80,
+            "height": 13
+          },
+          "caption": "Nome",
+          "font": {
+            "name": "Courier",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Total_Geral",
+      "bandType": "ADICIONAL",
+      "tag": 501,
+      "position": {
+        "top": 39,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "LiberaSaldoContabil();",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Rodape_Titulo",
+      "bandType": "ADICIONAL",
+      "tag": 502,
+      "position": {
+        "top": 260,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "AlfaParaInt(ECodFil,nCodFil);\n\nRegistrarLivro(ECodEmp, nCodFil, \"\", EDatFim, FNumLiv, FNumPag-1, EQtdMax+1);",
+      "onAfterPrint": "",
+      "children": []
+    }
+  ],
+  "tablesReferenced": [
+    "E031MOE",
+    "E045PLA",
+    "E045PLA.CLACTA",
+    "E045PLA.CTARED",
+    "E045PLA.DESCTA",
+    "E045PLA.MSKGCC",
+    "E045PLA.NIVCTA",
+    "E070EMP",
+    "E070FIL"
+  ],
+  "sqlFragments": [
+    "SELECT DESMOE FROM E031MOE WHERE CODMOE =:vCodMoe\";",
+    "SELECT CODFIL, NUMCGC FROM E070FIL WHERE CODEMP = :ECodEmp AND CODFIL = :FCodFil\";",
+    "Where(\"Detalhe_Contas\",vCond);"
+  ],
+  "_stats": {
+    "parsedBytes": 23333,
+    "totalBytes": 771803,
+    "parseComplete": true,
+    "bandCount": 10,
+    "fieldCount": 66,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 3881,
+        "skippedTo": 6561,
+        "note": "Skipped 2680 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 13887,
+        "skippedTo": 14368,
+        "note": "Skipped 467 bytes (classification+relations)"
+      }
+    ]
+  }
+}

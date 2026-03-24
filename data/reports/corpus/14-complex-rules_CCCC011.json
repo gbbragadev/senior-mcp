@@ -1,0 +1,894 @@
+{
+  "filename": "CCCC011.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "MODELO CCCC011.GER  TÍTULO Balancete (Contábil/C. Custos)   OBJETIVO\n Este modelo tem como objetivo listar o demonstrativo com os totais mensais dos lançamentos nas contas contábeis, com ou sem centro de custos.\r\n\n   INFORMAÇÕES ADICIONAIS Quando executamos o relatório podemos informar o período de duas formas: Período quebrado:  período não contempla o mês por completo. Neste caso a rotina busca o saldo anterior por conta/c.custo das tabelas de saldo (E650SAL/E650SLC) e as movimentações do período informado (créditos e débitos) diretamente das tabelas de lançamentos/rateios (E640LCT/E640RAT), calculando o saldo atual.  Mês Completo: quando informado um mês completo, a rotina busca o saldo diretamente das tabelas de saldo (E650SAL/E650SLC), desta forma a performance é otimizada.  OBS: Necessário que os saldos contábeis e por centro de custos estejam conciliados para a geração do relatório.  Exemplo do cálculo: Saldo por período\t(01/06/2015 a 15/06/2015). Neste caso buscará os débitos e créditos das contas/c.custos de 01 a 15/06/2015 para compor o salto atual. \t\t\t\t\t \tConta\tC.Custo\tSalAnt(e650SLC)\tDebMes(e640rat)\tCreMes(e640rat)\tSalMes(salant + movMes) \t9999\t1101\t15576,39D\t                                            15576,39\t                                        0 \t\t1102\t15576,39C\t             15576,39\t\t                                                        0 \t\t\t\t\t\t \t\t\t\t\t\t Saldo mensal (01/06/2015 a 30/06/2015). Neste caso buscará os valores existentes nas tabelas de saldo (e650SAL/e650SLC).\t \t\t\t\t\t \tConta\tC.Custo\tSalAnt(e650SLC)\tDebMes(e650SLC)\tCreMes(e650SLC)\t               SalMes(e650SLC) \t9999\t1101\t15576,39D\t \t                              15576,39\t                                         0 \t\t1102\t15576,39C\t               15576,39\t\t                                                         0 ",
+  "description": [
+    "MODELO",
+    "CCCC011.GER",
+    "",
+    "TÍTULO",
+    "Balancete (Contábil/C. Custos)",
+    " ",
+    "OBJETIVO\n Este modelo tem como objetivo listar o demonstrativo com os totais mensais dos lançamentos nas contas contábeis, com ou sem centro de custos.\r\n\n",
+    "",
+    "",
+    "INFORMAÇÕES ADICIONAIS",
+    "Quando executamos o relatório podemos informar o período de duas formas:",
+    "Período quebrado:  período não contempla o mês por completo. Neste caso a rotina busca o saldo anterior por conta/c.custo das tabelas de saldo (E650SAL/E650SLC) e as movimentações do período informado (créditos e débitos) diretamente das tabelas de lançamentos/rateios (E640LCT/E640RAT), calculando o saldo atual. ",
+    "Mês Completo: quando informado um mês completo, a rotina busca o saldo diretamente das tabelas de saldo (E650SAL/E650SLC), desta forma a performance é otimizada.",
+    "",
+    "OBS: Necessário que os saldos contábeis e por centro de custos estejam conciliados para a geração do relatório.",
+    "",
+    "Exemplo do cálculo:",
+    "Saldo por período\t(01/06/2015 a 15/06/2015). Neste caso buscará os débitos e créditos das contas/c.custos de 01 a 15/06/2015 para compor o salto atual.",
+    "\t\t\t\t\t",
+    "\tConta\tC.Custo\tSalAnt(e650SLC)\tDebMes(e640rat)\tCreMes(e640rat)\tSalMes(salant + movMes)",
+    "\t9999\t1101\t15576,39D\t                                            15576,39\t                                        0",
+    "\t\t1102\t15576,39C\t             15576,39\t\t                                                        0",
+    "\t\t\t\t\t\t",
+    "\t\t\t\t\t\t",
+    "Saldo mensal (01/06/2015 a 30/06/2015). Neste caso buscará os valores existentes nas tabelas de saldo (e650SAL/e650SLC).\t",
+    "\t\t\t\t\t",
+    "\tConta\tC.Custo\tSalAnt(e650SLC)\tDebMes(e650SLC)\tCreMes(e650SLC)\t               SalMes(e650SLC)",
+    "\t9999\t1101\t15576,39D\t \t                              15576,39\t                                         0",
+    "\t\t1102\t15576,39C\t               15576,39\t\t                                                         0",
+    ""
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Se  (ETipSal = 0)\n    Mensagem(Erro,\" 'Opção inválida para a lista!' \");\n\n/********************** DEFINIÇÃO DO TÍTULO DO RELATÓRIO **********************/\nSe  (ETipSal = 1)\n    {\n    AlteraControle(\"Descricao_Titulo\", \"Descrição\", \"Balancete por Período - Contábil\");\n    AlteraControle(\"Descricao_CCusto\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"DHifem\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Descricao_DesCcu\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Cabecalho\", \"Altura\", \"157\");         \n    }\nSenao\n    AlteraControle(\"Descricao_Titulo\", \"Descrição\", \"Balancete por Período - Centro de Custo\");\n\n/***** PÁGINA OU FOLHA - DEFINE SE O RELATÓRIO VAI TER PÁGINAS OU FOLHAS ******/ \nSe  (EFolPag = 'P')\n    AlteraControle(\"DFolPag\",\"Descrição\",\"Página:\");\nSenao\n    AlteraControle(\"DFolPag\",\"Descrição\",\"Folha:\");\n\nxNumPag = 1;  \n\n/****** NÚMERO PÁGINA/FOLHA - DEFINE A PÁGINA/FOLHA INICIAL DO RELATÓRIO ******/\nSe  (ENumFol > 0)\n    FNumPag = ENumFol;  \nSenao\n    FNumPag = 1;\n  \nSe  (ECcuIta = 'S')\n    AlteraControle(\"Adicional_CCusto\",\"Fonte\",\";Italico;;\");\n\n/*********** NÚMERO DO LIVRO - DEFINE O NÚMERO DO LIVRO IMPRESSO **************/      \nSe  (ENumLiv > 0)\n    FNumLiv = ENumLiv;\n  \n/************************* VALIDAÇÃO DAS DATAS ********************************/\nSe  (EDatIni = 0)\n    Mensagem(Erro,\" 'Data Inicial deve ser informada!' \");   \nSe  (EDatFim = 0)\n    Mensagem(Erro,\" 'Data Final deve ser informada!' \"); \nSe  (EDatIni > EDatFim)\n    Mensagem(Erro,\" 'Data inicial maior que data final!' \");\n\n/*********** MONTAR ABRANGÊNCIA E VALIDA FILIAL - PRÉ SELEÇÃO *****************/\n@- Monta abrangência de filial -@\nMontaAbrangencia(\"E070FIL.CODFIL\", ECodFil, xAbrFil);\n@- Valida se não foi informada filial -@\nSe  ((ETipOrd = 'N') e (xAbrFil = \"\"))\n    Mensagem(Erro,\" 'Informe a Filial!' \");  \n  \n/****************************** EMPRESA ***************************************/\nxSql = \"SELECT E070EMP.CODEMP, E070EMP.NOMEMP \" +\n         \"FROM E070EMP \" +\n        \"WHERE E070EMP.CODEMP = :CODEMP\";  \nSQL_Criar (xCursor);\nSQL_DefinirComando (xCursor, xSql);\nSQL_DefinirInteiro (xCursor, \"CODEMP\", ECodEmp);      \nSQL_AbrirCursor    (xCursor); \nSe  (SQL_EOF(xCursor) = 0)\n    {\n    SQL_RetornarFlutuante (xCursor, \"CODEMP\", xCodEmp);\n              IntParaAlfa (xCodEmp, DCodEmp);\n         SQL_RetornarAlfa (xCursor, \"NOMEMP\", DNomEmp);\n    }\nSQL_FecharCursor(xCursor);\nSQL_Destruir(xCursor);\n\n/********************************** FILIAL ************************************/\nSe  (ETipOrd = 'S')                                                              /** SE FOR CONSOLIDADO **/\n    {\n    AlteraControle (\"DConsolidado\", \"Imprimir\", \"Verdadeiro\");\n    AlteraControle (\"DCodFil\"     , \"Imprimir\", \"Falso\");\n    AlteraControle (\"DNomFil\"     , \"Imprimir\", \"Falso\");\n    AlteraControle (\"DCNPJ\"       , \"Imprimir\", \"Falso\");\n    AlteraControle (\"FNumCgc\"     , \"Imprimir\", \"Falso\");\n    }\nSenao                                                                           /** SE NÃO FOR CONSOLIDADO **/\n    {\n    xSql = \"SELECT E070FIL.CODFIL, E070FIL.NOMFIL, E070FIL.NUMCGC \" +\n             \"FROM E070FIL \" +\n            \"WHERE E070FIL.CODEMP = :CODEMP AND \" + xAbrFil + \" AND \";\n                 \n    Se  (ETipSal = 1)                                                              @ ETipSal = 1 - Contábil @ \n        xSql = xSql + \"EXISTS (SELECT 1 FROM E640LCT \" +\n                               \"WHERE E640LCT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640LCT.CODFIL = E070FIL.CODFIL AND \" +\n                                     \"E640LCT.DATLCT >= :DATINI AND \" +\n                                     \"E640LCT.DATLCT <= :DATFIM)\";       \n    Senao                                                                         @ ETipSal = 2 - Centro de Custo @  \n        xSql = xSql + \"EXISTS (SELECT 1 FROM E640LCT, E640RAT \" +\n                               \"WHERE E640LCT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640LCT.CODFIL = E070FIL.CODFIL AND \" +\n                                     \"E640RAT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640RAT.NUMLCT = E640LCT.NUMLCT AND \" +\n                                     \"E640LCT.DATLCT >= :DATINI AND \" +\n                                     \"E640LCT.DATLCT <= :DATFIM)\";                                   \n    SQL_Criar (xCursor);\n    SQL_DefinirComando (xCursor, xSql);\n    SQL_DefinirInteiro (xCursor, \"CODEMP\", ECodEmp);      \n    SQL_DefinirData    (xCursor, \"DATINI\", EDatIni);\n    SQL_DefinirData    (xCursor, \"DATFIM\", EDatFim);\n    SQL_AbrirCursor    (xCursor);   \n      \n    SQL_RetornarFlutuante (xCursor, \"NUMCGC\", FNumCgc);                           /** RETORNA OS VALORES PARA O CABEÇALHO **/\n    Se  (SQL_EOF(xCursor) = 0)\n        {     \n        SQL_RetornarFlutuante (xCursor, \"CODFIL\", xCodFil);\n                  IntParaAlfa (xCodFil, DCodFil);\n             SQL_RetornarAlfa (xCursor, \"NOMFIL\", DNomFil);\n        SQL_RetornarFlutuante (xCursor, \"NUMCGC\", FNumCgc);\n        }\n    Senao\n        {\n        SQL_FecharCursor(xCursor);\n        SQL_Destruir(xCursor);\n        Mensagem(Erro,\" 'Não existem movimentos para o período informado!' \");\n        } \n    SQL_FecharCursor(xCursor);\n    SQL_Destruir(xCursor);   \n    }     \n\nSe  (EConLct = 'S') \n    {\n    ConsistirLctoAContabilizar(ECodEmp,ECodFil,EDatIni,EDatFim,\"\",vQtdRegistros);\n    Se  (vQtdRegistros > 0)\n        {\n        Res = Mensagem(Retorna, \"Existem lançamentos que não foram contabilizados no período informado! Deseja Continuar? [&Sim, &Não]\");\n        Se  (Res > 0)\n            Cancel(1);\n        }\n    }\n \nSe  (ECcuIta = 'S')\n    AlteraControle(\"Adicional_CCusto\",\"Fonte\",\";ITÁLICO;;\");\n\n",
+    "selection": "",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "/***************** DEFINIÇÃO DE VARIÁVEIS E FUNÇÕES ***************************/\nDefinir Funcao Fun_GerarBalancete();                                            @ Função principal que define o relatório @\nDefinir Funcao Fun_MontarFiltrosEAbrangencias();                                @ Função monta os filtros e abrangências que serão utilizadas no relatório @\nDefinir Funcao Fun_BuscarCCustos();                                             @ Função que preenche uma lista de Centro de Custos Pais @\nDefinir Funcao Fun_DefinirRecuo();                                              @ Função limpa os valores da lista para utilizar a lista novamente @\nDefinir Funcao Fun_ZerarCampos();                                               @ Função que zera os valores correspondentes a cada campo para que os mesmos não sejam impressos com os dados da conta anterior @\nDefinir Funcao Fun_PercorrerFiliais();                                          @ Função para percorrer as filiais @\nDefinir Funcao Fun_CarregarSql();                                               @ Função para carregar o Sql de acordo com o tipo de movimento @\nDefinir Funcao Fun_ListarAdicional();                                           @ Função para listar o adicional_conta de acordo com  Tipo de Movimento informado @\nDefinir Funcao Fun_CarregarSaldoCCuPai();                                       @ Função para carregar o saldo contábil através do centro de custo pai quando informado abrangêcia de centro de custo @\nDefinir Funcao Fun_BuscarCcuPai();\nDefinir Funcao Fun_GerarBalanceteCcu();                                         @Função para carregar o saldo por centro de custos utilizando a classe de Saldos@   \n\n@ PS Pré Seleção / FG Funções Globais @\nDefinir Alfa xSql;                                                              @ PS + FG @\nDefinir Alfa xSqlAux;                                                           @ FG @\nDefinir Alfa xSqlFil;                                                           @ FG @\nDefinir Alfa xCursor;                                                           @ PS + FG @\nDefinir Alfa xCursorAux;                                                        @ FG @\nDefinir Alfa xCursorFil;                                                        @ FG @\nDefinir Alfa xAbrFil;                                                           @ PS + FG @\nDefinir Alfa xFiltroTipSal;                                                     @ PS @\nDefinir Alfa xCodCcu;                                                           @ FG @\nDefinir Alfa xDesCcu;                                                           @ FG @\nDefinir Alfa xAnaSin;                                                           @ FG @\nDefinir Alfa xDesCta;                                                           @ FG @\nDefinir Alfa xClaAtu;                                                           @ AICIONALCONTA_AI @\nDefinir Alfa xClaAnt;                                                           @ AICIONALCONTA_AI @\nDefinir Alfa xClaCtaStr;                                                        @ AICIONALCONTA_AI @\nDefinir Alfa xCodFilAlfa;                                                        \n\nDefinir Alfa xCtaRedAlfa;                                                       @ Filtros Sql @\nDefinir Alfa xLigacoes;                                                         @ Filtros Sql @\nDefinir Alfa xFilNivCta;                                                        @ Filtros Sql @   \nDefinir Alfa xDefGruCta;                                                        @ Filtros Sql @\nDefinir Alfa xDefGru;                                                           @ Filtros Sql @\nDefinir Alfa xFilSitCta;                                                        @ Filtros Sql @\nDefinir Alfa xFilCtaRed;                                                        @ Filtros Sql @\nDefinir Alfa xFilCodCcu;                                                        @ Filtros Sql @\nDefinir Alfa xLigacaoCCuSql;                                                    @ Filtros Sql @\nDefinir Alfa xRetornoCCuSql;                                                    @ Filtros Sql @\n\nDefinir Alfa xBuscarCtaSubordinadas;\nDefinir Alfa xLigacaoCtaSubordinada;\n                                 \nDefinir Data xMesAnt;                                                           @ FG @\nDefinir Alfa xDatIni;                                                           @ FG @\nDefinir Alfa xDatFim;                                                           @ FG @\nDefinir Alfa xMskGcc;                                                           @ FG @\n\nDefinir Numero xCodEmp;                                                         @ PS @\nDefinir Numero xCodFil;                                                         @ PS @\nDefinir Numero xCtaRed;                                                         @ FG @  \nDefinir Numero xSalCta;                                                         @ FG @\nDefinir Numero xDebCta;                                                         @ FG @\nDefinir Numero xCreCta;                                                         @ FG @\nDefinir Numero xSalAntCta;                                                      @ FG @\nDefinir Numero xNivCta;                                                         @ FG + AICIONALCONTA_AI @\nDefinir Numero xSalPag;                                                         @ AICIONALCONTA_AI @   \nDefinir Numero xProPag;                                                         @ AICIONALCONTA_AI @\nDefinir Numero xNivAnt;                                                         @ AICIONALCONTA_AI @\nDefinir Numero xNivAtu;                                                         @ AICIONALCONTA_AI @\nDefinir Numero xImpPag;                                                         @ CABEÇALHO_AI + CABEÇALHO_DI @\nDefinir Numero xCtaPar;\nDefinir Alfa   xClaPar;\nDefinir Alfa   xDesPar;\nDefinir Alfa   xClaCta;\nDefinir Alfa  xNovoCcu;\n/******************** FUNÇÃO P/ RETORNAR AS FILIAIS ****************************/\nFuncao Fun_PercorrerFiliais(); \n  {\n  xSqlFil = \"SELECT E070FIL.CODFIL, E070FIL.NOMFIL, E070FIL.NUMCGC \" +\n              \"FROM E070FIL \" +\n             \"WHERE E070FIL.CODEMP = :CODEMP AND \" + xAbrFil + \n         \" ORDER BY E070FIL.CODFIL\";\n  SQL_Criar (xCursorFil);\n  SQL_DefinirComando (xCursorFil, xSqlFil);\n  SQL_DefinirInteiro (xCursorFil, \"CODEMP\", ECodEmp);      \n  SQL_AbrirCursor    (xCursorFil); \n  Enquanto(SQL_EOF(xCursorFil) = 0)\n    {\n    SQL_RetornarFlutuante (xCursorFil, \"CODFIL\", xCodFil);\n              IntParaAlfa (xCodFil, DCodFil);\n              IntParaAlfa (xCodFil, xCodFilAlfa);\n         SQL_RetornarAlfa (xCursorFil, \"NOMFIL\", DNomFil);\n    SQL_RetornarFlutuante (xCursorFil, \"NUMCGC\", FNumCgc);\n    \n    Se  (xControleFilial = 1)\n        ListaSecao(\"Adicional_SaltarPagina\");\n\n    xControleFilial = 1;\n     \n    se  ((xNovoCcu = 'N') e (DBTipo = \"ORACLE\")) \n        Fun_GerarBalanceteCcu();\n    senao   \n        Fun_GerarBalancete();\n        \n    SQL_Proximo(xCursorFil);  \n    }\n  SQL_FecharCursor(xCursorFil);\n  SQL_Destruir(xCursorFil);\n  } \n\n/************************** FUNÇÃO PRINCIPAL **********************************/\nFuncao Fun_GerarBalancete();\n  {\n  ConverteDataToDB(EDatIni,xDatIni);\n  ConverteDataToDB(EDatFim,xDatFim);\n  \n  Se  (ETipSal = 2)\n      {\n      Definir Lista xListaCcu;\n      xListaCcu.DefinirCampos();                                                  @ Criando a lista a ser utilizada com os centros de custos @\n      xListaCcu.AdicionarCampo(\"CodCcu\", Alfa);                                   @ Codigo CCusto         @\n      xListaCcu.AdicionarCampo(\"DesCcu\", Alfa);                                   @ Descrição CCusto      @\n      xListaCcu.EfetivarCampos();\n    \n      Definir Lista xListaValoresCcu;\n      xListaValoresCcu.DefinirCampos();                                           @ Cria uma lista gravando os valores para cada centro de custo @ \n      xListaValoresCcu.AdicionarCampo(\"CodCcu\", Alfa);                            @ Codigo CCusto         @\n      xListaValoresCcu.AdicionarCampo(\"DesCcu\", Alfa);                            @ Descrição CCusto      @\n      xListaValoresCcu.AdicionarCampo(\"SalAnt\", Numero);                          @ Saldo Anterior CCusto @\n      xListaValoresCcu.AdicionarCampo(\"DebCcu\", Numero);                          @ Debido CCusto         @\n      xListaValoresCcu.AdicionarCampo(\"CreCcu\", Numero);                          @ Credito CCusto        @\n      xListaValoresCcu.AdicionarCampo(\"SalCcu\", Numero);                          @ Saldo CCusto          @ \n      xListaValoresCcu.EfetivarCampos();\n      \n      Se  ((ESalCon = 'S') e (EAbrCcu <> \"\"))\n          {\n          Definir Lista xListaCcuPai;\n          xListaCcuPai.DefinirCampos();                                             @ Criando a lista a ser utilizada com os centros de custos @\n          xListaCcuPai.AdicionarCampo(\"CodCcu\", Alfa);                              @ Codigo CCusto @\n          xListaCcuPai.EfetivarCampos();      \n          Fun_BuscarCcuPai();\n          }\n    \n      Fun_BuscarCCustos();                                                          @ Centro de Custo @                                                                   \n      }\n       \n  Fun_MontarFiltrosEAbrangencias();                                             @ Monta os filtros e abrangências que serão utilizados @\n    \n  Se  (ETipSal = 1)                                                              @-- Cria estrutura para buscar saldos anteriores --@   \n      CarregarSaldoContabil(1, ECodEmp, xCodFilAlfa, \"\", EDatIni, EDatFim, 0, 0, 0, 1, 0, 0, 0);  @ Contábil @\n  Senao\n      CarregarSaldoContabil(8, ECodEmp, xCodFilAlfa, \"\", EDatIni, EDatFim, 0, 0, 0, 1, 0, 0, 0);  @ Centro de Custo @\n     \n  @ Carregar as contas do plano @\n  xSql = \"SELECT E045PLA.CLACTA, E045PLA.CTARED, E045PLA.DESCTA, E045PLA.ANASIN, E045PLA.NIVCTA, E045PLA.MSKGCC, \" +\n                \"E045PLA.CLAPAR, E045PLA.CTAPAR, E045PLA.DESPAR \" +  \n           \"FROM E045PLA \" + xBuscarCtaSubordinadas +  \n          \"WHERE \" + xLigacoes + xFilNivCta + xDefGruCta + xFilSitCta +                                                   \n               \" E045PLA.CODEMP = :CODEMP \" + xLigacaoCtaSubordinada +                               \n      \" ORDER BY E045PLA.CLACTA\";\n  SQL_Criar(xCursor);   \n  SQL_UsarAbrangencia(xCursor, 0);\n  SQL_UsarSQLSenior2(xCursor,0);    \n  SQL_DefinirComando(xCursor,xSql);\n  SQL_DefinirInteiro(xCursor, \"CODEMP\", ECodEmp);    \n  Se  (ENivCta > 0)\n      SQL_DefinirInteiro(xCursor, \"NIVCTA\", ENivCta);                                                                      \n  SQL_AbrirCursor(xCursor); \n  Enquanto(SQL_EOF(xCursor) = 0)\n    {\n    Fun_ZerarCampos();                                                          @ Zerar os valores campos para que não sejam impressos com dados da conta anterior @     \n  \n    SQL_RetornarAlfa     (xCursor, \"ANASIN\", xAnaSin);          \n    SQL_RetornarAlfa     (xCursor, \"CLACTA\", xClaCta);\n    SQL_RetornarAlfa     (xCursor, \"DESCTA\", xDesCta);\n    SQL_RetornarInteiro  (xCursor, \"NIVCTA\", xNivCta); \n    SQL_RetornarFlutuante(xCursor, \"CTARED\", xCtaRed);\n    SQL_RetornarAlfa     (xCursor, \"MSKGCC\", xMskGcc);\n    SQL_RetornarFlutuante(xCursor, \"CTAPAR\", xCtaPar);\n    SQL_RetornarAlfa     (xCursor, \"CLAPAR\", xClaPar);\n    SQL_RetornarAlfa     (xCursor, \"DESPAR\", xDesPar);   \n          \n    @Exibição da Classificação paralela@\n    se  ((ETipCta = 2) e (xClaPar <> \"\") e (xClaPar <> \" \"))\n        DClaCta = xClaPar;\n    senao\n        ConverteMaskContab(xNivCta, xClaCta, xMskGcc, DClaCta);\n    \n    @Exibição da Conta paralela@\n    se  ((ETipCta = 2) e (xCtaPar <> 0))\n        DCtaRed = xCtaPar;\n    senao\n        DCtaRed = xCtaRed;      \n \n    Fun_DefinirRecuo();                                                         @ Define o recuo da descrição da conta @                                                               \n    Se  (ETipSal = 1)                                                            @-- Buscar valores do período --@\n        {\n        SaldoContabilCompleto(xCtaRed, \"\", 0, FDebCta, FCreCta, FSalCta, FSalAntCta);  @ Contábil @            \n        Fun_ListarAdicional();                                                    @ Verifica se é necessário listar a conta @                     \n        }\n    Senao\n        {         \n        xListaValoresCcu.Limpar();                                                @ Limpa os dados existentes na lista @    \n                  \n        Se  (xCtaRed <> xCtaRedOld)                                                @ Se trocou a conta lista o adicional novamente @\n            {               \n            Se  (ESalCon = 'S')        \n                {\n                SaldoContabilCompleto(xCtaRed, \"\", 0, FDebCta, FCreCta, FSalCta, FSalAntCta);  @ Contábil @\n                 \n                Se  (EAbrCcu <> \"\")                                                    @ Caso tenha uma abrangência de centro de custo informada, pega o saldo contábil pelo centro de custo pai para não ocorrerem erros@\n                    {\n                    xListaCcuPai.Primeiro();\n                    Enquanto (xListaCcuPai.FDA = 0)\n                      {\n                      xCodCcu = xListaCcuPai.CodCcu;              \n                      SaldoContabilCompleto(xCtaRed, xCodCcu, 0, xDebMes, xCreMes, xSalCta, xSalAntCta);\n            \n                      @ Atualiza o saldo a cada laço para listar o adicional conta @          \n                      FDebCta = FDebCta + xDebMes;\n                      FCreCta = FCreCta + xCreMes;\n                      FSalCta = FSalCta + xSalCta;\n                      FSalAntCta = FSalAntCta + xSalAntCta;                           \n                    \n                      xListaCcuPai.Proximo();\n                      }\n                    }\n                }\n                        \n            xListaCcu.Primeiro();\n            Enquanto (xListaCcu.FDA = 0)                                            @ Percorre a lista dos Centros de Custo buscando os valroes para cada um e gravando na lista @\n              {\n              xCodCcu = xListaCcu.CodCcu;          \n              SaldoContabilCompleto(xCtaRed, xCodCcu, 0, xDebMes, xCreMes, xSalCta, xSalAntCta);\n                        \n              xListaValoresCcu.Adicionar();                                         @ Grava os valroes retornados em uma lista para não precisar buscá-los novamente @ \n              xListaValoresCcu.CodCcu = xCodCcu;           \n              xListaValoresCcu.DesCcu = xListaCcu.DesCcu;  \n              xListaValoresCcu.SalAnt = xSalAntCta;        \n              xListaValoresCcu.DebCcu = xDebMes;           \n              xListaValoresCcu.CreCcu = xCreMes;           \n              xListaValoresCcu.SalCcu = xSalCta;           \n              xListaValoresCcu.Gravar();     \n                 \n              Se  ((EAbrCcu = \"\") ou (ESalCon = 'N'))                                                   @ Se não tiver abrangência de centro de custo, atualiza os saldos da conta para listar o adicional @\n                  {                                    \n                  FDebCta = FDebCta + xDebMes;\n                  FCreCta = FCreCta + xCreMes;\n                  FSalCta = FSalCta + xSalCta;\n                  FSalAntCta = FSalAntCta + xSalAntCta;           \n                  }\n                       \n              xListaCcu.Proximo();            \n              }\n            }        \n          \n        xCtaRedOld = xCtaRed;      \n        Fun_ListarAdicional();                                                    @ Verifica se é necessário listar a conta @\n          \n        Se  (xAnaSin = \"A\")\n            {      \n            xListaValoresCcu.Primeiro();\n            Enquanto (xListaValoresCcu.FDA = 0)                                       @ Percorre a lista de centros de custos para listar o adicional CCusto @ \n              {                                                                                   \n              DCodCcu    = xListaValoresCcu.CodCcu;                                   @ Atribui valor aos campos dos adicionais @\n              DDesCcu    = xListaValoresCcu.DesCcu;\n              FDebCcu    = xListaValoresCcu.DebCcu;\n              FCreCcu    = xListaValoresCcu.CreCcu;\n              FSalCcu    = xListaValoresCcu.SalCcu;\n              FSalAntCcu = xListaValoresCcu.SalAnt;\n            \n              Se  ((FDebCcu <> 0) ou (FCreCcu <> 0) ou (FSalCcu <> 0) ou (FSalAntCcu <> 0)) @ Lista o adicional somente se existir valores @  \n                  ListaSecao(\"Adicional_CCusto\");\n              \n              xListaValoresCcu.Proximo();     \n              }\n            }\n        }\n    SQL_Proximo(xCursor); \n    }\n  SQL_FecharCursor(xCursor);\n  SQL_Destruir(xCursor);\n  }\n\nFuncao Fun_GerarBalanceteCcu();\n  {\n  Se  (ESalCon = 'S')\n      Mensagem(Erro,\"Parâmetro 'Considerar Saldo das Contas Contábeis não disponível para nova modalidade de conciliação por centro de custos!\");\n\n  @Inicializar@\n  SldCtbFuncoes(1);\n  \n  @DefinirTipoSaldo@\n  SldCtbDefParametro(\"TipSaldo\",\"8\");\n  SldCtbDefParametro(\"AbrCcu\", EAbrCcu);\n  \n  @Listar Somente Sintéticas@\n  Se  (EAnaSin = 'N')          \n      SldCtbDefParametro(\"LstAna\", \"S\");  \n  \n  Se  (ESitCta <> 'T')\n      Se  (ESitCta = 'A')      \n          SldCtbDefParametro(\"SitCta\", \"A\");\n      Senao\n          SldCtbDefParametro(\"SitCta\", \"I\");    \n\n  Definir Alfa xTemp;\n\n  IntParaAlfa(ECodEmp, xTemp);\n  SldCtbDefParametro(\"CodEmp\", xTemp);\n  \n  SldCtbDefParametro(\"AbrFil\", xCodFilAlfa);\n  SldCtbDefParametro(\"DefGru\", EDefGru);\n\n  IntParaAlfa(ECtaRed, xTemp); \n  SldCtbDefParametro(\"CtaRed\", xTemp);\n  \n  IntParaAlfa(EDatIni, xTemp); \n  SldCtbDefParametro(\"DatIni\", xTemp);\n  \n  IntParaAlfa(EDatFim, xTemp); \n  SldCtbDefParametro(\"DatFim\", xTemp);\n  \n  IntParaAlfa(ENivCta, xTemp);\n  SldCtbDefParametro(\"NivCta\", xTemp);\n \n  SldCtbDefParametro(\"ComSaldoAnterior\",\"1\");\n  SldCtbDefParametro(\"MesesAbertos\",\"0\");\n  @SldCtbDefParametro(\"AnaCcu\", \"A\");@\n    \n  SldCtbFuncoes(3); @Carregar@\n  \n  Definir Numero xCtaRedOld;  \n  Definir Alfa xCodCcu; \n  Definir Numero xMesano;  \n  Definir Alfa xClaCcu; \n  Definir Alfa xAnaCta; \n  Definir Alfa xAnaCcu; \n  Definir Numero xDebMes; \n  Definir Numero xCreMes; \n  Definir Numero xSalMes;\n  Definir Alfa xCursor;\n  \n  Fun_ZerarCampos(); \n  SldCtbRetItemAtual(xCtaRed, xCodCcu, xMesano, xClaCta, xClaCcu, xAnaCta, xAnaCcu, xDebMes, xCreMes, xSalMes, xCtaRedOld);\n  Enquanto(xCtaRed > 0)\n    {\n    Se  (xCodCcu = \"\")\n        { @Seção Centro de Custos@ \n        FCreCta = xCreMes;\n        FDebCta = xDebMes;\n        FSalAntCta = xSalMes;\n        FSalCta = xSalMes + xDebMes - xCreMes;\n        xAnaSin = xAnaCta;      \n  \n        xSql = \"SELECT DESCTA, CTAPAR, CLAPAR, DESPAR, NIVCTA, MSKGCC \" + \n                 \"FROM E045PLA \" +\n                \"WHERE CTARED = :CTARED AND \" +\n                      \"CODEMP = :CODEMP\";      \n        SQL_Criar(xCursor);   \n        SQL_UsarAbrangencia(xCursor, 0);\n        SQL_UsarSQLSenior2(xCursor,0);    \n        SQL_DefinirComando(xCursor,xSql);\n        \n        SQL_DefinirInteiro(xCursor, \"CODEMP\", ECodEmp);\n        SQL_DefinirInteiro(xCursor, \"CTARED\", xCtaRed);\n                \n        SQL_AbrirCursor(xCursor); \n        Enquanto(SQL_EOF(xCursor) = 0)\n          {\n          SQL_RetornarAlfa     (xCursor, \"DESCTA\", xDesCta);\n          SQL_RetornarInteiro  (xCursor, \"CTAPAR\", xCtaPar);        \n                  \n          SQL_RetornarAlfa     (xCursor, \"CLAPAR\", xClaPar);        \n          SQL_RetornarAlfa     (xCursor, \"DESPAR\", xDesPar);\n          SQL_RetornarInteiro  (xCursor, \"NIVCTA\", xNivCta);\n  \n          SQL_RetornarAlfa     (xCursor, \"MSKGCC\", xMskGcc);        \n          \n          SQL_Proximo(xCursor);                          \n          }\n        SQL_FecharCursor(xCursor);\n        SQL_Destruir(xCursor);\n        \n        se  ((ETipCta = 2) e (xClaPar <> \"\") e (xClaPar <> \" \"))\n            DClaCta = xClaPar;\n        senao\n            ConverteMaskContab(xNivCta, xClaCta, xMskGcc, DClaCta);\n  \n        Se  ((ETipCta = 2) e (xCtaPar > 0))\n            xCtaRed = xCtaPar;\n  \n        DCtaRed = xCtaRed;\n        Fun_DefinirRecuo(); \n        Fun_ListarAdicional();             \n        }\n    senao  Se ((xAnaCcu = 'A') e (ETipSal = 2)) @Seção Conta Contábil@\n        {\n        DCodCcu = xCodCcu;   \n        FDebCcu =  xDebMes;\n        FCreCcu =  xCreMes;\n  \n        FSalAntCcu = xSalMes;\n        FSalCcu = xSalMes + xDebMes - xCreMes;  \n        \n        xSql = \"SELECT DESCCU \" +\n                 \"FROM E044CCU \" +\n                \"WHERE CODEMP = :CODEMP AND \" +\n                      \"CODCCU = :CODCCU\";      \n        SQL_Criar(xCursor);   \n        SQL_UsarAbrangencia(xCursor, 0);\n        SQL_UsarSQLSenior2(xCursor,0);    \n        SQL_DefinirComando(xCursor,xSql);\n        \n        SQL_DefinirInteiro(xCursor, \"CODEMP\", ECodEmp);\n        SQL_DefinirAlfa   (xCursor, \"CODCCU\", xCodCcu);\n                \n        SQL_AbrirCursor(xCursor); \n        Enquanto(SQL_EOF(xCursor) = 0)\n          {\n          SQL_RetornarAlfa     (xCursor, \"DESCCU\", DDesCcu);\n          SQL_Proximo(xCursor);\n          }\n        SQL_FecharCursor(xCursor);\n        SQL_Destruir(xCursor);\n  \n        Se  ((FDebCcu <> 0) ou (FCreCcu <> 0) ou (FSalCcu <> 0) ou (FSalAntCcu <> 0)) @ Lista o adicional somente se existir valores @  \n            ListaSecao(\"Adicional_CCusto\");                \n        }\n    xCtaRedOld = xCtaRed;\n      \n    Fun_ZerarCampos();\n    SldCtbRetItemAtual(xCtaRed, xCodCcu, xMesano, xClaCta, xClaCcu, xAnaCta, xAnaCcu, xDebMes, xCreMes, xSalMes, xCtaRedOld);\n    }\n  }\n\n/************************* Zera todos os campos *******************************/\nFuncao Fun_ZerarCampos(); \n  { \n  DCodCcu    = \"\";                                                              @ Codigo C. Custo @\n  xCodCcu    = \"\";                                                              @ Codigo C. Custo @      \n  DDesCcu    = \"\";                                                              @ Descrução C. Custo @\n  DClaCta    = \"\";                                                              @ Classificação da conta @\n  DCtaRed    =  0;                                                              @ Conta reduzida @\n  xCtaRed    =  0;                                                              @ Conta reduzida @  \n  xClaCta    = \"\";                                                              @ Classificação da conta @    \n  FDebCcu    =  0;                                                              @ Debito C. Custo @\n  FCreCcu    =  0;                                                              @ Credito C. Custo @\n  FSalCcu    =  0;                                                              @ Saldo C. Custo @\n  FDebCta    =  0;                                                              @ Débito conta @\n  FCreCta    =  0;                                                              @ Crédito Conta @\n  FSalCta    =  0;                                                              @ Saldo Conta @\n  FSalAntCcu =  0;                                                              @ Saldo anterior C.Custo @\n  FSalAntCta =  0;                                                              @ Saldo anterior conta @\n  xCtaPar    =  0;\n  xClaPar    = \"\";\n  xDesPar    = \"\";              \n  }\n\n/*************** Carrega os filtros informados na tela de entrada *************/\nFuncao Fun_MontarFiltrosEAbrangencias();\n  {\n  xBuscarCtaSubordinadas = \"\";\n  xLigacaoCtaSubordinada = \"\";\n\n  IntParaAlfa(ECtaRed, xCtaRedAlfa);\n  Se  (ECtaRed <> 0)\n      {\n      MontaAbrangencia(\"E045PLA.CTARED\", xCtaRedAlfa, xFilCtaRed);\n      xFilCtaRed = \" AND \" + xFilCtaRed;  \n     \n      xBuscarCtaSubordinadas = \",(SELECT E045PLA.CODEMP, E045PLA.CLACTA \" +\n                                   \"FROM E045PLA \" +\n                                  \"WHERE E045PLA.CODEMP = :CODEMP \" + xFilCtaRed + \") CTAPAI \" ;\n      Definir Alfa xVarConcat;                                                    @Variável para concatenar sql @                       \n      Se  (DBTipo = \"SQLSERVER\")\n          xVarConcat = \"+\";\n      Senao\n          xVarConcat = \"||\";\n                                        \n      xLigacaoCtaSubordinada = \" AND E045PLA.CLACTA LIKE CTAPAI.CLACTA \"+ xVarConcat + \" '%' \" + \n                               \" AND E045PLA.CODEMP = CTAPAI.CODEMP \";          \n      } \n  \n  Se  (EAnaSin = 'N')                                                             @ Todas as contas sintéticas @ \n      xLigacoes = \" E045PLA.ANASIN = 'S' AND \";   \n                       \n  Se  (ENivCta > 0)                                                               @ Filtra os niveis das contas @ \n      xFilNivCta = \" E045PLA.NIVCTA <= :NIVCTA  AND \";\n         \n  Se  (EDefGru <> \"\")                                                            @ Filtra os grupos de contas @\n      {\n      MontaAbrangencia(\"E045PLA.DEFGRU\", EDefGru, xDefGruCta);\n      xDefGruCta = xDefGruCta + \" AND \";\n      }      \n    \n  xFilSitCta = \"\";\n  Se  (ESitCta <> 'T')\n      Se  (ESitCta = 'A')      \n          xFilSitCta = \" E045PLA.SITCTA = 'A' AND \";\n      Senao\n          xFilSitCta = \" E045PLA.SITCTA = 'I' AND \";    \n  }\n\n/****************** Busca os valores C.Custo para o período *******************/                                      \nFuncao Fun_BuscarCCustos();  \n  {\n  Definir Alfa xSqlCentroCustos;\n  \n  xSqlCentroCustos = \",(SELECT E640RAT.CODEMP, E640RAT.CODCCU \" +\n                         \"FROM E640RAT \" +\n                        \"WHERE E640RAT.CODEMP = :CODEMP AND \" +\n                              \"E640RAT.SITRAT = 2 AND \" +\n                              \"E640RAT.DATLCT <= :DATFIM\";\n  Se  (EAbrCcu <> \"\")\n      {\n      MontaAbrangencia(\"E044CCU.CODCCU\", EAbrCcu, xFilCodCcu);\n      xFilCodCcu = \" AND \"  + xFilCodCcu;\n      \n      xRetornoCCuSql = \",(SELECT E044CCU.CODEMP, E044CCU.CLACCU \" +\n                           \"FROM E044CCU \" +\n                          \"WHERE E044CCU.CODEMP = :CODEMP \" + xFilCodCcu + \n                             \" GROUP BY E044CCU.CODEMP, E044CCU.CLACCU) CCUPAI \" ;\n      Definir Alfa xVarConcat;                                                    @Variável para concatenar sql @                       \n      Se  (DBTipo = \"SQLSERVER\")\n          xVarConcat = \"+\";\n      Senao\n          xVarConcat = \"||\";\n                            \n      xLigacaoCCuSql = \"AND E044CCU.CLACCU LIKE CCUPAI.CLACCU \"+ xVarConcat + \" '%' \" + \n                       \"AND E044CCU.CODEMP = CCUPAI.CODEMP \";\n                        \n      MontaAbrangencia(\"E640RAT.CODCCU\", EAbrCcu, xFilCodCcu);\n      xSqlCentroCustos = xSqlCentroCustos + \" AND \"  + xFilCodCcu;\n      }   \n  xSqlCentroCustos = xSqlCentroCustos + \" GROUP BY E640RAT.CODEMP, E640RAT.CODCCU) CCUSTO \";\n    \n  xSqlAux = \"SELECT E044CCU.CODCCU, E044CCU.DESCCU, E044CCU.CLACCU \" + \n              \"FROM E044CCU\" + xSqlCentroCustos + xRetornoCCuSql +               \n             \"WHERE E044CCU.CODEMP = :CODEMP AND \" +               \n                   \"E044CCU.ANASIN = 'A' AND \" +\n                   \"E044CCU.CODEMP = CCUSTO.CODEMP AND \" +\n                   \"E044CCU.CODCCU = CCUSTO.CODCCU \"+ xLigacaoCCuSql +\n         \" GROUP BY E044CCU.CODCCU, E044CCU.DESCCU, E044CCU.CLACCU \" +\n         \" ORDER BY E044CCU.CODCCU\";\n  SQL_Criar(xCursorAux);\n  SQL_UsarAbrangencia(xCursorAux, 0);\n  SQL_UsarSQLSenior2(xCursorAux,0);    \n  SQL_DefinirComando(xCursorAux, xSqlAux);  \n  SQL_DefinirInteiro(xCursorAux, \"CODEMP\", ECodEmp);\n  SQL_DefinirData   (xCursorAux, \"DATFIM\", EDatFim);         \n  SQL_AbrirCursor   (xCursorAux);\n  Enquanto(SQL_EOF(xCursorAux) = 0)   \n    {     \n    SQL_RetornarAlfa(xCursorAux, \"CODCCU\", xCodCcu);                            @ Retorna todos os centros de custo analíticos e adiciona na lista @\n    SQL_RetornarAlfa(xCursorAux, \"DESCCU\", xDesCcu);\n     \n    xListaCcu.Adicionar();\n    xListaCcu.CodCcu = xCodCcu;\n    xListaCcu.DesCcu = xDesCcu;\n    xListaCcu.Gravar();                  \n      \n    SQL_proximo(xCursorAux);        \n    }\n  SQL_FecharCursor(xCursorAux);\n  SQL_Destruir(xCursorAux);\n  }\n\n/************* Função para definir o recuo da descrição da conta **************/\nFuncao Fun_DefinirRecuo();\n  {\n  @Exibição Paralela da Conta@\n  se  ((ETipCta = 2) e (xDesPar <> \"\") e (xDesPar <> \" \"))\n      xDesCta = xDesPar;\n\n  Se  (xNivCta = 1)\n      DDesCta = \"\" + xDesCta;\n  Senao Se (xNivCta = 2)\n      DDesCta = \"    \" + xDesCta;\n  Senao Se (xNivCta = 3)\n      DDesCta = \"        \" + xDesCta;\n  Senao Se (xNivCta = 4)\n      DDesCta = \"            \" + xDesCta;\n  Senao Se (xNivCta = 5)\n      DDesCta = \"               \" + xDesCta;\n  Senao Se (xNivCta = 6)\n      DDesCta = \"                  \" + xDesCta;\n  Senao Se (xNivCta = 7)\n      DDesCta = \"                     \" + xDesCta;\n  Senao Se (xNivCta = 8)\n      DDesCta = \"                         \" + xDesCta;\n  Senao Se (xNivCta = 9)\n      DDesCta = \"                            \" + xDesCta;\n  Senao Se (xNivCta = 10)\n      DDesCta = \"                                \" + xDesCta;\n  Senao Se (xNivCta = 11)\n      DDesCta = \"                                   \" + xDesCta;\n  Senao Se (xNivCta = 12)\n      DDesCta = \"                                       \" + xDesCta;\n  Senao Se (xNivCta = 13)\n      DDesCta = \"                                         \" + xDesCta;\n  Senao Se (xNivCta = 14)\n      DDesCta = \"                                           \" + xDesCta;\n  Senao Se (xNivCta = 15)\n      DDesCta = \"                                              \" + xDesCta;\n  Senao                     \n      DDesCta = \"                                              \" + xDesCta;\n  }\n\n/* Função para listar o adicional_conta de acordo com  Tipo de Movimento informado */ \nFuncao Fun_ListarAdicional();\n  {\n  Se  ((EDesSin = 'S') e (xAnaSin = \"S\"))\n      AlteraControle(\"Adicional_Conta\",\"Fonte\",\";NEGRITO;;\");\n  Senao\n      AlteraControle(\"Adicional_Conta\",\"Fonte\",\";NORMAL;;\");\n  \n  Se  ((ETipMov = 1) ou (ETipMov = 3))                                           @ Todas as Contas ou Contas com movimento ou saldo anterior @  \n      {\n      Se  ((FSalAntCta <> 0) ou (FCreCta <> 0) ou (FDebCta <> 0) ou (FSalCta <> 0))@ Se houver lançamentos sempre lista @\n          ListaSecao(\"Adicional_Conta\");                                                       \n      Senao                                                                       @ Se não houver lançamentos lista somente se for ETipMov = 1, Todas @  \n          Se  (ETipMov = 1)                                                          @ Se for todas as contas, lista tmb as contas que não tem movimentos @                                                                       \n              ListaSecao(\"Adicional_Conta\");\n      }\n  Senao                                                                         @ Se for ETipMov = 2, lista somente se houve debito ou credito no período @\n      {\n      Se  ((FCreCta <> 0) ou (FDebCta <> 0))\n          ListaSecao(\"Adicional_Conta\");\n      }\n  }   \n\nFuncao Fun_BuscarCcuPai();\n  {  \n  xSqlAux = \"SELECT E044CCU.CODCCU \" +\n              \"FROM E044CCU \" +\n             \"WHERE E044CCU.CODEMP = :CODEMP AND \" +\n                   \"E044CCU.NIVCCU = 1\";\n  SQL_Criar(xCursorAux);\n  SQL_DefinirComando(xCursorAux, xSqlAux);  \n  SQL_DefinirInteiro(xCursorAux, \"CODEMP\", ECodEmp);         \n  SQL_AbrirCursor   (xCursorAux);\n  Enquanto(SQL_EOF(xCursorAux) = 0)   \n    { \n    SQL_RetornarAlfa(xCursorAux, \"CODCCU\", xCodCcu);                            @ Retorna todos os centros de custo analíticos e adiciona na lista @     \n    xListaCcuPai.Adicionar();\n    xListaCcuPai.CodCcu = xCodCcu;\n    xListaCcuPai.Gravar();          \n                  \n    SQL_proximo(xCursorAux);\n    } \n  SQL_FecharCursor(xCursorAux);\n  SQL_Destruir(xCursorAux);\n  }",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 28,
+        "left": 0,
+        "width": 6000,
+        "height": 175
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se  ((xNumPag > EQtdMax) e (EQtdMax > 0))\n    {\n    FNumLiv++;\n    FNumPag = ENumFol;\n    xImpPag = 0;\n    xNumPag = 1; \n    }",
+      "onAfterPrint": "Se  ((xImpPag = 1) e (EImpVer = 'S') e (EFolPag = 'F'))\n    xImpPag = 0;\nSenao\n    {\n    FNumPag++;\n    xNumPag++;\n    xImpPag = 1;\n    }",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Periodo",
+          "position": {
+            "top": 51,
+            "left": 279,
+            "width": 75,
+            "height": 18
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Arial",
+            "size": 12
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDatIni",
+          "position": {
+            "top": 51,
+            "left": 357,
+            "width": 83,
+            "height": 18
+          },
+          "caption": "EDatIni",
+          "font": {
+            "name": "Arial",
+            "size": 12
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDatFim",
+          "position": {
+            "top": 51,
+            "left": 456,
+            "width": 83,
+            "height": 18
+          },
+          "caption": "EDatFim",
+          "font": {
+            "name": "Arial",
+            "size": 12
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_a",
+          "position": {
+            "top": 54,
+            "left": 444,
+            "width": 8,
+            "height": 15
+          },
+          "caption": "a",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Livro",
+          "position": {
+            "top": 6,
+            "left": 645,
+            "width": 32,
+            "height": 17
+          },
+          "caption": "Livro:",
+          "onPrint": "se  (ENumLiv = 0) \n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumLiv",
+          "position": {
+            "top": 6,
+            "left": 678,
+            "width": 39,
+            "height": 17
+          },
+          "caption": "FNumLiv",
+          "onPrint": "se  (ENumLiv = 0)\n    Cancel(3);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Titulo",
+          "position": {
+            "top": 27,
+            "left": 0,
+            "width": 827,
+            "height": 23
+          },
+          "caption": "Balancete por Período (Contábil/Centro de Custos)",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCNPJ",
+          "position": {
+            "top": 108,
+            "left": 3,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "CNPJ:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DConsolidado",
+          "position": {
+            "top": 90,
+            "left": 45,
+            "width": 206,
+            "height": 17
+          },
+          "caption": "Consolidado",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DFolPag",
+          "position": {
+            "top": 6,
+            "left": 720,
+            "width": 44,
+            "height": 16
+          },
+          "caption": "Página:",
+          "onPrint": "Se  ((xImpPag = 1) e (EFolPag = 'F') e (EImpVer = 'S'))\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumPag",
+          "position": {
+            "top": 6,
+            "left": 765,
+            "width": 41,
+            "height": 17
+          },
+          "caption": "FNumPag",
+          "onPrint": "Se  ((xImpPag = 1) e (EFolPag = 'F') e (EImpVer = 'S'))\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DNomEmp",
+          "position": {
+            "top": 72,
+            "left": 45,
+            "width": 700,
+            "height": 17
+          },
+          "caption": "DNomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DNomFil",
+          "position": {
+            "top": 90,
+            "left": 45,
+            "width": 700,
+            "height": 17
+          },
+          "caption": "DNomFil",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumCgc",
+          "position": {
+            "top": 108,
+            "left": 45,
+            "width": 206,
+            "height": 17
+          },
+          "caption": "FNumCgc",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCodEmp",
+          "position": {
+            "top": 72,
+            "left": 3,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "DCodEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCodFil",
+          "position": {
+            "top": 90,
+            "left": 3,
+            "width": 40,
+            "height": 17
+          },
+          "caption": "DCodFil",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc_Conta",
+          "position": {
+            "top": 138,
+            "left": 105,
+            "width": 38,
+            "height": 16
+          },
+          "caption": "Conta",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Des_Hifem",
+          "position": {
+            "top": 138,
+            "left": 147,
+            "width": 5,
+            "height": 16
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc_Descricao",
+          "position": {
+            "top": 138,
+            "left": 153,
+            "width": 305,
+            "height": 16
+          },
+          "caption": "Nome",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_SalAnt",
+          "position": {
+            "top": 138,
+            "left": 483,
+            "width": 84,
+            "height": 15
+          },
+          "caption": "Saldo Anterior",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Debito",
+          "position": {
+            "top": 138,
+            "left": 567,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "Débito",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Credito",
+          "position": {
+            "top": 138,
+            "left": 654,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "Crédito",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Saldo",
+          "position": {
+            "top": 138,
+            "left": 741,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "Saldo Atual",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Classificacao",
+          "position": {
+            "top": 138,
+            "left": 0,
+            "width": 79,
+            "height": 16
+          },
+          "caption": "Classificação",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_CCusto",
+          "position": {
+            "top": 156,
+            "left": 96,
+            "width": 49,
+            "height": 16
+          },
+          "caption": "C. Custo",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DHifem",
+          "position": {
+            "top": 156,
+            "left": 144,
+            "width": 6,
+            "height": 16
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_DesCcu",
+          "position": {
+            "top": 156,
+            "left": 153,
+            "width": 321,
+            "height": 16
+          },
+          "caption": "Descrição",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Conta",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 203,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se  (ESalPag = 'S') \n    {\n    xProPag = 0;\n    @ Transforma a classificação da conta para uma String(Alfa) @\n    xClaCtaStr = xClaCta;\n      \n    Se  (xClaAnt = \"\")\n        {\n        xClaAnt = xClaCtaStr;\n        CopiarStr(xClaAnt, 1, 1);\n        }\n    \n    @ Verifica se existe espaço na página @  \n    ProximaPagina(\"Adicional_Conta\", xProPag);\n    \n    xClaAtu = xClaCtaStr;\n    CopiarStr(xClaAtu, 1, 1);\n    \n    @ Caso tenha mudado o grupo de contas passa para a próxima página @\n    Se  (xClaAtu <> xClaAnt)\n        {\n        Se  (xProPag = 0)\n            {\n            ListaSecao(\"Adicional_SaltarPagina\");\n            xControlePagina = 0;\n            }\n        xClaAnt = xClaAtu;\n        }\n    }\n\nSe  (ESalLin = 'S')\n    {\n    xProPag = 0;\n   \n    Se  (xNivAnt = 0)\n        xNivAnt = xNivCta;\n    Senao\n        {\n        @ Verifica se existe espaço na página @   \n        ProximaPagina(\"Adicional_LinhaBranco\", xProPag); \n              \n        xNivAtu = xNivCta;\n      \n        Se  (xNivAtu <> xNivAnt)\n            Se  (xProPag = 0)\n                Se  (xNivCta <= ENivAte)\n                    ListaSecao(\"Adicional_LinhaBranco\");\n        \n        xNivAnt = xNivAtu;\n        }\n    }",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Desc_Hifem",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 5,
+            "height": 16
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DDesCta",
+          "position": {
+            "top": 0,
+            "left": 153,
+            "width": 329,
+            "height": 16
+          },
+          "caption": "DDesCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalAntCta",
+          "position": {
+            "top": 0,
+            "left": 483,
+            "width": 83,
+            "height": 16
+          },
+          "caption": "FSalAntCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDebCta",
+          "position": {
+            "top": 0,
+            "left": 567,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "FDebCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FCreCta",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "FCreCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalCta",
+          "position": {
+            "top": 0,
+            "left": 741,
+            "width": 86,
+            "height": 16
+          },
+          "caption": "FSalCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DClaCta",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 76,
+            "height": 16
+          },
+          "caption": "DClaCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "DCtaRed",
+          "position": {
+            "top": 0,
+            "left": 78,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "DCtaRed",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_CCusto",
+      "bandType": "OUTRO",
+      "tag": 601,
+      "position": {
+        "top": 219,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "DCodCcu",
+          "position": {
+            "top": 0,
+            "left": 99,
+            "width": 43,
+            "height": 13
+          },
+          "caption": "DCodCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Hifem",
+          "position": {
+            "top": 0,
+            "left": 147,
+            "width": 4,
+            "height": 15
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DDesCcu",
+          "position": {
+            "top": 0,
+            "left": 153,
+            "width": 331,
+            "height": 13
+          },
+          "caption": "DDesCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalAntCcu",
+          "position": {
+            "top": 0,
+            "left": 483,
+            "width": 83,
+            "height": 13
+          },
+          "caption": "FSalAntCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDebCcu",
+          "position": {
+            "top": 0,
+            "left": 567,
+            "width": 86,
+            "height": 13
+          },
+          "caption": "FDebCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FCreCcu",
+          "position": {
+            "top": 0,
+            "left": 654,
+            "width": 86,
+            "height": 13
+          },
+          "caption": "FCreCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalCcu",
+          "position": {
+            "top": 0,
+            "left": 741,
+            "width": 86,
+            "height": 13
+          },
+          "caption": "FSalCcu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Titulo",
+      "bandType": "CABECALHO",
+      "tag": 1,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 14
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "/** CHAMA AS FUNÇÕES QUE ESTÃO NAS FUNÇÕES GLOBAIS **/\nRetornarParametroGlobal(\"GerSdlAnt\", xNovoCcu);\nSe  (ETipOrd = 'S')\n    {\n    xAbrFil = ECodFil;\n    xCodFilAlfa = ECodFil;\n       \n    se  ((xNovoCcu = 'N') e (DBTipo = \"ORACLE\")) \n        Fun_GerarBalanceteCcu();\n    senao   \n        Fun_GerarBalancete();\n    }\nSenao\n    Fun_PercorrerFiliais();\n",
+      "children": []
+    },
+    {
+      "name": "Adicional_SaltarPagina",
+      "bandType": "OUTRO",
+      "tag": 603,
+      "position": {
+        "top": 14,
+        "left": 0,
+        "width": 6000,
+        "height": 14
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Adicional_LinhaBranco",
+      "bandType": "OUTRO",
+      "tag": 604,
+      "position": {
+        "top": 235,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 251,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 452,
+            "height": 13
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 612,
+            "width": 154,
+            "height": 13
+          },
+          "caption": "NomUsu",
+          "onPrint": "Se  (EMosUsu = 'N')\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 3,
+            "left": 570,
+            "width": 39,
+            "height": 13
+          },
+          "caption": "Usuário:",
+          "onPrint": "Se  (EMosUsu = 'N')\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "E044CCU",
+    "E045PLA",
+    "E070EMP",
+    "E070FIL",
+    "E640LCT",
+    "E640RAT"
+  ],
+  "sqlFragments": [
+    "SELECT E070EMP.CODEMP, E070EMP.NOMEMP \" +\n         \"FROM E070EMP \" +\n        \"WHERE E070EMP.CODEMP = :CODEMP\";",
+    "SELECT E070FIL.CODFIL, E070FIL.NOMFIL, E070FIL.NUMCGC \" +\n             \"FROM E070FIL \" +\n            \"WHERE E070FIL.CODEMP = :CODEMP AND \" + xAbrFil + \" AND \";",
+    "SELECT 1 FROM E640LCT \" +\n                               \"WHERE E640LCT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640LCT.CODFIL = E070FIL.CODFIL AND \" +\n                                     \"E640LCT.DATLCT >= :DATINI AND \" +\n                                     \"E640LCT.DATLCT <= :DATFIM)\";",
+    "SELECT 1 FROM E640LCT, E640RAT \" +\n                               \"WHERE E640LCT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640LCT.CODFIL = E070FIL.CODFIL AND \" +\n                                     \"E640RAT.CODEMP = E070FIL.CODEMP AND \" +\n                                     \"E640RAT.NUMLCT = E640LCT.NUMLCT AND \" +\n                                     \"E640LCT.DATLCT >= :DATINI AND \" +\n                                     \"E640LCT.DATLCT <= :DATFIM)\";",
+    "SELECT E070FIL.CODFIL, E070FIL.NOMFIL, E070FIL.NUMCGC \" +\n              \"FROM E070FIL \" +\n             \"WHERE E070FIL.CODEMP = :CODEMP AND \" + xAbrFil + \n         \" ORDER BY E070FIL.CODFIL\";",
+    "SELECT E045PLA.CLACTA, E045PLA.CTARED, E045PLA.DESCTA, E045PLA.ANASIN, E045PLA.NIVCTA, E045PLA.MSKGCC, \" +\n                \"E045PLA.CLAPAR, E045PLA.CTAPAR, E045PLA.DESPAR \" +  \n           \"FROM E045PLA \" + xBuscarCtaSubordinadas +  \n          \"WHERE \" + xLigacoes + xFilNivCta + xDefGruCta + xFilSitCta +                                                   \n               \" E045PLA.CODEMP = :CODEMP \" + xLigacaoCtaSubordinada +                               \n      \" ORDER BY E045PLA.CLACTA\";",
+    "SELECT DESCTA, CTAPAR, CLAPAR, DESPAR, NIVCTA, MSKGCC \" + \n                 \"FROM E045PLA \" +\n                \"WHERE CTARED = :CTARED AND \" +\n                      \"CODEMP = :CODEMP\";",
+    "SELECT DESCCU \" +\n                 \"FROM E044CCU \" +\n                \"WHERE CODEMP = :CODEMP AND \" +\n                      \"CODCCU = :CODCCU\";",
+    "SELECT E045PLA.CODEMP, E045PLA.CLACTA \" +\n                                   \"FROM E045PLA \" +\n                                  \"WHERE E045PLA.CODEMP = :CODEMP \" + xFilCtaRed + \") CTAPAI \" ;",
+    "SELECT E640RAT.CODEMP, E640RAT.CODCCU \" +\n                         \"FROM E640RAT \" +\n                        \"WHERE E640RAT.CODEMP = :CODEMP AND \" +\n                              \"E640RAT.SITRAT = 2 AND \" +\n                              \"E640RAT.DATLCT <= :DATFIM\";",
+    "SELECT E044CCU.CODEMP, E044CCU.CLACCU \" +\n                           \"FROM E044CCU \" +\n                          \"WHERE E044CCU.CODEMP = :CODEMP \" + xFilCodCcu + \n                             \" GROUP BY E044CCU.CODEMP, E044CCU.CLACCU) CCUPAI \" ;",
+    "SELECT E044CCU.CODCCU, E044CCU.DESCCU, E044CCU.CLACCU \" + \n              \"FROM E044CCU\" + xSqlCentroCustos + xRetornoCCuSql +               \n             \"WHERE E044CCU.CODEMP = :CODEMP AND \" +               \n                   \"E044CCU.ANASIN = 'A' AND \" +\n                   \"E044CCU.CODEMP = CCUSTO.CODEMP AND \" +\n                   \"E044CCU.CODCCU = CCUSTO.CODCCU \"+ xLigacaoCCuSql +\n         \" GROUP BY E044CCU.CODCCU, E044CCU.DESCCU, E044CCU.CLACCU \" +\n         \" ORDER BY E044CCU.CODCCU\";",
+    "SELECT E044CCU.CODCCU \" +\n              \"FROM E044CCU \" +\n             \"WHERE E044CCU.CODEMP = :CODEMP AND \" +\n                   \"E044CCU.NIVCCU = 1\";"
+  ],
+  "_stats": {
+    "parsedBytes": 53686,
+    "totalBytes": 828921,
+    "parseComplete": true,
+    "bandCount": 7,
+    "fieldCount": 45,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 132,
+        "skippedTo": 204,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 40535,
+        "skippedTo": 44656,
+        "note": "Skipped 4121 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      }
+    ]
+  }
+}

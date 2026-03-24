@@ -1,0 +1,785 @@
+{
+  "filename": "HRGE003.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Objetivo: validar se a instalação do aplicativo Marcação de Ponto está correta.  Ao acessar o relatório é possível visualizar os itens que apresentam algum erro a partir do \"X\". E os corretos com um visto.",
+  "description": [
+    "Objetivo: validar se a instalação do aplicativo Marcação de Ponto está correta. ",
+    "Ao acessar o relatório é possível visualizar os itens que apresentam algum erro a partir do \"X\". E os corretos com um visto."
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "",
+    "selection": "",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Titulo",
+      "bandType": "CABECALHO",
+      "tag": 1,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 90
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa valorMemo;\nDefinir Alfa icone; @ ok, erro, alerta @\n\nListaSecao(\"VersaoMinima\");\nListaSecao(\"GruposSGU\");\nListaSecao(\"EmailsSGU\");\nListaSecao(\"UsuariosGrupo\");\nListaSecao(\"Coletor\");\nListaSecao(\"ProcessosAutomaticos\");\nListaSecao(\"DadosProprietaria\");\nListaSecao(\"AssinalamentoMarcacaoPonto\");\n@ListaSecao(\"DisponibilidadeServicos\");@\nListaSecao(\"ChecklistManual\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 3,
+            "left": 678,
+            "width": 42,
+            "height": 17
+          },
+          "caption": "Página:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema005",
+          "position": {
+            "top": 3,
+            "left": 723,
+            "width": 27,
+            "height": 17
+          },
+          "caption": "numpag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 33,
+            "left": 276,
+            "width": 281,
+            "height": 22
+          },
+          "caption": "Marcação de Ponto 1.0 | HCM",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 12,
+            "left": 294,
+            "width": 241,
+            "height": 22
+          },
+          "caption": "Diagnóstico do aplicativo",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho006",
+          "position": {
+            "top": 63,
+            "left": 0,
+            "width": 774,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSImagem",
+          "name": "Imagem001",
+          "position": {
+            "top": 9,
+            "left": 15,
+            "width": 145,
+            "height": 48
+          }
+        }
+      ]
+    },
+    {
+      "name": "AdicionalPadrao",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 470,
+        "left": 0,
+        "width": 6000,
+        "height": 40
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se (icone = \"ok\")\n  Inicio\n  AlteraControle (\"IconeErro\", \"Imprimir\", \"Falso\");\n  AlteraControle (\"IconeAlerta\", \"Imprimir\", \"Falso\");\n  \n  AlteraControle (\"IconeOk\", \"Imprimir\", \"Verdadeiro\");\n  Fim;\nSe (icone = \"erro\")\n  Inicio\n  AlteraControle (\"IconeOk\", \"Imprimir\", \"Falso\");\n  AlteraControle (\"IconeAlerta\", \"Imprimir\", \"Falso\");\n  \n  AlteraControle (\"IconeErro\", \"Imprimir\", \"Verdadeiro\");\n  Fim;\nSe (icone = \"alerta\")\n  Inicio\n  AlteraControle (\"IconeOk\", \"Imprimir\", \"Falso\");\n  AlteraControle (\"IconeErro\", \"Imprimir\", \"Falso\");\n  \n  AlteraControle (\"IconeAlerta\", \"Imprimir\", \"Verdadeiro\");\n  Fim;\nSe (icone = \"\")\n  Inicio\n  AlteraControle (\"IconeOk\", \"Imprimir\", \"Falso\");\n  AlteraControle (\"IconeErro\", \"Imprimir\", \"Falso\");\n  AlteraControle (\"IconeAlerta\", \"Imprimir\", \"Falso\");\n  Fim;  ",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSImagem",
+          "name": "IconeAlerta",
+          "position": {
+            "top": 6,
+            "left": 21,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "type": "TSImagem",
+          "name": "IconeErro",
+          "position": {
+            "top": 6,
+            "left": 21,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "type": "TSImagem",
+          "name": "IconeOk",
+          "position": {
+            "top": 6,
+            "left": 21,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "memo",
+          "position": {
+            "top": 6,
+            "left": 48,
+            "width": 735,
+            "height": 17
+          },
+          "field": "memo",
+          "onPrint": "ValStr = valorMemo;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "GruposSGU",
+      "bandType": "OUTRO",
+      "tag": 601,
+      "position": {
+        "top": 125,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao GrupoExiste(); \nDefinir Funcao GrupoPossuiDireitoMobilidade();\nDefinir Funcao GrupoPossuiUsuarios();\n\nDefinir Funcao ListaGrupoInexistente();\nDefinir Funcao ListaGrupoSemDireitoMobilidade();\nDefinir Funcao ListaGrupoSemUsuarios();\n\nDefinir Cursor Cur_R910GRP;\nDefinir Cursor Cur_R910PCN;\nDefinir Cursor Cur_R910MGP;\n\nDefinir Numero grupoColaboradoresOk;\nDefinir Numero grupoAdministradoresOk;\nDefinir Numero grupoGestoresOk;\n\nDefinir Alfa nomeGrupo;\nDefinir Alfa descricaoCampo;\n\nDefinir Numero achouGrupo;\nDefinir Numero possuiDireitoMobilidade;\nDefinir Numero possuiUsuarios;\n\nnomeGrupo = \"Mobilidade - Marcação de Ponto - Colaboradores\";\nGrupoExiste(); \nSe (achouGrupo = 1)\n  Inicio\n    GrupoPossuiDireitoMobilidade();\n    Se (possuiDireitoMobilidade = 1)\n      Inicio\n      GrupoPossuiUsuarios();\n      Se (possuiUsuarios = 1)\n        grupoColaboradoresOk = 1;\n      Senao\n        Inicio\n        grupoColaboradoresOk = 0;\n        ListaGrupoSemUsuarios();\n        Fim;\n      Fim\n    Senao\n      Inicio\n        grupoColaboradoresOk = 0;\n        ListaGrupoSemDireitoMobilidade();      \n      Fim;\n  Fim\nSenao\n  Inicio\n    grupoColaboradoresOk = 0;\n    ListaGrupoInexistente();\n  Fim;\n  \nnomeGrupo = \"Mobilidade - Marcação de Ponto - Administradores\";\nGrupoExiste(); \nSe (achouGrupo = 1)\n  Inicio\n    GrupoPossuiDireitoMobilidade();\n    Se (possuiDireitoMobilidade = 1)\n      Inicio\n      GrupoPossuiUsuarios();\n      Se (possuiUsuarios = 1)\n        grupoAdministradoresOk = 1;\n      Senao\n        Inicio\n        grupoAdministradoresOk = 0;\n        ListaGrupoSemUsuarios();\n        Fim;\n      Fim\n    Senao\n      Inicio\n        grupoAdministradoresOk = 0;\n        ListaGrupoSemDireitoMobilidade();      \n      Fim;\n  Fim\nSenao\n  Inicio\n    grupoAdministradoresOk = 0;\n    ListaGrupoInexistente();\n  Fim;\n  \nnomeGrupo = \"Mobilidade - Marcação de Ponto - Gestores\";\nGrupoExiste(); \nSe (achouGrupo = 1)\n  Inicio\n    GrupoPossuiDireitoMobilidade();\n    Se (possuiDireitoMobilidade = 1)\n      Inicio\n      GrupoPossuiUsuarios();\n      Se (possuiUsuarios = 1)\n        grupoGestoresOk = 1;\n      Senao\n        Inicio\n        grupoGestoresOk = 0;\n        ListaGrupoSemUsuarios();\n        Fim;\n      Fim\n    Senao\n      Inicio\n        grupoGestoresOk = 0;\n        ListaGrupoSemDireitoMobilidade();      \n      Fim;\n  Fim\nSenao\n  Inicio\n    grupoGestoresOk = 0;\n    ListaGrupoInexistente();\n  Fim;  \n\nSe ((grupoColaboradoresOk = 1) e (grupoAdministradoresOk = 1) e (grupoGestoresOk = 1))\nInicio\n  valorMemo = \"Grupos do SGU configurados corretamente.\";\n  icone = \"ok\";\n  ListaSecao(\"AdicionalPadrao\");  \nFim;\n\nFuncao GrupoExiste();\n  Inicio\n  Cur_R910GRP.SQL \"SELECT CODENT \\\n                  FROM R910ENT \\\n                  WHERE NOMEXB = :nomeGrupo\";\n                     \n  Cur_R910GRP.AbrirCursor();\n  Se (Cur_R910GRP.Achou)\n    achouGrupo = 1;\n  Senao\n    achouGrupo = 0;\n    \n  Cur_R910GRP.FecharCursor();\n  Fim;\n  \nFuncao GrupoPossuiDireitoMobilidade();\n  Inicio\n  @ código permissão mobilidade = 25 @\n  Cur_R910PCN.SQL \"SELECT codper \\ \n                    FROM R910PCN \\\n                    WHERE codper = 25 \\\n                      AND codent = ( \\\n                        SELECT codent \\\n                        FROM r910ent \\\n                        WHERE nomexb = :nomeGrupo \\\n                      )\";\n                     \n  Cur_R910PCN.AbrirCursor();\n  Se (Cur_R910PCN.Achou)\n    possuiDireitoMobilidade = 1;\n  Senao\n    possuiDireitoMobilidade = 0;\n    \n  Cur_R910PCN.FecharCursor();\n  Fim;\n\nFuncao GrupoPossuiUsuarios();\n  Inicio                         \n  Cur_R910MGP.SQL \"SELECT codmbr \\\n              FROM R910MGP \\\n              WHERE codgrp in ( \\\n                SELECT codent \\\n                FROM r910ent \\\n                WHERE nomexb = :nomeGrupo \\\n              )\";\n                     \n  Cur_R910MGP.AbrirCursor();\n  Se (Cur_R910MGP.Achou)\n    possuiUsuarios = 1;\n  Senao\n    possuiUsuarios = 0;\n    \n  Cur_R910MGP.FecharCursor(); \n  Fim;\n  \nFuncao ListaGrupoInexistente();\n  Inicio\n    valorMemo = \"Grupo de usuário \\\"\" + nomeGrupo + \"\\\" não cadastrado no SGU.\";\n    icone = \"erro\";     \n    ListaSecao(\"AdicionalPadrao\");\n  Fim;\n  \nFuncao ListaGrupoSemDireitoMobilidade();\n  Inicio\n    valorMemo = \"Grupo de usuário \\\"\" + nomeGrupo + \"\\\" cadastrado no SGU, porém não possui o direito \\\"Utilizar os aplicativos móveis\\\".\";\n    icone = \"erro\";     \n    ListaSecao(\"AdicionalPadrao\");\n  Fim;  \n  \nFuncao ListaGrupoSemUsuarios();\n  Inicio\n    valorMemo = \"Grupo \\\"\" + nomeGrupo + \"\\\" não possui usuários.\";\n    icone = \"erro\";     \n    ListaSecao(\"AdicionalPadrao\");\n  Fim;  \n  ",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoGruposSGU",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação dos grupos do SGU",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho002",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coletor",
+      "bandType": "OUTRO",
+      "tag": 602,
+      "position": {
+        "top": 230,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao ValidarCaminhoMarcacao();\nDefinir Funcao ValidarExtensaoMarcacao();\nDefinir Funcao ValidarCaminhoRede();\n\nDefinir Alfa diretorioMarcacao;\nDefinir Numero caminhoMarcacaoValido;\nDefinir Numero extensaoMarcacaoValido;\nDefinir Numero prefixoCaminhoMarcacaoValido;\n\nDefinir Cursor Cur_R058MOD;\nDefinir Numero vCaracter;\nDefinir Numero dirmarExtensaoValido;\nDefinir Numero dirrejExtensaoValido;\nDefinir Numero dirmarValido;\nDefinir Numero dirrejValido;\nDefinir Numero achouDirmar;\nDefinir Numero achouDirrej;\nDefinir Numero dirmarCaminhoRedeValido;\nDefinir Numero dirrejCaminhoRedeValido;\n\nCur_R058MOD.SQL \"SELECT DIRMAR, DIRREJ \\\n                 FROM R058MOD \\\n                 WHERE modcol = 96\";\n                     \nCur_R058MOD.AbrirCursor();\nSe (Cur_R058MOD.Achou)\n    Inicio\n    vCaracter = 0;\n    \n    @ Valida se dirmar existe @    \n    Se (Cur_R058MOD.DIRMAR = \"NULL\")\n      achouDirmar = 0;\n    Senao\n      Inicio\n        LerPosicaoAlfa (Cur_R058MOD.DIRMAR, vCaracter, 1);\n        Se (vCaracter = ' ')\n          achouDirmar = 0;\n        Senao\n          achouDirmar = 1;\n      Fim;\n\n    @ Valida se dirrej existe @    \n    Se (Cur_R058MOD.DIRREJ = \"NULL\")\n      achouDirrej = 0;\n    Senao\n      Inicio\n        LerPosicaoAlfa (Cur_R058MOD.DIRREJ, vCaracter, 1);\n        Se (vCaracter = ' ')\n          achouDirrej = 0;\n        Senao\n          achouDirrej = 1;\n      Fim;\n    \n    @ Valida se deretorios sao validos @\n    Se (achouDirmar = 1)\n      Inicio\n      diretorioMarcacao = Cur_R058MOD.DIRMAR;\n      ValidarExtensaoMarcacao();\n      dirmarExtensaoValido = extensaoMarcacaoValido;\n      ValidarCaminhoMarcacao();\n      dirmarValido = caminhoMarcacaoValido;\n      ValidarCaminhoRede();\n      dirmarCaminhoRedeValido = prefixoCaminhoMarcacaoValido;\n      Fim;\n\n    Se (achouDirrej = 1)\n      Inicio\n      diretorioMarcacao = Cur_R058MOD.DIRREJ;\n      ValidarExtensaoMarcacao();\n      dirrejExtensaoValido = extensaoMarcacaoValido;\n      ValidarCaminhoMarcacao();\n      dirrejValido = caminhoMarcacaoValido;\n      ValidarCaminhoRede();\n      dirrejCaminhoRedeValido = prefixoCaminhoMarcacaoValido;\n      Fim;\n    \n    @ Exibe resultado @\n    Se (achouDirmar = 0)\n      Inicio\n      valorMemo = \"Diretório para arquivos de marcações não informado no coletor Mobilidade.\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      Fim;\n    Senao\n      Inicio\n        Se (dirmarExtensaoValido = 0)\n          Inicio\n          valorMemo = \"Diretório para arquivos de marcações informado no coletor Mobilidade deve terminar com o caminho \\\"\\\\*.txt\\\". Exemplo: \\\"\\\\\\\\computador01\\\\*.txt\\\".\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim; \n          \n        Se (dirmarCaminhoRedeValido = 0)\n          Inicio\n          valorMemo = \"Diretório para arquivos de marcações informado no coletor Mobilidade deve ser um caminho de rede. Exemplo: \\\"\\\\\\\\computador01\\\\*.txt\\\".\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim; \n\n        Se (dirmarValido = 0)\n          Inicio\n          valorMemo = \"Diretório para arquivos de marcações informado no coletor Mobilidade não existe.\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim;\n      Fim;\n      \n    Se (achouDirrej = 0)\n      Inicio\n      valorMemo = \"Diretório para marcações rejeitadas não informado no coletor Mobilidade.\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      Fim;\n    Senao\n      Inicio\n        Se (dirrejExtensaoValido = 0)      \n          Inicio\n          valorMemo = \"Diretório para marcações rejeitadas informado no coletor Mobilidade deve terminar com o caminho \\\"\\\\*.txt\\\". Exemplo: \\\"\\\\\\\\computador01\\\\*.txt\\\".\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim;\n          \n        Se (dirrejCaminhoRedeValido = 0)\n          Inicio\n          valorMemo = \"Diretório para marcações rejeitadas informado no coletor Mobilidade deve ser um caminho de rede. Exemplo: \\\"\\\\\\\\computador01\\\\*.txt\\\".\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim;\n          \n        Se (dirrejValido = 0)\n          Inicio\n          valorMemo = \"Diretório para marcações rejeitadas informado no coletor Mobilidade não existe.\";\n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n          Fim;  \n      Fim;\n    \n    Se ((achouDirmar = 1) e (achouDirrej = 1) e (dirmarValido = 1) e (dirrejValido = 1) e (dirmarExtensaoValido = 1) e (dirrejExtensaoValido = 1) e (dirmarCaminhoRedeValido = 1) e (dirrejCaminhoRedeValido = 1))\n      Inicio\n      valorMemo = \"Coletor cadastrado corretamente.\";\n      icone = \"ok\";\n      ListaSecao(\"AdicionalPadrao\");\n      Fim;\n      \n    Fim;\nSenao\n    Inicio\n    valorMemo = \"Não encontrado coletor do tipo Mobilidade.\";\n    icone = \"erro\";\n    ListaSecao(\"AdicionalPadrao\");\n    Fim;\n    \nCur_R058MOD.FecharCursor(); \n\nFuncao ValidarCaminhoMarcacao();\n  Inicio\n  Definir Numero tamanhoDirMarc;\n  Definir Alfa caminhoDirMarc;\n  \n  TamanhoAlfa(diretorioMarcacao, tamanhoDirMarc);\n  caminhoDirMarc = diretorioMarcacao;\n  CopiarAlfa(caminhoDirMarc, 0, tamanhoDirMarc - 5);\n  \n  caminhoMarcacaoValido = ExisteDiretorio(caminhoDirMarc);\n  Fim;\n\nFuncao ValidarExtensaoMarcacao();\n  Inicio\n  Definir Numero tamanhoDirMarc;\n  Definir Alfa extensaoDirMarc;\n   \n  TamanhoAlfa(diretorioMarcacao, tamanhoDirMarc);\n  extensaoDirMarc = diretorioMarcacao; \n  CopiarAlfa(extensaoDirMarc, tamanhoDirMarc - 5, 6);\n  \n  Se (extensaoDirMarc = \"\\\\*.txt\")\n    extensaoMarcacaoValido = 1;\n  Senao\n    extensaoMarcacaoValido = 0;\n    \n  Fim;\n  \nFuncao ValidarCaminhoRede();\n  Inicio\n  Definir Numero tamanhoDirMarc;\n  Definir Alfa prefixoRede;\n   \n  TamanhoAlfa(diretorioMarcacao, tamanhoDirMarc);\n  prefixoRede = diretorioMarcacao; \n  CopiarAlfa(prefixoRede, 0, 2);\n  \n  Se (prefixoRede = \"\\\\\\\\\")\n    prefixoCaminhoMarcacaoValido = 1;\n  Senao\n    prefixoCaminhoMarcacaoValido = 0;  \n  Fim;\n  ",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoColetor",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação de coletor para Mobilidade",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho003",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "ProcessosAutomaticos",
+      "bandType": "OUTRO",
+      "tag": 603,
+      "position": {
+        "top": 265,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao ProcessoAutomaticoExiste();\nDefinir Funcao LeituraAutomaticaHabilitada();\nDefinir Funcao VerificarEmailAdministrador();\nDefinir Funcao ValidarEmail();\n\nDefinir Cursor Cur_R300PRO;\nDefinir Cursor Cur_R900CPL;\n\nDefinir Alfa mensagemErroProcessoAutomatico;\nDefinir Numero tipmob;\nDefinir Alfa aTipmob;\nDefinir Alfa emailUsuario;\n\nDefinir Numero vCaracter;\nDefinir Numero tamanhoEmail;\n\nDefinir Numero processoExiste;\nDefinir Numero leituraAutomaticaOk;\nDefinir Numero emailExiste;\nDefinir Numero ehEmailAdministrador;\n\nDefinir Numero tipmob1OK;\nDefinir Numero tipmob2OK;\nDefinir Numero emailOk;\n\n@Inicializa verificadores @\nemailOk = 1;\n\n@ Processo automatico TIPPAT = 15 e TIPMOB = 1 @\ntipmob = 1;\nProcessoAutomaticoExiste();  \nSe (processoExiste = 1)\n    Inicio\n      LeituraAutomaticaHabilitada();\n      Se (leituraAutomaticaOk = 1)   \n        tipmob1Ok = 1;\n      Senao\n        Inicio\n          tipmob1Ok = 0;\n          valorMemo = \"Foi encontrado o processo automático de \\\"Retornar Marcações Mobilidade\\\", \" +\n                      \"porém o campo \\\"Leitura Automática das Marcações\\\" não está marcado como \\\"Sim\\\", \" +\n                      \"conforme indica a documentação.\"; \n          icone = \"erro\";\n          ListaSecao(\"AdicionalPadrao\");\n        Fim;\n        \n      ValidarEmail();\n    Fim;\n  Senao\n    Inicio\n    tipmob1OK = 0;\n    valorMemo = \"Não encontrado processo automático do Marcação de Ponto do tipo \\\"Retornar Marcações Mobilidade\\\".\";\n    icone = \"erro\";\n    ListaSecao(\"AdicionalPadrao\");\n    Fim;\n\n@ Processo automatico TIPPAT = 15 e TIPMOB = 2 @    \ntipmob = 2;\nProcessoAutomaticoExiste();\nSe (processoExiste = 1)\n    Inicio\n    tipmob2Ok = 1;\n    ValidarEmail();\n    Fim;\n  Senao\n    Inicio\n    tipmob2OK = 0;\n    valorMemo = \"Não encontrado processo automático do Marcação de Ponto do tipo \\\"Enviar Colaboradores Mobilidade\\\".\";\n    icone = \"erro\";\n    ListaSecao(\"AdicionalPadrao\");\n    Fim;\n\n@ Validação compilada @\nSe ((tipmob1Ok = 1) e (tipmob2Ok = 1) e (emailOK = 1))\n  Inicio\n  valorMemo = \"Processos automáticos cadastrados corretamente.\";\n  icone = \"ok\";\n  ListaSecao(\"AdicionalPadrao\");\n  Fim;\n\n@ Funções auxiliares @\nFuncao ProcessoAutomaticoExiste();\n  Inicio\n    Cur_R300PRO.SQL \"SELECT nomusu \\\n                    FROM r300pro \\\n                    WHERE tippat = 15 \\\n                      AND tipmob = :tipmob\";\n                     \n  Cur_R300PRO.AbrirCursor();\n  Se (Cur_R300PRO.Achou)\n    Inicio\n    processoExiste = 1;\n    emailUsuario = Cur_R300PRO.NOMUSU;\n    FIm;\n  Senao\n    processoExiste = 0;\n    \n  Cur_R300PRO.FecharCursor();\nFim;\n\nFuncao LeituraAutomaticaHabilitada();\n  Inicio\n  @ Essa validação deve ocorrer apenas para o tipmob 1 @\n  Cur_R300PRO.SQL \"SELECT leiaut \\\n                    FROM r300pro \\\n                    WHERE tippat = 15 \\\n                      AND tipmob = 1\";\n                     \n  Cur_R300PRO.AbrirCursor();\n  Se (Cur_R300PRO.Achou)\n    Se (Cur_R300PRO.LEIAUT = \"S\")  \n      leituraAutomaticaOk = 1;\n    Senao\n      leituraAutomaticaOk = 0;    \n  Senao\n    leituraAutomaticaOk = 0;\n    \n  Cur_R300PRO.FecharCursor();\nFim;\n\nFuncao VerificarEmailAdministrador();\n  Inicio\n  Cur_R900CPL.SQL \"SELECT email \\\n                    FROM R900cpl \\\n                    WHERE email = :emailUsuario \\\n                    AND perid in ( \\\n                    \tSELECT codmbr \\\n                    \tFROM R910MGP \\\n                     \tWHERE codgrp in ( \\\n                    \t\tSELECT codent \\\n                    \t\tFROM r910ent \\\n                    \t\tWHERE nomexb in ( \\\n                    \t\t\t'Mobilidade - Marcação de Ponto - Administradores' \\\n                    \t\t) \\\n                    \t) \\\n                    )\";\n                     \n  Cur_R900CPL.AbrirCursor();\n  Se (Cur_R900CPL.Achou)\n    ehEmailAdministrador = 1;\n  Senao\n    ehEmailAdministrador = 0;\n    \n  Cur_R900CPL.FecharCursor();\n  Fim;\n  \nFuncao ValidarEmail();\n  Inicio\n  LerPosicaoAlfa (emailUsuario, vCaracter, 1);\n  TamanhoAlfa(emailUsuario, tamanhoEmail);\n  \n  Se (tipmob = 1)\n    aTipmob = \"Retornar Marcações Mobilidade\";\n  Se (tipMob = 2)\n    aTipmob = \"Enviar Colaboradores Mobilidade\";\n      \n  Se ((emailUsuario = \"NULL\") ou (vCaracter = ' ') ou (tamanhoEmail = 0))\n    Inicio\n    emailOk = 0;\n      \n    valorMemo = \"E-mail de autenticação não encontrado para o processo \" + aTipmob + \".\";\n    icone = \"erro\";\n    ListaSecao(\"AdicionalPadrao\");\n    Fim;\n  Senao\n    Inicio\n    VerificarEmailAdministrador();\n    Se (ehEmailAdministrador = 0)\n      Inicio\n      emailOk = 0;  \n      \n      valorMemo = \"E-mail de autenticação informado para o processo \\\"\" + aTipmob + \"\\\" não é de um usuário que pertence ao grupo \\\"Mobilidade - Marcação de Ponto - Administradores\\\".\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      Fim;\n    Fim;\n  Fim;",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoProcessosAutomaticos",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação dos processos automáticos específicos do Marcação de Ponto",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho004",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "DadosProprietaria",
+      "bandType": "OUTRO",
+      "tag": 604,
+      "position": {
+        "top": 300,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Numero codigoModuloMobilidade;\nDefinir Numero moduloExiste;\nDefinir Alfa icone;\nDefinir Alfa valorMemo;\nDefinir Data vValidadeModulo;\nDefinir Alfa vNome;\n\nDefinir Numero vQuantidade;\nDefinir Alfa vNomeModuloAux;\nDefinir Numero indiceModulo;\nDefinir Alfa vDataStr;\n\n@ Sistema 8 (Mobilidade) - Módulo 1502 (Marcação de Ponto) @\ncodigoModuloMobilidade = 1502;\n\nmoduloExiste = ExisteModuloProp(codigoModuloMobilidade);\n\nSe (moduloExiste = 1)\n  Inicio\n  icone = \"ok\";\n  valorMemo = \"Requisitos da proprietária atendidos.\";\n  Fim;\nSenao\n  Inicio\n  icone = \"erro\";\n  valorMemo = \"Módulo 1502 (Marcação de Ponto) do sistema 8 (Mobilidade) não consta na proprietária.\";\n  Fim;\n\nDefinir Alfa xPto;\n\nListaSecao(\"AdicionalPadrao\");\n\nProp_ObterQtdModulos(8, vQuantidade);\npara (i = 0; i < vQuantidade; i++)\n{\n  Prop_ObterNomeModulo(8, i, vNomeModuloAux);\n  se(vNomeModuloAux = \"MP\") {\n    indiceModulo = i;\n  }\n}\nProp_ObterDataValidadeModulo(8,indiceModulo,vValidadeModulo);\n\n/*Mensagem(retorna, xPto);*/\nConverteMascara(3, vValidadeModulo, vDataStr, \"DD/MM/YYYY\");\nSe ((vValidadeModulo >= datsis) ou (vDataStr = \"05/06/2079\"))\n  Inicio\n  icone = \"ok\";\n  valorMemo=\"O módulo 1502 (MP) ainda está válido.\";\n  Fim;\nSenao\n  Inicio\n  icone = \"erro\";\n  valorMemo=\"O módulo 1502 (MP) está expirado. Entre em contato com a área de copias da Senior solicitando nova proprietária.\";\n  Fim;\n  \nListaSecao(\"AdicionalPadrao\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoDadosProprietaria",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação dos dados da proprietária",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho005",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "AssinalamentoMarcacaoPonto",
+      "bandType": "OUTRO",
+      "tag": 605,
+      "position": {
+        "top": 335,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao ObterColaboradorDoUsuario();\nDefinir Funcao PossuiPermissaoMobilidade();\nDefinir Funcao PossuiEmailValido();\nDefinir Funcao ObterNomeColaborador();\nDefinir Funcao obterMensagemIdentificacaoColaborador();\n\nDefinir Alfa Cur_R910MGPa;\nDefinir Cursor Cur_R034USU;\nDefinir Cursor Cur_R034MDL;\nDefinir Cursor Cur_R900CPL;\nDefinir Cursor Cur_R034FUN;\nDefinir Alfa aSqlAux;\n\nDefinir Numero codigoEmpresa;\nDefinir Numero tipoColaborador;\nDefinir Numero codigoColaborador;\nDefinir Numero codigoUsuario;\nDefinir Alfa nomeColaborador;\n\nDefinir Alfa aCodigoUsuario;\nDefinir Alfa aCodigoEmpresa;\nDefinir Alfa aTipoColaborador;\nDefinir Alfa aCodigoColaborador;\n\nDefinir Numero vCaracter;\nDefinir Alfa mensagemIdentificacaoColaborador;\n\nDefinir Numero usuarioPossuiColaborador;\nDefinir Numero permissaoMobilidadeOk;\nDefinir Numero registroPermissaoMobilidadeOk;\nDefinir Numero emailValidoOk;\nDefinir Numero achouProblema;\n\nachouProblema = 0;\n\n@ Busca todos usuarios dos grupos de mobilidade @\naSqlAux = \"SELECT DISTINCT codmbr \\\n            FROM R910MGP \\ \n            WHERE codgrp in ( \\\n              SELECT codent \\ \n              FROM r910ent \\ \n              WHERE nomexb in ( \\\n                'Mobilidade - Marcação de Ponto - Colaboradores', \\\n                'Mobilidade - Marcação de Ponto - Administradores', \\\n                'Mobilidade - Marcação de Ponto - Gestores' \\\n              ) \\\n            )\";\n\nSQL_CRIAR(Cur_R910MGPa);\nSQL_DefinirComando(Cur_R910MGPa, aSqlAux);\nSQL_AbrirCursor(Cur_R910MGPa);\nEnquanto (SQL_EOF(Cur_R910MGPa) = 0)\n  Inicio\n  SQL_RetornarInteiro(Cur_R910MGPa, \"codmbr\", codigoUsuario);\n\n  ObterColaboradorDoUsuario();\n  PossuiPermissaoMobilidade();\n  PossuiEmailValido();\n  \n  Se (usuarioPossuiColaborador = 1)\n    Inicio\n    Se (registroPermissaoMobilidadeOk = 1)\n      Inicio\n     \tSe (permissaoMobilidadeOk = 1)\n\t\t\t  Inicio\n\t\t\t\tSe (emailValidoOk = 0)\n\t\t\t\t  Inicio\n\t\t\t\t  achouProblema = 1;\n\t\t\t\t\n\t\t\t\t  obterMensagemIdentificacaoColaborador();\n\t\t\t\t  valorMemo = \"E-mail não encontrado em usuário associado ao \" + mensagemIdentificacaoColaborador;\n\t\t\t\t  icone = \"erro\";\n\t\t\t\t  ListaSecao(\"AdicionalPadrao\");\n\t\t\t\t  Fim;\n\t\t\t  Fim;\n\t\t\tSenao\n\t\t\t  Inicio\n\t\t\t  achouProblema = 1;\n\t\t\t\t\n\t\t\t  Se (emailValidoOk = 0)\n\t\t\t\t  Inicio\n\t\t\t\t  obterMensagemIdentificacaoColaborador();\n\t\t\t\t  valorMemo = \"Assinalamento \\\"Marcação Ponto Mobilidade\\\" e e-mail em usuário associado não encontrados para o \" + mensagemIdentificacaoColaborador;\n\t\t\t\t  Fim;\n\t\t\t  Senao\n\t\t\t\t  Inicio\n\t\t\t\t  obterMensagemIdentificacaoColaborador();\n\t\t\t\t  valorMemo = \"Assinalamento \\\"Marcação Ponto Mobilidade\\\" não encontrado para o \" + mensagemIdentificacaoColaborador;\n\t\t\t\t  Fim;\n\t\t\t  \n\t\t\t  icone = \"erro\";  \n\t\t\t  ListaSecao(\"AdicionalPadrao\");\n\t\t\t  Fim;\n      Fim;\n      \n    Senao\n      Inicio\n\t\t  obterMensagemIdentificacaoColaborador();\n      valorMemo = \"Erro ao consultar registro do assinalamento \\\"Marcação Ponto Mobilidade\\\" para o \" + mensagemIdentificacaoColaborador + \" Por favor, grave a informação novamente.\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      Fim;\n    Fim;\n    \n  Senao\n    Inicio\n      achouProblema = 1;\n      IntParaAlfa(codigoUsuario, aCodigoUsuario);\n      valorMemo = \"Usuário \" + aCodigoUsuario + \" não possui um colaborador associado.\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n    Fim;  \n     \n  SQL_Proximo(Cur_R910MGPa);\n  Fim;\n  \nSQL_FecharCursor(Cur_R910MGPa);\nSQL_Destruir(Cur_R910MGPa);\n\n@ Resultado final @\nSe (achouProblema = 0)\nInicio\n  valorMemo = \"Assinalamentos configurados corretamente.\";\n  icone = \"ok\";\n  ListaSecao(\"AdicionalPadrao\");\nFim;\n\n\n@ Funções auxiliares @\nFuncao ObterColaboradorDoUsuario();\n  Inicio\n  Cur_R034USU.SQL \"SELECT numemp, tipcol, numcad \\ \n                      FROM R034USU \\ \n                      WHERE codusu = :codigoUsuario\";\n                     \n  Cur_R034USU.AbrirCursor();\n  Se (Cur_R034USU.Achou)\n    Inicio\n    usuarioPossuiColaborador = 1;\n    \n    codigoEmpresa = Cur_R034USU.NUMEMP;\n    tipoColaborador = Cur_R034USU.TIPCOL;\n    codigoColaborador = Cur_R034USU.NUMCAD;\n    Fim;\n  Senao\n    usuarioPossuiColaborador = 0;\n     \n  Cur_R034USU.FecharCursor();\n  Fim;\n\nFuncao PossuiPermissaoMobilidade();\n  Inicio \n  @ código da permissão do módulo mobilidade = 16 @\n  Cur_R034MDL.SQL \"SELECT indcon \\\n                      FROM R034MDL \\\n                      WHERE codmod = 16 \\\n                        AND numemp = :codigoEmpresa \\\n                        AND tipcol = :tipoColaborador \\\n                        AND numcad = :codigoColaborador\";\n                     \n  Cur_R034MDL.AbrirCursor();\n  Se (Cur_R034MDL.Achou)\n    Inicio\n    registroPermissaoMobilidadeOk = 1;\n    \n    Se (Cur_R034MDL.INDCON = \"S\")\n      permissaoMobilidadeOk = 1;\n    Senao\n      permissaoMobilidadeOk = 0;\n    Fim;\n  Senao\n    Inicio\n    registroPermissaoMobilidadeOk = 0;\n    permissaoMobilidadeOk = 0;\n    Fim;\n    \n  Cur_R034MDL.FecharCursor();\n  Fim;\n\nFuncao PossuiEmailValido();\n  Inicio\n  Cur_R900CPL.SQL \"SELECT email \\\n                    FROM R900cpl \\\n                    WHERE perid = :codigoUsuario\";\n                     \n  Cur_R900CPL.AbrirCursor();\n  Se (Cur_R900CPL.Achou)\n    Inicio\n    Se (Cur_R900CPL.email = \"NULL\")\n      emailValidoOk = 0;\n    Senao\n      Inicio\n        LerPosicaoAlfa (Cur_R900CPL.EMAIL, vCaracter, 1);\n        Se (vCaracter = ' ')\n          emailValidoOk = 0;\n        Senao\n          emailValidoOk = 1;\n      Fim;\n    Fim;\n  Senao\n    emailValidoOk = 0;\n    \n  Cur_R900CPL.FecharCursor();\n  Fim;\n\nFuncao ObterNomeColaborador();\n  Inicio\n  Cur_R034FUN.SQL \"SELECT nomfun \\\n                    FROM R034FUN \\\n                    WHERE numemp = :codigoEmpresa \\\n                      AND tipcol = :tipoColaborador \\\n                      AND numcad = :codigoColaborador\";\n                     \n  Cur_R034FUN.AbrirCursor();\n  Se (Cur_R034FUN.Achou)\n    nomeColaborador = Cur_R034FUN.NOMFUN;\n    \n  Cur_R034FUN.FecharCursor();\n  Fim;\n\nFuncao obterMensagemIdentificacaoColaborador();\n  Inicio\n    IntParaAlfa(codigoColaborador, aCodigoColaborador);\n    IntParaAlfa(codigoEmpresa, aCodigoEmpresa);\n    Se (tipoColaborador = 1)\n      aTipoColaborador = \"empregado\";\n    Se (tipoColaborador = 2)\n      aTipoColaborador = \"terceiro\";  \n    Se (tipoColaborador = 3)\n      aTipoColaborador = \"parceiro\";\n  \n    ObterNomeColaborador();\n    mensagemIdentificacaoColaborador = aTipoColaborador + \" \" + nomeColaborador + \" (\" + aCodigoColaborador + \"). Empresa: \" + aCodigoEmpresa + \".\";\n  Fim;",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoAssMarcPonto",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação de assinalamento para Marcação de Ponto",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "RodapeGeral",
+      "bandType": "ADICIONAL",
+      "tag": 502,
+      "position": {
+        "top": 510,
+        "left": 0,
+        "width": 6000,
+        "height": 95
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho007",
+          "position": {
+            "top": 60,
+            "left": 75,
+            "width": 695,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "AvisoTabelasConsulta",
+          "position": {
+            "top": 69,
+            "left": 99,
+            "width": 673,
+            "height": 17
+          },
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "EmailsSGU",
+      "bandType": "OUTRO",
+      "tag": 606,
+      "position": {
+        "top": 160,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao ObterDescricaoUsuariosDuplicados();\nDefinir Funcao ObterDescricaoUsuariosSemEmail();\nDefinir Funcao VerificarEmails();\n\nDefinir Cursor Cur_R900CPL;\nDefinir Cursor CurAux_R900CPL;\n\nDefinir Cursor Cur2_R900CPL;\nDefinir Cursor CurAux2_R900CPL;\n\nDefinir Alfa descricaoUsuariosDuplicados;\nDefinir Alfa descricaoUsuariosSemEmail;\nDefinir Numero emailsOk;\n\nDefinir Alfa emailDuplicado;\nDefinir Alfa aCodigoUsuario;\nDefinir Alfa nomeGrupo;\n\n@ Inicialização @\nemailsOk = 1;\n\n@ Validação @\nnomeGrupo = \"Mobilidade - Marcação de Ponto - Administradores\";\nVerificarEmails();\n\nnomeGrupo = \"Mobilidade - Marcação de Ponto - Gestores\";\nVerificarEmails();\n\nnomeGrupo = \"Mobilidade - Marcação de Ponto - Colaboradores\";\nVerificarEmails();\n\n@ Resultado final @\nSe (emailsOk = 1)\n  Inicio\n  valorMemo = \"E-mails do SGU cadastrados corretamente.\";\n  icone = \"ok\";\n  ListaSecao(\"AdicionalPadrao\");\n  Fim;\n\n\n@ Funções auxiliares @\nFuncao VerificarEmails();\n  Inicio\n  Cur_R900CPL.SQL \"SELECT email \\\n                    FROM R900cpl \\\n                    WHERE perid in ( \\\n                    \tSELECT codmbr \\\n                    \tFROM R910MGP \\\n                    \tWHERE codgrp in ( \\\n                    \t\tSELECT codent \\\n                    \t\tFROM r910ent \\\n                    \t\tWHERE nomexb in ( \\\n                    \t\t\t:nomeGrupo \\\n                    \t\t) \\\n                    \t) \\\n                    ) \\\n                  AND EMAIL IS NOT NULL \\\n                  GROUP BY email \\\n                  HAVING COUNT(*) > 1\";\n                     \n  Cur_R900CPL.AbrirCursor();\n  Se (Cur_R900CPL.Achou)\n    Inicio\n    emailsOk = 0;\n    \n    Enquanto (Cur_R900CPL.Achou)\n      Inicio\n      emailDuplicado = Cur_R900CPL.EMAIL;\n      ObterDescricaoUsuariosDuplicados();\n      \n      valorMemo = \"Os usuários \" + descricaoUsuariosDuplicados + \"do grupo \\\"\" + nomeGrupo + \"\\\" possuem o mesmo e-mail (\" + emailDuplicado + \").\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      \n      Cur_R900CPL.Proximo();\n      Fim;\n    Fim; \n  Cur_R900CPL.FecharCursor();\n  \n  Cur2_R900CPL.SQL \"SELECT email \\\n                    FROM R900cpl \\\n                    WHERE perid in ( \\\n                    \tSELECT codmbr \\\n                    \tFROM R910MGP \\\n                    \tWHERE codgrp in ( \\\n                    \t\tSELECT codent \\\n                    \t\tFROM r910ent \\\n                    \t\tWHERE nomexb in ( \\\n                    \t\t\t:nomeGrupo \\\n                    \t\t) \\\n                    \t) \\\n                    ) \\\n                  AND EMAIL IS NULL \\\n                  GROUP BY email\";\n                     \n  Cur2_R900CPL.AbrirCursor();\n  Se (Cur2_R900CPL.Achou)\n    Inicio\n    emailsOk = 0;\n    \n    Enquanto (Cur2_R900CPL.Achou)\n      Inicio\n      ObterDescricaoUsuariosSemEmail();\n\n      valorMemo = \"Os usuários \" + descricaoUsuariosSemEmail + \"do grupo \\\"\" + nomeGrupo + \"\\\" não possuem e-mail cadastrado.\";\n      icone = \"erro\";\n      ListaSecao(\"AdicionalPadrao\");\n      \n      Cur2_R900CPL.Proximo();\n      Fim;\n    Fim; \n  Cur2_R900CPL.FecharCursor();\n  \n  Fim;\n\nFuncao ObterDescricaoUsuariosDuplicados();\n  Inicio\n  CurAux_R900CPL.SQL \"SELECT perid \\\n                    FROM R900cpl usuarios \\\n                    WHERE email = :emailDuplicado \\\n                    \tAND usuarios.perid in ( \\\n                    \t\tSELECT codmbr \\\n                    \t\tFROM R910MGP \\\n                    \t\tWHERE codgrp in ( \\\n                    \t\t\tSELECT codent \\\n                    \t\t\tFROM r910ent \\\n                    \t\t\tWHERE nomexb in ( \\\n                    \t\t\t\t:nomeGrupo \\\n                     \t\t\t) \\\n                    \t\t) \\\n                    \t)\"\n                   \n  CurAux_R900CPL.AbrirCursor();\n  descricaoUsuariosDuplicados = \"\";\n  Enquanto (CurAux_R900CPL.Achou)\n    Inicio\n    IntParaAlfa (CurAux_R900CPL.PERID, aCodigoUsuario);\n    descricaoUsuariosDuplicados = descricaoUsuariosDuplicados + aCodigoUsuario + \", \";\n    \n    CurAux_R900CPL.Proximo();\n    Fim;\n  \n  CurAux_R900CPL.FecharCursor();\n  Fim;\n  \n  Funcao ObterDescricaoUsuariosSemEmail();\n  Inicio\n  CurAux2_R900CPL.SQL \"SELECT perid \\\n                    FROM R900cpl usuarios \\\n                    WHERE email IS NULL \\\n                    \tAND usuarios.perid in ( \\\n                    \t\tSELECT codmbr \\\n                    \t\tFROM R910MGP \\\n                    \t\tWHERE codgrp in ( \\\n                    \t\t\tSELECT codent \\\n                    \t\t\tFROM r910ent \\\n                    \t\t\tWHERE nomexb in ( \\\n                    \t\t\t\t:nomeGrupo \\\n                     \t\t\t) \\\n                    \t\t) \\\n                    \t)\"\n                   \n  CurAux2_R900CPL.AbrirCursor();\n  descricaoUsuariosSemEmail = \"\";\n  Enquanto (CurAux2_R900CPL.Achou)\n    Inicio\n    IntParaAlfa (CurAux2_R900CPL.PERID, aCodigoUsuario);\n    descricaoUsuariosSemEmail = descricaoUsuariosSemEmail + aCodigoUsuario + \", \";\n    \n    CurAux2_R900CPL.Proximo();\n    Fim;\n  \n  CurAux2_R900CPL.FecharCursor();\n  Fim;",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "cabecalhoEmailsSGU",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação dos e-mails no SGU",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho008",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "DisponibilidadeServicos",
+      "bandType": "OUTRO",
+      "tag": 607,
+      "position": {
+        "top": 370,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa usuarioNuvem;\nDefinir Alfa senhaNuvem;\n\nDefinir Alfa vHTTP;\nHttpObjeto(vHTTP);\nDefinir Alfa vPostResponse;\nDefinir Alfa vPostData;\n\n@vPostData =  \"email=\" + usuarioNuvem + \"&senha=\" + senhaNuvem;           @\n\n@HttpPost(vHTTP, \"http://localhost:8080/mobile-2.0.15-DEVELOP-local/services/validador/auth\", vPostData, vPostResponse);        @\n\n@valorMemo = vPostResponse;                                                                                       @\n\n@ListaSecao(\"AdicionalPadrao\");                                                                       @\n\n@Web services necessários disponiveis @\n",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "CabecalhoDispServicos",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação dos web services",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho009",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "VersaoMinima",
+      "bandType": "OUTRO",
+      "tag": 608,
+      "position": {
+        "top": 90,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa letraEntrada;\nDefinir Numero achouErro;\n\nDefinir Numero majorVersion;\nDefinir Numero minorVersion;\nDefinir Numero release;                                \nDefinir Numero build;\n\nDefinir Alfa aMajorVersion;\nDefinir Alfa aMinorVersion;\nDefinir Alfa aRelease;\nDefinir Alfa aBuild;\n\nDefinir Numero majorVersionMinimo;\nDefinir Numero minorVersionMinimo;\nDefinir Numero releaseMinimo;\nDefinir Numero buildMinimo;\n\nDefinir Alfa aMajorVersionMinimo;\nDefinir Alfa aMinorVersionMinimo;\nDefinir Alfa aReleaseMinimo;\nDefinir Alfa aBuildMinimo;\n\nachouErro = 0;\n\nObterVersaoSistema(majorVersion, minorVersion, release, build);\n\nmajorVersionMinimo = 6;\nminorVersionMinimo = 2;\nreleaseMinimo = 31;\nbuildMinimo = 34;  \n\nSe (majorVersion < majorVersionMinimo)\n  achouErro = 1;\nSenao\nSe (majorVersion = majorVersionMinimo)   \n  Inicio\n  Se (minorVersion < minorVersionMinimo)\n    achouErro = 1;\n  Senao\n  Se (minorVersion = minorVersionMinimo)   \n    Inicio\n    Se (release < releaseMinimo)\n      achouErro = 1;\n    Senao\n    Se (release = releaseMinimo)   \n      Inicio\n      Se (build < buildMinimo)\n        achouErro = 1;\n      Fim;\n    Fim;\n  Fim;\n  \nSe (achouErro = 0)\n  Inicio\n  valorMemo = \"Versão mínima atendida.\";\n  icone = \"ok\";\n  Fim;\nSenao\n  Inicio\n  IntParaAlfa(majorVersionMinimo, aMajorVersionMinimo);\n  IntParaAlfa(minorVersionMinimo, aMinorVersionMinimo);\n  IntParaAlfa(releaseMinimo, aReleaseMinimo);\n  IntParaAlfa(buildMinimo, aBuildMinimo);\n  \n  IntParaAlfa(majorVersion, aMajorVersion);\n  IntParaAlfa(minorVersion, aMinorVersion);\n  IntParaAlfa(release, aRelease);\n  IntParaAlfa(build, aBuild);\n  valorMemo = \"Versão em execução é menor do que a versão mínima para utilizar o aplicativo. Versão encontrada: \" + aMajorVersion + \".\" + aMinorVersion + \".\" + aRelease + \".\" + aBuild + \", \\\nversão esperada: \" + aMajorVersionMinimo + \".\" + aMinorVersionMinimo + \".\" + aReleaseMinimo + \".\" + aBuildMinimo + \".\";\n  icone = \"erro\";  \n  Fim;\n  \nListaSecao(\"AdicionalPadrao\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "CabecalhoVersaoMinima",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação da versão mínima",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho010",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 605,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "DescricaoRodape",
+          "position": {
+            "top": 0,
+            "left": 18,
+            "width": 250,
+            "height": 17
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 0,
+            "left": 297,
+            "width": 472,
+            "height": 17
+          },
+          "caption": "http://documentacao.senior.com.br/mobilidade/#mobilidade/gestao-pessoas/marcacao-ponto.htm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "ChecklistManual",
+      "bandType": "OUTRO",
+      "tag": 609,
+      "position": {
+        "top": 405,
+        "left": 0,
+        "width": 6000,
+        "height": 65
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "icone = \"alerta\";\n\nvalorMemo = \"Garantir a data de validade da proprietária.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir a disponbilidade do banco de dados.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir que a configuração \\\"Habilitar agendador de processos automáticos\\\" está ligada no Middleware.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir que a quantidade de usuários nos grupos não ultrapasse a quantidade de usuários contratada para uso do aplicativo.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir a existência do agendamento da regra com a função MobilidadeSincronizar.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir a disponibilidade dos web services.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir que a senha do e-mail de autenticação do processo automático está correta.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir acesso a URL do servidor do mobilidade, cadastrado no ConfigCenter.\";\nListaSecao(\"AdicionalPadrao\");\n\nvalorMemo = \"Garantir que na tela Assinalamentos Diversos (FR000ASS), guia Ponto, os coletores estão cadastrados.\";\nListaSecao(\"AdicionalPadrao\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "CabecalhoChecklistManual",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Checklist manual",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho011",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescricaoChecklistManual",
+          "position": {
+            "top": 36,
+            "left": 18,
+            "width": 391,
+            "height": 17
+          },
+          "caption": "Os itens seguintes também devem ser verificados para garantir a implantação:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "UsuariosGrupo",
+      "bandType": "OUTRO",
+      "tag": 610,
+      "position": {
+        "top": 195,
+        "left": 0,
+        "width": 6000,
+        "height": 35
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Funcao validarQdeUsuarios();\nDefinir Funcao GrupoQdeUsuarios();\n\nDefinir Alfa nomeGrupo;\n\nDefinir Alfa aEnter;\nDefinir Alfa aQuebra;\nDefinir Alfa vNomeModulo;\nDefinir Alfa aQdeGeral;\nDefinir Alfa aQdeUsuario;\nDefinir Alfa aQdeUsuariosGrupo;\n\nCaracterParaAlfa(10, aEnter);\nCaracterParaAlfa(13, aQuebra);\n\n@ Valida a quantidade de usuários na proprietária @  \nvalidarQdeUsuarios();\n\nFuncao validarQdeUsuarios();\nInicio\n  @ Apresentar a quantidade de licenças por módulo na proprietária do cliente - INICIO @\n  \n  Prop_ObterQtdModulos(8, vQuantidade);\n  /*\n  IntParaAlfa(vQuantidade, aQdeGeral);\n  valorMemo = aQdeGeral;\n  ListaSecao(\"AdicionalPadrao\");\n  */\n  \n  Para (i=1;i<vQuantidade;i++) {\n      Prop_ObterQtdLicencasModulo(8, i, vQdeGeral, vQdeUsuario);\n      Prop_ObterNomeModulo(8, i, vNomeModulo);\n      IntParaAlfa(vQdeGeral, aQdeGeral);\n      IntParaAlfa(vQdeUsuario, aQdeUsuario);\n      valorMemo = \"Módulo: \" + vNomeModulo;\n      @ListaSecao(\"AdicionalPadrao\");@\n      valorMemo = \"Quantidade de Usuários na proprietária: \" + aQdeUsuario;\n      @ListaSecao(\"AdicionalPadrao\");@\n      \n      Se (vNomeModulo = \"MP\") {\n          nomeGrupo = \"Mobilidade - Marcação de Ponto - Colaboradores\";\n          GrupoQdeUsuarios();\n      }     \n  }\nFim;\n\nFuncao GrupoQdeUsuarios();\nInicio\n  QdeUsuariosGrupo = 0;\n                           \n  Cur_R910MGP.SQL \"SELECT R910MGP.codmbr FROM R910MGP \\\n                    WHERE R910MGP.codgrp = (SELECT r910ent.codent \\\n                                              FROM r910ent \\ \n                                             WHERE r910ent.nomexb = :nomeGrupo \\\n                                               AND r910ent.TIPENT = 'G' AND r910ent.codent = R910MGP.CodGrp)\";\n  Cur_R910MGP.AbrirCursor();\n  Enquanto (Cur_R910MGP.Achou) { \n    QdeUsuariosGrupo++;\n    Cur_R910MGP.Proximo();    \n  }  \n  Cur_R910MGP.FecharCursor();\n  \n  IntParaAlfa(QdeUsuariosGrupo, aQdeUsuariosGrupo);\n  \n  Se (QdeUsuariosGrupo > vQdeUsuario) {\n      icone = \"erro\";\n      valorMemo = \"Módulo: \" + vNomeModulo + aEnter + aQuebra;\n      valorMemo = valorMemo + \"Usuários na proprietária: \" + aQdeUsuario + \", Usuários no grupo \\\"\" + nomeGrupo + \"\\\": \" + aQdeUsuariosGrupo;\n      ListaSecao(\"AdicionalPadrao\");\n\n      icone = \"\";  \n      valorMemo = \"A quantidade de usuários no grupo é maior que o permitido para uso conforme licença. Alguns usuários não poderão efetuar login no app.\";\n      ListaSecao(\"AdicionalPadrao\");    \n  }\n  Senao {\n      icone = \"ok\";\n      valorMemo = \"Módulo: \" + vNomeModulo + aEnter + aQuebra;\n      valorMemo = valorMemo + \"Usuários na proprietária: \" + aQdeUsuario + \", Usuários no grupo \\\"\" + nomeGrupo + \"\\\": \" + aQdeUsuariosGrupo;\n      ListaSecao(\"AdicionalPadrao\");\n  \n      icone = \"\";  \n      valorMemo = \"A quantidade de usuários no grupo está conforme o permitido na licença.\";\n      ListaSecao(\"AdicionalPadrao\");  \n  }\n   \nFim;\n ",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 6,
+            "left": 18,
+            "width": 500,
+            "height": 17
+          },
+          "caption": "Validação da quantidade de usuários no grupo do SGU",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho012",
+          "position": {
+            "top": 27,
+            "left": 15,
+            "width": 500,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 51377,
+    "totalBytes": 652213,
+    "parseComplete": true,
+    "bandCount": 14,
+    "fieldCount": 35,
+    "errorCount": 1,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 489,
+        "skippedTo": 812,
+        "note": "Skipped 323 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1316 @@
+{
+  "filename": "smat009.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Função:    Emitir Relação dos Medicamentos Administrados e Doados.   Permite definir se serão impressos ou não as recomendações, as anotações,  o atendente responsável pela receita, o atendente responsável pela administração, a quantidade doada e as solicitações (S - Apresenta somente solicitações atendidas,  N - Apresenta todas as solicitações)  Abrangência:   1.Código da Ficha Médica   2.Período Inicial (data do atendimento)   3.Período Final (data do atendimento)   4.CID   5.Ocorrência   6.Medicamento  Quebra:   1.Data - sem totalização   2.Medicamento e Data - total por Medicamento/Data   3.Medicamento - total por Medicamento  Ordenação:   1.Data, Hora, Medicamento, Nome do Atendido, Número Ficha Médica   2.Medicamento, Data, Hora, Nome do Atendido, Número Ficha Médica   ",
+  "description": [
+    "Função: ",
+    "  Emitir Relação dos Medicamentos Administrados e Doados.",
+    "  Permite definir se serão impressos ou não as recomendações, as anotações, ",
+    "o atendente responsável pela receita, o atendente responsável pela administração,",
+    "a quantidade doada e as solicitações (S - Apresenta somente solicitações atendidas, ",
+    "N - Apresenta todas as solicitações)",
+    "",
+    "Abrangência:",
+    "  1.Código da Ficha Médica",
+    "  2.Período Inicial (data do atendimento)",
+    "  3.Período Final (data do atendimento)",
+    "  4.CID",
+    "  5.Ocorrência",
+    "  6.Medicamento",
+    "",
+    "Quebra:",
+    "  1.Data - sem totalização",
+    "  2.Medicamento e Data - total por Medicamento/Data",
+    "  3.Medicamento - total por Medicamento",
+    "",
+    "Ordenação:",
+    "  1.Data, Hora, Medicamento, Nome do Atendido, Número Ficha Médica",
+    "  2.Medicamento, Data, Hora, Nome do Atendido, Número Ficha Médica",
+    "",
+    " "
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir alfa vPerIni;\nDefinir alfa vPerFim;\nDefinir alfa vSqlAux;\nDefinir alfa ESolAte;\n\n@ Verifica se a data inicial é menor que a final e ambas diferentes de zero @\nSe ((EPerIni > EPerFim) ou (EPerIni = 0) ou (EPerFim = 0))\nInicio\n   Mensagem(Erro, \"A Data Inicial deve ser menor que a Data Final e ambas diferentes de zero! [&OK]\");\n   Cancel(1);\nFim;\n\nConverteDataBanco(EPerIni,vPerIni);\nConverteDataBanco(EPerFim,vPerFim);\n\nvSqlAux = \"(R110MED.DatAte >= \" + vPerIni + \" AND  R110MED.DatAte <= \" + vPerFim + \")\";\nInsClauSqlWhere(\"Detalhe_Medicamentos\",vSqlAux);\n\n@ Tratamento para listar somente solicitações atendidas ou todas @\nSe (ESolAte = \"S\")\nInicio\n   vSqlAux = \" AND R110MED.IndSol = 'S'\";\n   InsClauSqlWhere(\"Detalhe_Medicamentos\",vSqlAux);\nFim;\n\n/* -----------------------------------------------------------------\n    VERIFICA NA DEFINIÇÃO DO MEDICINA SE É USADO O SUBGRUPO DO CID\n   ----------------------------------------------------------------- */\nDefinir Cursor CDef;\nDefinir Alfa xUsaSub;\n\nxUsaSub = \"N\";\nxNumEmp = EmpAtu;\nCDef.SQL \"SELECT APRCID FROM R110DEF WHERE NUMEMP = :xNumEmp\";\nCDef.AbrirCursor();\nSe (CDef.Achou)\n  {\n  xUsaSub = CDef.AprCid;\n  }\nCDef.FecharCursor();",
+    "selection": "",
+    "initialization": "/*\n define as listas que serão utilizadas para totalização dos medicamentos por forma de apresentação\n acumulando os medicamentos administrados e doados\n*/\nDefinir Lista LTotMedAdm;\n\nLTotMedAdm.DefinirCampos();\nLTotMedAdm.AdicionarCampo(\"Med\",alfa);\nLTotMedAdm.AdicionarCampo(\"Tip\",alfa);\nLTotMedAdm.AdicionarCampo(\"Qtd\",numero);\nLTotMedAdm.AdicionarCampo(\"Dat\",data);\nLTotMedAdm.EfetivarCampos();\n\nDefinir Lista LTotMedDoa;\n\nLTotMedDoa.DefinirCampos();\nLTotMedDoa.AdicionarCampo(\"Med\",alfa);\nLTotMedDoa.AdicionarCampo(\"Tip\",alfa);\nLTotMedDoa.AdicionarCampo(\"Qtd\",numero);\nLTotMedDoa.AdicionarCampo(\"Dat\",data);\nLTotMedDoa.EfetivarCampos();",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Detalhe_Medicamentos",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 175,
+        "left": 0,
+        "width": 6000,
+        "height": 37
+      },
+      "canPrint": true,
+      "tableList": [
+        "R110MED.CODATE",
+        "R110MED.ATEADM",
+        "R110MED.OBSADM",
+        "R110MED.ANOADM",
+        "R110MED.QTDAPL",
+        "R110REM.NOMREM",
+        "R110MED.DATATE",
+        "R110MED.QTDDOA",
+        "R110MED.CODAPR",
+        "R110MED.CODAPD",
+        "R110MED.CODDOE",
+        "R110MED.CODSUB"
+      ],
+      "onBeforePrint": "Definir alfa xDesAprAdm;\nDefinir alfa xDesAprDoa;\nDefinir cursor Cur_R110Apr;\nDefinir Numero xCodApr;\nDefinir alfa EAprDoa;\n\n@ Tratamento para apresentar quantidade doada @\nSe (EAprDoa = \"S\")\nInicio\n  AlteraControle(\"Cadastro010\",\"Imprimir\",\"Verdadeiro\");\n  AlteraControle(\"DesAprDoa\",\"Imprimir\",\"Verdadeiro\");\nFim;\nSenao\nInicio\n  AlteraControle(\"Cadastro010\",\"Imprimir\",\"Falso\");\n  AlteraControle(\"DesAprDoa\",\"Imprimir\",\"Falso\");\nFim;\n\n@ Limpa as variáveis @\nxDesAprAdm = \"\";\nxDesAprDoa = \"\";\n\n/*\n utiliza-se o mesmo cursor para retornar a descrição da forma de apresentação do medicamento\n administrado e do medicamento doado\n*/\nCur_R110Apr.SQL \"SELECT DESAPR FROM R110APR WHERE CODAPR=:xCodApr\";\n\n@ Busca a descrição do medicamento administrado @\nxCodApr = R110MED.CodApr;\n\nCur_R110Apr.AbrirCursor();\nSe (Cur_R110Apr.Achou)\nInicio\n  xDesAprAdm = Cur_R110Apr.DesApr;  \nFim;\nCur_R110Apr.FecharCursor();\n\n@ Busca a descrição do medicamento doado @\nxCodApr = R110MED.CodApd;\n\nCur_R110Apr.AbrirCursor();\nSe (Cur_R110Apr.Achou)\nInicio\n  xDesAprDoa = Cur_R110Apr.DesApr;  \nFim;\nCur_R110Apr.FecharCursor();\n\n@ Exibe o resultado nos campos descrição @\nAlteraControle(\"DesAprAdm\",\"Descrição\",xDesAprAdm);\nAlteraControle(\"DesAprDoa\",\"Descrição\",xDesAprDoa);",
+      "onAfterPrint": "Definir alfa xDesAprAdm;\nDefinir alfa xDesAprDoa;\nDefinir alfa EAprRec; @ Apresentar Recomendação @\nDefinir alfa EAprAno; @ Apresentar Anotação @\nDefinir alfa EAprAtr; @ Apresentar Atendente que receitou remédio @\nDefinir alfa EAprAta; @ Apresentar Atendente que administrou remédio @\nDefinir alfa vAteRec; @ Nome do Atendente que receitou remédio @\nDefinir alfa vAteAdm; @ Nome do Atendente que administrou remédio @\nDefinir cursor Cur_R108TAT;\nDefinir Numero vCodAte;\n\nCur_R108TAT.SQL \"SELECT NomAte FROM R108TAT WHERE CodAte=:vCodAte\";\n\n@ Listar atendente que receitou / administrou @\nSe ((EAprAtr = \"S\") ou (EAprAta = \"S\"))\nInicio\n  Se ((EAprAtr = \"S\") e (R110MED.CodAte <> 0))\n  Inicio\n    vCodAte = R110MED.CodAte;\n    vAteRec = \"\";\n\n    Cur_R108TAT.AbrirCursor();\n    Se (Cur_R108TAT.Achou)\n      vAteRec = Cur_R108TAT.NomAte;\n    Cur_R108TAT.FecharCursor();  \n\n  Fim;\n\n  Se ((EAprAta = \"S\") e (R110MED.AteAdm <> 0))\n  Inicio\n    vCodAte = R110MED.AteAdm;\n    vAteAdm = \"\";\n\n    Cur_R108TAT.AbrirCursor();\n    Se (Cur_R108TAT.Achou)\n      vAteAdm = Cur_R108TAT.NomAte;\n    Cur_R108TAT.FecharCursor();  \n  Fim;\n\n  AlteraControle(\"DescRespReceita\",\"Descrição\",vAteRec);\n  AlteraControle(\"DescRespAdmin\",\"Descrição\",vAteAdm);\n  ListaSecao(\"Adicional_Lista_Rec_Adm\");\nFim;\n\nSe ((EAprRec = \"S\") e ((R110MED.ObsAdm <> \"\") e (R110MED.ObsAdm <> \" \")))\nInicio\n  AlteraControle(\"MemoRecomenda\",\"Justificado\",\"Verdadeiro\");\n  ListaSecao(\"Adicional_Recomendacao\");\nFim;\n\nSe ((EAprAno = \"S\") e ((R110MED.AnoAdm <> \"\") e (R110MED.AnoAdm <> \" \")))\nInicio\n  AlteraControle(\"MemoAnota\",\"Justificado\",\"Verdadeiro\");\n  ListaSecao(\"Adicional_Anotacao\");\nFim;\n\n/*********************************************************\n          TOTALIZADOR MEDICAMENTO ADMINISTRADO\n *********************************************************/\n@ Verificar antes se houve administração de remédio @\nSe ((xDesAprAdm <> \"\") e (R110MED.QtdApl <> 0))\ninicio\n  LTotMedAdm.Chave(\"Med;Tip;Dat\");\n  LTotMedAdm.SetarChave();\n  LTotMedAdm.Med = R110REM.NomRem;\n  LTotMedAdm.Tip = xDesAprAdm;\n  LTotMedAdm.Dat = R110MED.DatAte;\n\n  @ Se encontrar o medicamento/apresentação na lista, altera o valor, senão inclui @\n  Se (LTotMedAdm.VaiParaChave())\n  inicio\n    LTotMedAdm.Editar();\n    LTotMedAdm.Qtd = LTotMedAdm.Qtd + R110MED.QtdApl;\n    LTotMedAdm.Gravar();\n  fim;\n  Senao\n  inicio\n    LTotMedAdm.Adicionar();\n    LTotMedAdm.Med = R110REM.NomRem;\n    LTotMedAdm.Tip = xDesAprAdm;\n    LTotMedAdm.Dat = R110MED.DatAte;\n    LTotMedAdm.Qtd = R110MED.QtdApl;\n    LTotMedAdm.Gravar();\n  fim;\nfim;\n\n/*********************************************************\n          TOTALIZADOR MEDICAMENTO DOADO\n *********************************************************/\n@ Verificar antes se houve doação de remédio @\nSe ((xDesAprDoa <> \"\") e (R110MED.QtdDoa <> 0))\ninicio\n  LTotMedDoa.Chave(\"Med;Tip;Dat\");\n  LTotMedDoa.SetarChave();\n  LTotMedDoa.Med = R110REM.NomRem;\n  LTotMedDoa.Tip = xDesAprDoa;\n  LTotMedDoa.Dat = R110MED.DatAte;\n\n  @ Se encontrar o medicamento/apresentação na lista, altera o valor, senão inclui @\n  Se (LTotMedDoa.VaiParaChave())\n  inicio\n    LTotMedDoa.Editar();\n    LTotMedDoa.Qtd = LTotMedDoa.Qtd + R110MED.QtdDoa;\n    LTotMedDoa.Gravar();\n  fim;\n  Senao\n  inicio\n    LTotMedDoa.Adicionar();\n    LTotMedDoa.Med = R110REM.NomRem;\n    LTotMedDoa.Tip = xDesAprDoa;\n    LTotMedDoa.Dat = R110MED.DatAte;\n    LTotMedDoa.Qtd = R110MED.QtdDoa;\n    LTotMedDoa.Gravar();\n  fim;\nfim;\n/*********************************************************/",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 201,
+            "width": 60,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "DatAte",
+          "caption": "R110MED.DatAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 30,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "HorAte",
+          "caption": "R110MED.HorAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 300,
+            "width": 54,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodFic",
+          "caption": "R110MED.CodFic",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 357,
+            "width": 197,
+            "height": 17
+          },
+          "table": "R110FIC",
+          "field": "NomAtn",
+          "caption": "R110FIC.NomAtn",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 18,
+            "left": 201,
+            "width": 60,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "DatAdm",
+          "caption": "R110MED.DatAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 18,
+            "left": 264,
+            "width": 30,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "HorAdm",
+          "caption": "R110MED.HorAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 912,
+            "width": 18,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodOco",
+          "caption": "R110MED.CodOco",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro020",
+          "position": {
+            "top": 0,
+            "left": 975,
+            "width": 10,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "IndSol",
+          "caption": "R110MED.IndSol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesAprAdm",
+          "position": {
+            "top": 18,
+            "left": 357,
+            "width": 197,
+            "height": 17
+          },
+          "caption": "DesAprAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 194,
+            "height": 17
+          },
+          "table": "R110REM",
+          "field": "NomRem",
+          "caption": "R110REM.NomRem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 18,
+            "left": 300,
+            "width": 54,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "QtdApl",
+          "caption": "R110MED.QtdApl",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 873,
+            "width": 36,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodRem",
+          "caption": "R110MED.CodRem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 158,
+            "height": 17
+          },
+          "table": "R108TOC",
+          "field": "DesOco",
+          "caption": "R108TOC.DesOco",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesAprDoa",
+          "position": {
+            "top": 18,
+            "left": 618,
+            "width": 158,
+            "height": 17
+          },
+          "caption": "DesAprDoa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 933,
+            "width": 18,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodApr",
+          "caption": "R110MED.CodApr",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 954,
+            "width": 18,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodApd",
+          "caption": "R110MED.CodApd",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro027",
+          "position": {
+            "top": 18,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodSub",
+          "caption": "R110MED.CodSub",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodDoe",
+          "caption": "R110MED.CodDoe",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 18,
+            "left": 558,
+            "width": 56,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "QtdDoa",
+          "caption": "R110MED.QtdDoa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro022",
+          "position": {
+            "top": 0,
+            "left": 987,
+            "width": 40,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "AteAdm",
+          "caption": "R110MED.AteAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro021",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 46,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "CodAte",
+          "caption": "R110MED.CodAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DCid",
+          "position": {
+            "top": 0,
+            "left": 558,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "DCid",
+          "onPrint": "Se ((xUsaSub = \"S\") e (R110MED.CodDoe = ' ')) {\n    AlteraControle (\"DCid\", \"Descrição\", R110MED.CodSub);\n} Senao {\n  Definir Alfa xCodDoe;\n  formatarCID10(R110MED.CodDoe, xCodDoe);\n  AlteraControle (\"DCid\", \"Descrição\", xCodDoe);\n}",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Data",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 138,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "DescDataAtend",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 120,
+            "height": 17
+          },
+          "caption": "Data do Atendimento:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 0,
+            "left": 126,
+            "width": 60,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "DatAte",
+          "caption": "R110MED.DatAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Remedios",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 117,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro018",
+          "position": {
+            "top": 0,
+            "left": 87,
+            "width": 283,
+            "height": 17
+          },
+          "table": "R110REM",
+          "field": "NomRem",
+          "caption": "R110REM.NomRem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Medicamento:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Remedios_Data",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 305,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [
+        "R110MED.DATATE"
+      ],
+      "onBeforePrint": "Definir alfa EAprDoa;\n\nSe (EAprDoa = \"S\")\nInicio\n  AlteraControle(\"Descricao007\",\"Imprimir\",\"Verdadeiro\");\n  AlteraControle(\"FDoa\",\"Imprimir\",\"Verdadeiro\");\nFim;\nSenao\nInicio\n  AlteraControle(\"Descricao007\",\"Imprimir\",\"Falso\");\n  AlteraControle(\"FDoa\",\"Imprimir\",\"Falso\");\nFim;\n",
+      "onAfterPrint": "Definir alfa xDescApres;\n\nTem = LTotMedAdm.Primeiro();\nenquanto (Tem = 1)\ninicio\n  Se (LTotMedAdm.Dat = R110MED.DatAte)\n  inicio\n    xDescApres = LTotMedAdm.Tip;\n    FTotTipo   = LTotMedAdm.Qtd;\n    FAdm = FTotTipo;\n\n    LTotMedDoa.Chave(\"Med;Tip;Dat\");\n    LTotMedDoa.SetarChave();\n    LTotMedDoa.Med = LTotMedAdm.Med;\n    LTotMedDoa.Tip = LTotMedAdm.Tip;\n    LTotMedDoa.Dat = LTotMedAdm.Dat;\n    \n    FDoa = 0;\n    Enquanto (LTotMedDoa.VaiParaChave())\n    {\n      FDoa = FDoa + LTotMedDoa.Qtd;\n      LTotMedDoa.Excluir();\n    }    \n\n    AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n    ListaSecao(\"Adicional_Total_Med\");\n  fim;\n  Tem = LTotMedAdm.Proximo();\nfim;\n\n/* Navega por todos os registros da lista obtendo os valores dos campos */\nDefinir alfa EAprDoa;\n\n@ Tratamento para apresentar quantidade doada @\nSe (EAprDoa = \"S\")\ninicio\n  Tem = LTotMedDoa.Primeiro();\n  enquanto (Tem = 1)\n  inicio\n    Se (LTotMedDoa.Dat = R110MED.DatAte)\n    inicio\n      xDescApres = LTotMedDoa.Tip;\n      FTotTipo   = LTotMedDoa.Qtd;\n      FDoa = FTotTipo;\n      FAdm = 0;\n      AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n      ListaSecao(\"Adicional_Total_Med\");\n    fim;\n    Tem = LTotMedDoa.Proximo();\n  fim;\nfim;",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 0,
+            "left": 87,
+            "width": 76,
+            "height": 14
+          },
+          "caption": "Subtotal/Data:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro017",
+          "position": {
+            "top": 0,
+            "left": 165,
+            "width": 60,
+            "height": 14
+          },
+          "table": "R110MED",
+          "field": "DatAte",
+          "caption": "R110MED.DatAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 0,
+            "left": 552,
+            "width": 78,
+            "height": 17
+          },
+          "caption": "Administrado",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 0,
+            "left": 633,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "Doado",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Remedios",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 325,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa EAprDoa;\n\nSe (EAprDoa = \"S\")\nInicio\n  AlteraControle(\"Descricao003\",\"Imprimir\",\"Verdadeiro\");\n  AlteraControle(\"FDoa\",\"Imprimir\",\"Verdadeiro\");\nFim;\nSenao\nInicio\n  AlteraControle(\"Descricao003\",\"Imprimir\",\"Falso\");\n  AlteraControle(\"FDoa\",\"Imprimir\",\"Falso\");\nFim;",
+      "onAfterPrint": "Definir alfa xDescApres;\n\nxDescApres = \"\";\nFTotTipo   = 0;\n\nFAdm = 0;\nFDoa = 0;\n\nTem  = LTotMedAdm.Primeiro();\nTeve = Tem;\n\nEnquanto (Tem = 1)\ninicio\n  @ Se é a mesma forma de administração mas outra data, deve acumular @\n  Se (xDescApres = LTotMedAdm.Tip){\n    FTotTipo = FTotTipo + LTotMedAdm.Qtd;\n    FAdm = FTotTipo;\n    LTotMedDoa.Chave(\"Med;Tip\");\n    LTotMedDoa.SetarChave();\n    LTotMedDoa.Med = LTotMedAdm.Med;\n    LTotMedDoa.Tip = LTotMedAdm.Tip;\n    \n    Enquanto (LTotMedDoa.VaiParaChave())\n    {\n      FDoa = FDoa + LTotMedDoa.Qtd;\n      LTotMedDoa.Excluir();\n    }    \n  }\n  Senao\n  inicio\n    @ A primeira vez não lista nada @\n    Se (xDescApres <> \"\")\n    inicio\n      AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n      ListaSecao(\"Adicional_Total_Med\");\n      FDoa = 0;\n      FAdm = 0;\n    fim;\n    xDescApres = LTotMedAdm.Tip;\n    FTotTipo = LTotMedAdm.Qtd;\n    FAdm = FTotTipo;\n\n    LTotMedDoa.Chave(\"Med;Tip\");\n    LTotMedDoa.SetarChave();\n    LTotMedDoa.Med = LTotMedAdm.Med;\n    LTotMedDoa.Tip = LTotMedAdm.Tip;\n    Enquanto (LTotMedDoa.VaiParaChave())\n    {\n      FDoa = FDoa + LTotMedDoa.Qtd;\n      LTotMedDoa.Excluir();\n    }    \n\n  fim;\n  Tem = LTotMedAdm.Proximo();\nfim;\n\n@ Lista o último da lista @\nSe (Teve = 1)\ninicio\n  AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n  ListaSecao(\"Adicional_Total_Med\");\n  FDoa = 0;\n  FAdm = 0;\nfim;\n\n@ Limpa a lista em memória @\nLTotMedAdm.Limpar();\n\n/* Navega por todos os registros da lista obtendo os valores dos campos */\nDefinir alfa EAprDoa;\n\n@ Tratamento para apresentar quantidade doada @\nSe (EAprDoa = \"S\")\ninicio\n  xDescApres = \"\";\n  FTotTipo   = 0;\n\n  Tem = LTotMedDoa.Primeiro();\n  Teve = Tem;\n  \n  Enquanto (Tem = 1)\n  inicio\n    Se (xDescApres = LTotMedDoa.Tip){\n      FTotTipo = FTotTipo + LTotMedDoa.Qtd;\n      FDoa = FTotTipo;\n    }\n    Senao\n    inicio\n      @ A primeira vez não lista nada @\n      Se (xDescApres <> \"\")\n      inicio\n        AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n        ListaSecao(\"Adicional_Total_Med\");\n        FDoa = 0;\n        FAdm = 0;        \n      fim;\n      xDescApres = LTotMedDoa.Tip;\n      FTotTipo   = LTotMedDoa.Qtd;\n      FDoa = FTotTipo;\n    fim;\n    Tem = LTotMedDoa.Proximo();\n  fim;\n  Se (Teve = 1)\n  inicio\n    AlteraControle(\"DescApres\",\"Descrição\",xDescApres);\n    ListaSecao(\"Adicional_Total_Med\");\n    FDoa = 0;\n    FAdm = 0;\n  fim;\nfim;\nLTotMedDoa.Limpar();\n\nUltimoRegistro (\"Detalhe_Medicamentos\", IsEof);\nSe (IsEof = 0)\n  SaltarPagina();",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 0,
+            "left": 87,
+            "width": 110,
+            "height": 15
+          },
+          "caption": "Total/Medicamento:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro019",
+          "position": {
+            "top": 0,
+            "left": 198,
+            "width": 194,
+            "height": 15
+          },
+          "table": "R110REM",
+          "field": "NomRem",
+          "caption": "R110REM.NomRem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 0,
+            "left": 552,
+            "width": 77,
+            "height": 17
+          },
+          "caption": "Administrado",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 0,
+            "left": 633,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "Doado",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Recomendacao",
+      "bandType": "OUTRO",
+      "tag": 602,
+      "position": {
+        "top": 231,
+        "left": 0,
+        "width": 6000,
+        "height": 37
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 102,
+            "height": 17
+          },
+          "caption": "Recomendações:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "MemoRecomenda",
+          "position": {
+            "top": 18,
+            "left": 6,
+            "width": 543,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "ObsAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Anotacao",
+      "bandType": "OUTRO",
+      "tag": 603,
+      "position": {
+        "top": 268,
+        "left": 0,
+        "width": 6000,
+        "height": 37
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 102,
+            "height": 17
+          },
+          "caption": "Anotações:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "MemoAnota",
+          "position": {
+            "top": 18,
+            "left": 6,
+            "width": 544,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "AnoAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 117
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa EAprDoa;\nDefinir alfa EAprAtr;\nDefinir alfa EAprAta; \n\n@ Tratamento para apresentar quantidade doada @\nSe (EAprDoa = \"S\")\n  AlteraControle(\"Descricao014\",\"Imprimir\",\"Verdadeiro\");\nSenao\n  AlteraControle(\"Descricao014\",\"Imprimir\",\"Falso\");\n\n@ Apresentar Atendente que receitou remédio @\nSe (EAprAtr = \"S\")\n  AlteraControle(\"Descricao022\",\"Imprimir\",\"Verdadeiro\");\nSenao\n  AlteraControle(\"Descricao022\",\"Imprimir\",\"Falso\");\n\n@ Apresentar Atendente que administrou remédio @\nSe (EAprAta = \"S\")\n  AlteraControle(\"Descricao023\",\"Imprimir\",\"Verdadeiro\");\nSenao\n  AlteraControle(\"Descricao023\",\"Imprimir\",\"Falso\");",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 63,
+            "left": 3,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Medicamento",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao022",
+          "position": {
+            "top": 99,
+            "left": 201,
+            "width": 119,
+            "height": 17
+          },
+          "caption": "Atendente (Receitou)",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 81,
+            "left": 201,
+            "width": 95,
+            "height": 17
+          },
+          "caption": "Data/Hora Admin.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao018",
+          "position": {
+            "top": 63,
+            "left": 201,
+            "width": 95,
+            "height": 17
+          },
+          "caption": "Data/Hora Atend.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 63,
+            "left": 300,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Paciente",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao023",
+          "position": {
+            "top": 99,
+            "left": 558,
+            "width": 141,
+            "height": 17
+          },
+          "caption": "Atendente (Administrou)",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 63,
+            "left": 618,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Ocorrência",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 27,
+            "left": 270,
+            "width": 246,
+            "height": 23
+          },
+          "caption": "Relação de Medicamentos",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro026",
+          "position": {
+            "top": 6,
+            "left": 36,
+            "width": 280,
+            "height": 14
+          },
+          "table": "R030EMP",
+          "field": "NomEmp",
+          "caption": "R030EMP.NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 6,
+            "left": 699,
+            "width": 24,
+            "height": 14
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 6,
+            "left": 723,
+            "width": 40,
+            "height": 14
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 81,
+            "left": 300,
+            "width": 138,
+            "height": 17
+          },
+          "caption": "Qtde Adm/Apresentação",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro025",
+          "position": {
+            "top": 6,
+            "left": 3,
+            "width": 32,
+            "height": 14
+          },
+          "table": "R110FIC",
+          "field": "NumEmp",
+          "caption": "R110FIC.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 81,
+            "left": 558,
+            "width": 144,
+            "height": 17
+          },
+          "caption": "Qtde Doada/Apresentação",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 63,
+            "left": 522,
+            "width": 90,
+            "height": 17
+          },
+          "caption": "CID",
+          "onPrint": "Se (xUsaSub = \"S\")\n  AlteraControle (\"Descricao016\", \"Descrição\", \"CID/Subgrupo\");",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Lista_Rec_Adm",
+      "bandType": "OUTRO",
+      "tag": 601,
+      "position": {
+        "top": 212,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "DescRespReceita",
+          "position": {
+            "top": 0,
+            "left": 201,
+            "width": 301,
+            "height": 17
+          },
+          "caption": "DescRespReceita",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescRespAdmin",
+          "position": {
+            "top": 0,
+            "left": 558,
+            "width": 218,
+            "height": 17
+          },
+          "caption": "DescRespAdmin",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Remedios_Data",
+      "bandType": "TITULO",
+      "tag": 103,
+      "position": {
+        "top": 157,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Medicamento:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro023",
+          "position": {
+            "top": 0,
+            "left": 87,
+            "width": 283,
+            "height": 17
+          },
+          "table": "R110REM",
+          "field": "NomRem",
+          "caption": "R110REM.NomRem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao021",
+          "position": {
+            "top": 0,
+            "left": 375,
+            "width": 120,
+            "height": 17
+          },
+          "caption": "Data do Atendimento:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro024",
+          "position": {
+            "top": 0,
+            "left": 498,
+            "width": 60,
+            "height": 17
+          },
+          "table": "R110MED",
+          "field": "DatAte",
+          "caption": "R110MED.DatAte",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 364,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 751,
+            "height": 12
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Total_Med",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 345,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "DescApres",
+          "position": {
+            "top": 0,
+            "left": 135,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "DescApres",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FAdm",
+          "position": {
+            "top": 0,
+            "left": 573,
+            "width": 57,
+            "height": 17
+          },
+          "caption": "FAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDoa",
+          "position": {
+            "top": 0,
+            "left": 633,
+            "width": 57,
+            "height": 17
+          },
+          "caption": "FDoa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R030EMP",
+    "R108TOC",
+    "R110DEF",
+    "R110FIC",
+    "R110MED",
+    "R110MED.ANOADM",
+    "R110MED.ATEADM",
+    "R110MED.CODAPD",
+    "R110MED.CODAPR",
+    "R110MED.CODATE",
+    "R110MED.CODDOE",
+    "R110MED.CODSUB",
+    "R110MED.DATATE",
+    "R110MED.OBSADM",
+    "R110MED.QTDAPL",
+    "R110MED.QTDDOA",
+    "R110REM",
+    "R110REM.NOMREM"
+  ],
+  "sqlFragments": [
+    "Where(\"Detalhe_Medicamentos\",vSqlAux);",
+    "Where(\"Detalhe_Medicamentos\",vSqlAux);",
+    "SELECT APRCID FROM R110DEF WHERE NUMEMP = :xNumEmp\";"
+  ],
+  "_stats": {
+    "parsedBytes": 28456,
+    "totalBytes": 606710,
+    "parseComplete": true,
+    "bandCount": 12,
+    "fieldCount": 63,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 2993,
+        "skippedTo": 5556,
+        "note": "Skipped 2563 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 14332,
+        "skippedTo": 15581,
+        "note": "Skipped 1235 bytes (classification+relations)"
+      }
+    ]
+  }
+}

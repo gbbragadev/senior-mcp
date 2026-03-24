@@ -1,0 +1,1246 @@
+{
+  "filename": "FPGE008.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Objetivo: Listagem sintética da movimentação dos colaboradores, apurando as transferências, admissões e demissões nas filiais.  Referência: Serão considerados todos os históricos de filial até o final da competência de referência.  Listar Entrada: Informar se deve listar uma página ao final do relatório demonstrando os assinalamentos da tela de entrada.  Obs: Este relatório pode apresentar um comportamento diferente entre a sua versão nativa e caso seja duplicado, pois as informações para a execução do modelo são carregadas de forma diferente em cada caso.",
+  "description": [
+    "Objetivo: Listagem sintética da movimentação dos colaboradores, apurando as transferências, admissões e demissões nas filiais.",
+    "",
+    "Referência: Serão considerados todos os históricos de filial até o final da competência de referência.",
+    "",
+    "Listar Entrada: Informar se deve listar uma página ao final do relatório demonstrando os assinalamentos da tela de entrada.",
+    "",
+    "Obs: Este relatório pode apresentar um comportamento diferente entre a sua versão nativa e caso seja duplicado, pois as informações para a execução do modelo são carregadas de forma diferente em cada caso."
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "/**************** 1º - Consistência dados da tela de entrada ******************/ \n  Se (EDatRef=0)\n  inicio\n    Mensagem(Retorna,\"Informe a Data de Referência! [OK]\");\n    Cancel(1);\n  fim;\n  @ Montar data com ultimo dia do mes atual @\n  UltimoDia (EdatRef);\n  DesmontaData(EDatRef, xdia, xmes, xano);\n  BusQtdDiasMes(xmes, xano, xdias);\n  MontaData(xdias, xmes, xano, xFimCmp);\n  MontaData(1, xmes, xano, xIniCmp);\n  @ Montar data com o 1º dia do mes anterior @\n  se (xmes = 1)\n  MontaData(1, 12 , xano -1, xIniPer);\n  senao   \n    MontaData(1, xmes -1 , xano, xIniPer); \n\n  @ Montar data com ultimo dia do mes atual @\n  UltimoDia (xIniPer);\n  DesmontaData(xIniPer, xdia, xmes, xano);\n  BusQtdDiasMes(xmes, xano, xdias);\n  MontaData(xdias, xmes, xano, ERefAnt);\n  @ Montar data com o 1º dia do mes anterior @\n\n\n\n/************************* 2º - Histórico de Filial ***************************/\n  @ Strings com inicio e fim da competência de referencia @ \n  ConverteDataBanco(xFimCmp, txtFimCmp);                                                     \n  ConverteDataBanco(xIniCmp, txtIniCmp);\n\n  @ Abrangência com R038HFI até o final da competência de refeRência @ \n/*  será feito um cursor na seleção \n   auxsql = \" R038HFI.NUMEMP = R034FUN.NUMEMP \"\n           + \" AND R038HFI.TIPCOL = R034FUN.TIPCOL \"\n           + \" AND  R038HFI.NUMCAD = R034FUN.NUMCAD \"\n           + \" AND (R038HFI.NUMEMP = R038HFI.NUMEMP) AND \\\n           (R038HFI.DATALT <= \" + txtFimCmp +\")) AND \";\n*/           \n@ --------------- Relacionamento com o Histórico de Filial --------------------@\n@ Não pode ser utilizado o comando MontarSQLHistorico, motivo: transferencia de filial @\nAuxSQL = \"(R038HFI.DATALT = (SELECT MAX (DATALT) FROM R038HFI TAB2 WHERE \"\n                  + \"(TAB2.NUMEMP = R038HFI.NUMEMP) AND \"\n                  + \"(TAB2.TIPCOL = R038HFI.TIPCOL) AND \"\n                  + \"(TAB2.NUMCAD = R038HFI.NUMCAD) AND \"\n                  + \"(TAB2.NUMEMP = TAB2.EMPATU) AND \"\n                  + \"(TAB2.NUMCAD = TAB2.CADATU) AND \"\n                  + \"(TAB2.DATALT <= \" + txtFimCmp + \"))) AND\";\nInsClauSqlWhere( \"Detalhe_Sintetico\", AuxSQL );\n     \n@ -------------- Relacionamento com o Historico de Vínculo --------------------@\nMontarSqlHistorico( \"R038HVI\", EDatRef, AuxSQLHist ); \nAuxSQL = AuxSQLHist; \nInsClauSqlWhere( \"Detalhe_Sintetico\", AuxSQL );\n\n\n\n\n  \n",
+    "selection": "",
+    "initialization": "/************************** Iniciar Variáveis Globais**************************/\n  oldNumEmp = 0;\n  oldCodFil = 0;\n  oldNumCad = 0;\n  oldMesImp = 0; \n  FunAdm = 0;\n  FunDe  = 0;\n  NumCadMes1 = 0;\n  NumCadMes2 = 0;\n",
+    "finalization": "",
+    "functionRule": "\n/*********************** Definição das váriáveis Globais **********************/\n\n @ Declaração das Variáveis @\n Definir data EDatRef;\n Definir data ERefAnt;\n Definir alfa auxsql;\n Definir alfa txtFimCmp;\n Definir alfa txtIniCmp;\n Definir data xFimCmp;\n Definir Data xIniPer;\n Definir Data xIniCmp;\n Definir numero xdia;\n Definir numero xmes;\n Definir numero xano;\n Definir numero xdias;\n \n Definir Numero NumCadMes1;\n Definir Numero NumCadMes2;  \n Definir Numero FunAdm;\n Definir Numero FunDem;\n Definir Alfa AuxSQLHist;",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 69
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 45,
+            "left": 0,
+            "width": 761,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 3,
+            "left": 39,
+            "width": 9,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 723,
+            "width": 29,
+            "height": 17
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 3,
+            "left": 690,
+            "width": 33,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema007",
+          "position": {
+            "top": 3,
+            "left": 48,
+            "width": 374,
+            "height": 15
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 32,
+            "height": 15
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 18,
+            "left": 6,
+            "width": 746,
+            "height": 24
+          },
+          "caption": "Gerencial - Movimentação Sintético",
+          "onPrint": "@ Ajustar Título do Modelo @\nDefinir Alfa ETitulo;\nSe (ETitulo <> \"\")\nInicio\n  Valstr = Etitulo;\n  Cancel(2);\nFim;",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 48,
+            "left": 6,
+            "width": 134,
+            "height": 17
+          },
+          "caption": "Empresa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 51,
+            "left": 399,
+            "width": 124,
+            "height": 13
+          },
+          "caption": "Competência Anterior",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 51,
+            "left": 543,
+            "width": 210,
+            "height": 13
+          },
+          "caption": "Competência de Referência",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_Sintetico",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 96,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": false,
+      "tableList": [
+        "R034FUN.NUMEMP",
+        "R034FUN.TIPCOL",
+        "R034FUN.NUMCAD",
+        "R038HFI.CODFIL",
+        "R038HFI.DATALT",
+        "R034FUN.DATADM",
+        "R010SIT.TIPSIT",
+        "R034FUN.DATAFA",
+        "R022VIN.CONGED",
+        "R034FUN.TIPCON"
+      ],
+      "onBeforePrint": "Definir Cursor Cur_R038HFI;\nDefinir Data vFimCmp;\n\n@ -- Iniciar Variávies -- @\n  vNumEmp = R034FUN.NumEmp;\n  vTipCol = R034FUN.Tipcol;\n  vNumCad = R034FUN.NumCad;\n  vFimCmp = xFimCmp;\n\n/* Variáveis carregadas na pré seleção @\n  xIniCmp, xFimCmp, \n*/\n   \n@ -- Zerar váriaveis que serão utilizadas pelo Totalizador @ \n  @-- Datas --@\n  vDatDem  = 0;          \n  vDatAdm  = 0;\n  vDatAlt  = 0;\n  @-- Sados --@\n  fSldMes2 = 0;\n  FSldMes1 = 0;\n  @  Controle @\n  FAdmMes  = 0;\n  FDemMes  = 0;\n  xTransf  = 0;\n  xAdm     = 0;\n  xDem     = 0;\n  @  Situação @\n  xTipSit  = 0;\n  xFilAnt  = 0;\n  xFil     = 0;\n  \n\n@------------------------------------------------------------------------------@\n@    1º - Definir Datas de Adm e Demissão                                      @  \n@------------------------------------------------------------------------------@ \n  @Verifica Ultimo histórico do colaborador, somente até o final da competencia@\n  @R038HFI.DATALT <= :vFimCmp AND @\n  Cur_R038HFI.SQL \n        \"SELECT R038HFI.NUMEMP, R038HFI.TIPCOL, R038HFI.NUMCAD ,R038HFI.DATALT ,\\\n         R038HFI.CODFIL FROM R038HFI WHERE R038HFI.DATALT <= :vFimCmp AND R038HFI.TIPCOL = :vTipCol AND R038HFI.EMPATU = :vNumEmp \\\n         AND R038HFI.CADATU = :vNumCad ORDER BY R038HFI.DATALT Desc \";\n  Cur_R038HFI.AbrirCursor();\n\n  Se(Cur_R038HFI.Achou)\n  Inicio\n    xfil = Cur_R038HFI.CODFIL; \n    vDatAlt = Cur_R038HFI.DATALT;\n    Se(R038HFI.CODFIL <> xfil)\n      vDatAdm = R038HFI.DATALT;\n    senao\n      vDatAdm = R034FUN.DATADM;\n  Fim  \n  Senao\n  Inicio\n    vDatAlt = R038HFI.DATALT;\n    vDatAdm = R034FUN.DATADM;\n    xfil    = R038HFI.CODFIL;     \n  Fim\n  Cur_R038HFI.FecharCursor();  \n\n  @Valores para conferencia@\n  fAlt = vDatAlt;\n  fAdm = vDatAdm;  \n  fFil = xFil;\n\n  @ situação no histórico de filial@\n  xtipsit = R010SIT.TIPSIT;\n  \n  @ Ajustar Data de Demissão @\n  se(xtipsit = 7)\n    vDatDem = R034FUN.DatAfa; \n  fDem = vDatDem ;  \n  \n  @ Definir a Filial da competencia Anterior @\n  RetFilEmp (vNumEmp, vTipCol, vNumCad, ERefAnt );\n  xFilAnt = filemp;   \n  fAnt = xFilAnt;\n  \n  @---------- Exceções colaboradores que não devem ser listados-------------@\n  Se((R022VIN.CONGED <> 'S')OU(R034FUN.TIPCOL = 2) OU (R034FUN.TIPCON = 11)OU \n    (R034FUN.TIPCON = 12))\n    VAPARA Desconsidera;\n\n  @-------- Verificar se é Transferencia ----------@\n  Se ((vDatAlt >= xIniCmp ) E (vDatAlt <= xFimCmp ))\n  Inicio\n    xTransf = 1;\n  Fim\n  Senao\n    xTransf = 0;\n\n  @------ Verificar se é demitido no mesref -------@\n  Se ((vDatDem >= xIniCmp ) E (vDatDem <= xFimCmp ))\n  Inicio\n    xDem = 1;\n  Fim\n  Senao\n    xDem = 0;  \n  \n  @------ Verificar se é admintido no mesref ------@\n  Se ((vDatAdm >= xIniCmp ) E (vDatAdm <= xFimCmp ))\n  Inicio\n    xAdm = 1;\n  Fim\n  Senao\n    xAdm = 0;           \n \n@------------------------------------------------------------------------------@  \n@   2º - Verificar colaboradores na competência anterior                       @ \n@------------------------------------------------------------------------------@\n  @ Colaboradores ativos no inicio do 1º mes @\n  Se (vDatAdm < xIniCmp)\n  Inicio\n    Se(NumCadMes1 <> R034FUN.NUMCAD)\n    Inicio\n      Se(((xtipsit <> 7) E (xTransf = 1) E (R038HFI.CODFIL = xFilAnt))ou \n        (( xtipsit <> 7) E (xTransf = 0) E(R038HFI.CODFIL = xFilAnt)))\n      Inicio\n        FSldMes1 = 1;\n        NumCadMes1 = R034FUN.NUMCAD;\n      fim  \n      Senao\n      Se((xtipsit = 7) E (vDatDem >= xIniCmp) E (xTransf = 1) E (R038HFI.CODFIL <> xFilAnt) ou\n         (xtipsit = 7) E (vDatDem >= xIniCmp) E (xTransf = 0) E (R038HFI.CODFIL = xFilAnt))\n      Inicio\n        FSldMes1 = 1;\n        @ Carregar variávies que informa o ultimo reg. listado @\n        NumCadMes1 = R034FUN.NUMCAD;\n      Fim  \n    fim\n  Fim\n@------------------------------------------------------------------------------@  \n@    Colaboradores Ativos na competência de referência                         @       \n@------------------------------------------------------------------------------@    \n  Se  (vDatAdm <= xfimCmp)\n  Inicio\n    Se(NumCadMes2 <> R034FUN.NUMCAD)\n    Inicio\n        Se(((xtipsit <> 7) E (xTransf = 1) E (R038HFI.CODFIL <> xFilAnt) E (R038HFI.CODFIL = xFil))OU\n           ((xtipsit <> 7) E (xTransf = 0) E (R038HFI.CODFIL = xFilAnt)))        \n        Inicio  \n          FSldMes2 = 1;\n          NumCadMes2 = R034FUN.NUMCAD;\n        Fim  \n        Senao  \n        Se((xtipsit = 7) E (vDatDem > xFimCmp) E (R038HFI.CODFIL = xFil))\n        Inicio  \n          FSldMes2 = 1;\n          NumCadMes2 = R034FUN.NUMCAD;\n        Fim  \n    Fim      \n  fim\n \n@------------------------------------------------------------------------------@  \n@    3º - Verificar Demissões e Admissões por transferência na Competência     @ \n@------------------------------------------------------------------------------@       \n  Se  (vDatAdm <= xfimCmp)\n  Inicio \n    @ -------------------- Admitidos por Transferência ----------------------- @\n    SE (FunAdm <> R034FUN.NUMCAD)\n    Inicio\n      Se(((xTransf = 1) E (xtipsit <> 7) E (R038HFI.CODFIL <> xFilAnt) E (R038HFI.CODFIL = xFil) ) OU\n        ((xAdm    = 1) E (xtipsit = 7) E (xFilAnt = 0)) ou\n        ((xTransf = 1) E (xtipsit  = 7) E (R038HFI.CODFIL = xFilAnt) E (vDatDem > xFimCmp)))\n      Inicio\n        FAdmMes = 1;\n        FunAdm =  R034FUN.NUMCAD;\n      Fim \n    Fim\n  \n    @ ------------ Demitidos por Transferência na Competencia ---------------- @\n    SE (FunDem <> R034FUN.NUMCAD)\n    Inicio  \n      Se(((xTransf = 1) E (R038HFI.CODFIL <> xFil) E(R038HFI.CODFIL = xFilAnt)) OU\n        ((xDem = 1) E ((R038HFI.CODFIL = xFilAnt) ou (xFilAnt = 0)))) \n      Inicio\n        FunDem =  R034FUN.NUMCAD;\n        FDemMes = 1;\n      Fim \n    Fim\n  Fim  \n@------------------------------------------------------------------------------@\n\n  @ Desconsidera Exeções @\n  Desconsidera: \n\n     ",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSFormula",
+          "name": "FDemMes",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 60,
+            "height": 15
+          },
+          "caption": "FDemMes",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FAdmMes",
+          "position": {
+            "top": 0,
+            "left": 543,
+            "width": 58,
+            "height": 14
+          },
+          "caption": "FAdmMes",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fSldMes1",
+          "position": {
+            "top": 0,
+            "left": 399,
+            "width": 75,
+            "height": 17
+          },
+          "caption": "fSldMes1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fSldMes2",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 66,
+            "height": 17
+          },
+          "caption": "fSldMes2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 108,
+            "width": 43,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NumCad",
+          "caption": "R034FUN.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 41,
+            "height": 17
+          },
+          "table": "R038HFI",
+          "field": "CODFIL",
+          "caption": "R038HFI.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fAdm",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 59,
+            "height": 17
+          },
+          "caption": "fAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fAlt",
+          "position": {
+            "top": 0,
+            "left": 321,
+            "width": 58,
+            "height": 17
+          },
+          "caption": "fAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 381,
+            "width": 15,
+            "height": 17
+          },
+          "table": "R010SIT",
+          "field": "TipSit",
+          "caption": "R010SIT.TipSit",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fDem",
+          "position": {
+            "top": 0,
+            "left": 477,
+            "width": 64,
+            "height": 16
+          },
+          "caption": "fDem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 765,
+            "width": 13,
+            "height": 17
+          },
+          "table": "R038HVI",
+          "field": "CodVin",
+          "caption": "R038HVI.CodVin",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 780,
+            "width": 10,
+            "height": 17
+          },
+          "table": "R022VIN",
+          "field": "ConGed",
+          "caption": "R022VIN.ConGed",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 3,
+            "left": 918,
+            "width": 15,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "TipCol",
+          "caption": "R034FUN.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 0,
+            "left": 795,
+            "width": 60,
+            "height": 17
+          },
+          "table": "R038HFI",
+          "field": "DatAlt",
+          "caption": "R038HFI.DatAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 153,
+            "width": 105,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 0,
+            "left": 858,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NumEmp",
+          "caption": "R034FUN.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FFil",
+          "position": {
+            "top": 0,
+            "left": 45,
+            "width": 23,
+            "height": 17
+          },
+          "caption": "FFil",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "fAnt",
+          "position": {
+            "top": 0,
+            "left": 69,
+            "width": 38,
+            "height": 17
+          },
+          "caption": "fAnt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Empresa",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 69,
+        "left": 0,
+        "width": 6000,
+        "height": 27
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 12,
+            "left": 399,
+            "width": 75,
+            "height": 14
+          },
+          "caption": "Saldo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "desAdmitidos",
+          "position": {
+            "top": 12,
+            "left": 543,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Adm/Trans.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 12,
+            "left": 618,
+            "width": 68,
+            "height": 14
+          },
+          "caption": "Dem/Transf.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "mescb1",
+          "position": {
+            "top": 0,
+            "left": 399,
+            "width": 143,
+            "height": 14
+          },
+          "caption": "mescb1",
+          "onPrint": "Definir Numero mesinf;\nDefinir Numero anoinf;\nDefinir Alfa   strano;\n\nRetornaAnoData(xIniPer,anoinf);\nRetornaMesData(xIniPer,mesinf);\nIntParaAlfa(anoinf, strano);\n\nSe(mesinf = 1)\nInicio\n  Valstr = \"Janeiro de \" + strano;\n  Cancel(2);\nFim;\nSe(mesinf = 2)\nInicio\n  Valstr = \"Fevereiro de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 3)\nInicio\n  Valstr = \"Março de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 4)\nInicio\n  Valstr = \"Abril de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 5)\nInicio\n  Valstr = \"Maio de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 6)\nInicio\n  Valstr = \"Junho de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 7)\nInicio\n  Valstr = \"Julho de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 8)\nInicio\n  Valstr = \"Agosto de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 9)\nInicio\n  Valstr = \"Setembro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 10)\nInicio\n  Valstr = \"Outubro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 11)\nInicio\n  Valstr = \"Novembro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 12)\nInicio\n  Valstr = \"Dezembro de \"+ strano;\n  Cancel(2);\nFim;",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "mescb2",
+          "position": {
+            "top": 0,
+            "left": 543,
+            "width": 212,
+            "height": 13
+          },
+          "caption": "mescb2",
+          "onPrint": "Definir Numero mesinf;\nDefinir Numero anoinf;\nDefinir Alfa   strano;\n\nRetornaAnoData(xIniCmp,anoinf);\nRetornaMesData(xIniCmp,mesinf);\nIntParaAlfa(anoinf, strano);\n\nSe(mesinf = 1)\nInicio\n  Valstr = \"Janeiro de \" + strano;\n  Cancel(2);\nFim;\nSe(mesinf = 2)\nInicio\n  Valstr = \"Fevereiro de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 3)\nInicio\n  Valstr = \"Março de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 4)\nInicio\n  Valstr = \"Abril de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 5)\nInicio\n  Valstr = \"Maio de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 6)\nInicio\n  Valstr = \"Junho de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 7)\nInicio\n  Valstr = \"Julho de \" + strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 8)\nInicio\n  Valstr = \"Agosto de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 9)\nInicio\n  Valstr = \"Setembro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 10)\nInicio\n  Valstr = \"Outubro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 11)\nInicio\n  Valstr = \"Novembro de \"+ strano;\n  Cancel(2);\nFim;\nSenao\nSe(mesinf = 12)\nInicio\n  Valstr = \"Dezembro de \"+ strano;\n  Cancel(2);\nFim;\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 9,
+            "left": 51,
+            "width": 243,
+            "height": 17
+          },
+          "table": "R030EMP",
+          "field": "NomEmp",
+          "caption": "R030EMP.NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 12,
+            "left": 693,
+            "width": 45,
+            "height": 14
+          },
+          "caption": "Saldo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 9,
+            "left": 42,
+            "width": 5,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 9,
+            "left": 12,
+            "width": 28,
+            "height": 17
+          },
+          "table": "R030EMP",
+          "field": "NumEmp",
+          "caption": "R030EMP.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_filiais",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 115,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "@ Após Imprimir subtotal zerar variáveis de controle @\nNumCadMes1 = 0;\nNumCadMes2 = 0;\nvDatDem    = 0;          \nvDatAdm    = 0;\nvDatAlt    = 0;\nfSldMes2   = 0;\nFSldMes1   = 0;\nFAdmMes    = 0;\nFDemMes    = 0;\nxFil       = 0;\nxTransf    = 0;\nxTipSit    = 0;\nFunAdm     = 0;\nFunDem     = 0;",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 18,
+            "width": 108,
+            "height": 17
+          },
+          "table": "R030FIL",
+          "field": "NumCgc",
+          "caption": "R030FIL.NumCgc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 174,
+            "width": 224,
+            "height": 17
+          },
+          "table": "R030FIL",
+          "field": "NomFil",
+          "caption": "R030FIL.NomFil",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 0,
+            "left": 399,
+            "width": 75,
+            "height": 15
+          },
+          "caption": "Total001",
+          "fieldName": "Detalhe_Sintetico.fSldMes1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total002",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 66,
+            "height": 15
+          },
+          "caption": "Total002",
+          "fieldName": "Detalhe_Sintetico.fSldMes2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total005",
+          "position": {
+            "top": 0,
+            "left": 543,
+            "width": 58,
+            "height": 15
+          },
+          "caption": "Total005",
+          "fieldName": "Detalhe_Sintetico.FAdmMes",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total006",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 61,
+            "height": 15
+          },
+          "caption": "Total006",
+          "fieldName": "Detalhe_Sintetico.FDemMes",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 129,
+            "width": 36,
+            "height": 17
+          },
+          "table": "R030FIL",
+          "field": "CODFIL",
+          "caption": "R030FIL.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 0,
+            "left": 168,
+            "width": 6,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Empresas",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 133,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa ESalPag  ;\n\nse (EsalPag = \"S\")\n  alteracontrole(\"SubTitulo_Empresa\",\"Salto Página\",\"Sim\");\n  \n@Iniciar Variáveis Globais @\noldNumEmp = 0;\noldCodFil = 0;\noldNumCad = 0;\noldMesImp = 0;   ",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 0,
+            "left": 333,
+            "width": 62,
+            "height": 17
+          },
+          "caption": "Saldo :",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 51,
+            "width": 271,
+            "height": 17
+          },
+          "table": "R030EMP",
+          "field": "NomEmp",
+          "caption": "R030EMP.NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "totSldMes1",
+          "position": {
+            "top": 0,
+            "left": 399,
+            "width": 75,
+            "height": 17
+          },
+          "caption": "totSldMes1",
+          "fieldName": "Subtotal_filiais.Total001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "totSld",
+          "position": {
+            "top": 0,
+            "left": 693,
+            "width": 67,
+            "height": 16
+          },
+          "caption": "totSld",
+          "fieldName": "Subtotal_filiais.Total002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "totDem",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 62,
+            "height": 16
+          },
+          "caption": "totDem",
+          "fieldName": "Subtotal_filiais.Total006",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "totAdm",
+          "position": {
+            "top": 0,
+            "left": 543,
+            "width": 58,
+            "height": 16
+          },
+          "caption": "totAdm",
+          "fieldName": "Subtotal_filiais.Total005",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 12,
+            "width": 29,
+            "height": 17
+          },
+          "table": "R030EMP",
+          "field": "NumEmp",
+          "caption": "R030EMP.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 0,
+            "left": 42,
+            "width": 5,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 198,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 0,
+            "width": 761,
+            "height": 11
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Entrada",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 181,
+        "left": 0,
+        "width": 6000,
+        "height": 17
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSMemoran",
+          "name": "Memoran001",
+          "position": {
+            "top": 0,
+            "left": 15,
+            "width": 740,
+            "height": 14
+          },
+          "field": "Memoran001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Total_Geral",
+      "bandType": "ADICIONAL",
+      "tag": 501,
+      "position": {
+        "top": 152,
+        "left": 0,
+        "width": 6000,
+        "height": 29
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "  se (ELisEnt = 'S')\n    listasecao(\"Adicional_Entrada\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 3,
+            "left": 309,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Saldo Geral :",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total003",
+          "position": {
+            "top": 3,
+            "left": 399,
+            "width": 76,
+            "height": 17
+          },
+          "caption": "Total003",
+          "fieldName": "Subtotal_Empresas.totSldMes1",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total004",
+          "position": {
+            "top": 3,
+            "left": 543,
+            "width": 58,
+            "height": 17
+          },
+          "caption": "Total004",
+          "fieldName": "Subtotal_Empresas.totAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total007",
+          "position": {
+            "top": 3,
+            "left": 618,
+            "width": 62,
+            "height": 17
+          },
+          "caption": "Total007",
+          "fieldName": "Subtotal_Empresas.totDem",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total008",
+          "position": {
+            "top": 3,
+            "left": 693,
+            "width": 67,
+            "height": 17
+          },
+          "caption": "Total008",
+          "fieldName": "Subtotal_Empresas.totSld",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 96,
+            "height": 17
+          },
+          "caption": "Nº de Empresas :",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total009",
+          "position": {
+            "top": 3,
+            "left": 105,
+            "width": 68,
+            "height": 17
+          },
+          "caption": "Total009",
+          "fieldName": "Subtotal_Empresas.Cadastro011",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 3,
+            "left": 180,
+            "width": 54,
+            "height": 17
+          },
+          "caption": "Nº Filiais :",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total010",
+          "position": {
+            "top": 3,
+            "left": 237,
+            "width": 63,
+            "height": 17
+          },
+          "caption": "Total010",
+          "fieldName": "Subtotal_filiais.Cadastro004",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho002",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 759,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R010SIT",
+    "R010SIT.TIPSIT",
+    "R022VIN",
+    "R022VIN.CONGED",
+    "R030EMP",
+    "R030FIL",
+    "R034FUN",
+    "R034FUN.DATADM",
+    "R034FUN.DATAFA",
+    "R034FUN.NUMCAD",
+    "R034FUN.NUMEMP",
+    "R034FUN.TIPCOL",
+    "R034FUN.TIPCON",
+    "R038HFI",
+    "R038HFI.CODFIL",
+    "R038HFI.DATALT",
+    "R038HVI"
+  ],
+  "sqlFragments": [
+    "SELECT MAX (DATALT) FROM R038HFI TAB2 WHERE \"\n                  + \"(TAB2.NUMEMP = R038HFI.NUMEMP) AND \"\n                  + \"(TAB2.TIPCOL = R038HFI.TIPCOL) AND \"\n                  + \"(TAB2.NUMCAD = R038HFI.NUMCAD) AND \"\n                  + \"(TAB2.NUMEMP = TAB2.EMPATU) AND \"\n                  + \"(TAB2.NUMCAD = TAB2.CADATU) AND \"\n                  + \"(TAB2.DATALT <= \" + txtFimCmp + \"))) AND\";",
+    "Where( \"Detalhe_Sintetico\", AuxSQL );",
+    "Where( \"Detalhe_Sintetico\", AuxSQL );"
+  ],
+  "_stats": {
+    "parsedBytes": 26115,
+    "totalBytes": 701395,
+    "parseComplete": true,
+    "bandCount": 8,
+    "fieldCount": 65,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 4027,
+        "skippedTo": 5091,
+        "note": "Skipped 1064 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 15500,
+        "skippedTo": 16522,
+        "note": "Skipped 1008 bytes (classification+relations)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+/*  Regra por processo 837 - Validar Requisições do Anúncio
+  Esta regra é chamada ao clicar no botão Alterar na tela de anúncios guia requisições.
+  
+  Regra de exemplo: Faz a consistência se as requisições informadas na grid estão com a situação Em andamento ou não iniciada e também que o 
+  número de requisições não ultrapasse a 3 requisições.    
+*/
+
+Definir Numero xIndice;
+Definir Alfa xValorItem;
+Definir Cursor CUR_R126RQU;
+Definir Alfa xMensagem;
+Definir ALfa xPulaLinha;
+Definir Alfa xCarAscII;
+Definir Alfa xSitRquAlfa; 
+Definir Alfa xDesLis;
+RetornaAscII(13, xCarAscII);
+xPulaLinha = xCarAscII;
+
+/* Atribui para a variável xQtd a quantidade de requisições que foram informadas na grid,
+  Estas requisições estão informadas na variável de sistema ListaRequisicoesAnuncio separadas por um | (pipe)
+ */
+ListaQuantidade(ListaRequisicoesAnuncio, "|", xQtd);
+
+xIndice = 0;
+/* Percorre todas as requisições */
+enquanto (xQtd > xIndice)
+inicio  
+  xIndice++;
+  /* Pega o valor da requisição e atribui a variável xValorItem conforme o índice informado */
+  ListaItem(ListaRequisicoesAnuncio, "|", xIndice, xValorItem);
+  AlfaParaInt (xValorItem, xCODRQU);
+  /* Faz um select na tabela de requisições para identificar a quantidade de vagas que a requisição
+     posicionada possui
+ */
+  CUR_R126RQU.SQL "SELECT SITRQU FROM R126RQU WHERE CODRQU = :xCODRQU";
+  CUR_R126RQU.AbrirCursor();
+  se (CUR_R126RQU.Achou)
+  inicio
+    /* Se a requisição não estiver em andamento ou não iniciada não permite cadastrar esta requisição */
+    se (CUR_R126RQU.SITRQU > 1)
+    inicio
+      IntParaAlfa(CUR_R126RQU.SITRQU, xSitRquAlfa);
+      DescItemLista("LSitRqu", xSitRquAlfa, xDesLis);
+      
+      xMensagem = xMensagem  + "A requisição " + xValorItem + " está " + xDesLis + ". " + xPulaLinha; 
+    fim; 
+  fim;
+  CUR_R126RQU.FecharCursor();
+  
+fim;  
+
+/* Se possuir alguma mensagem, apresenta para o cliente */
+se (xMensagem <> "")
+inicio
+  xMensagem = "Somente é permitido a inclusão de requisições que estejam com a situação em andamento ou não iniciada:" + xPulaLinha + xMensagem;
+  mensagem(erro, xMensagem);             
+fim;
+
+/* Se a quantidade de requisições for maior que 3, exibe a mensagem que informando 
+  que não é permitido inserir mais de 3 requisições */
+se (xQtd > 3){
+  mensagem(erro, "Não é permitido incluir mais de 3 requisições para este anúncio.");
+}

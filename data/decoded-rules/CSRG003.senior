@@ -1,0 +1,101 @@
+Definir Numero xNumEmp;
+Definir Numero xTipCol;
+Definir Numero xNumCad;
+Definir Data xCmpAva;
+Definir Numero xTipAva;
+Definir Alfa xFamCnc;
+Definir Alfa xCodCnc;
+Definir Alfa xCodHTe;
+Definir Alfa xCodHPe;
+Definir Numero xCodAva;
+Definir Cursor CAva;
+Definir Numero xCodIte;
+Definir Numero xNotAva;
+Definir Numero xSomaNotas;
+Definir Numero xQtdeNotas;
+Definir Numero xMedAvaDet;
+
+xSomaNotas = 0;
+xQtdeNotas= 0;
+
+Se (TipoAvaDet = "C") 
+  {
+  xNumEmp = R077CDE.NumEmp;
+  xTipCol = R077CDE.TipCol;
+  xNumCad = R077CDE.NumCad;
+  xCmpAva = R077CDE.CmpAva;
+  xTipAva = R077CDE.TipAva;
+  xFamCnc = R077CDE.FamCnc;
+  xCodCnc = R077CDE.CodCnc;
+  xCodAva = R077CDE.CodAva;
+  
+  CAva.SQL "SELECT CODITE, NOTAVA FROM R077CDE WHERE NUMEMP = :xNumEmp AND TIPCOL = :xTipCol AND NUMCAD = :xNumCad AND CMPAVA = :xCmpAva AND TIPAVA = :xTipAva AND FAMCNC = :xFamCnc AND CODCNC = :xCodCnc AND CODAVA = :xCodAva";
+  CAva.AbrirCursor();
+  Enquanto (CAva.Achou)
+    {
+    xCodIte = CAva.CodIte;
+    xNotAva = CAva.NotAva;
+    
+    xSomaNotas = xSomaNotas + xNotAva;
+    xQtdeNotas = xQtdeNotas + 1; 
+
+    CAva.Proximo();
+    }
+  CAva.FecharCursor();
+  }
+Senao
+Se (TipoAvaDet = "P") 
+  {
+  xNumEmp = R077PDE.NumEmp;
+  xTipCol = R077PDE.TipCol;
+  xNumCad = R077PDE.NumCad;
+  xCmpAva = R077PDE.CmpAva;
+  xTipAva = R077PDE.TipAva;
+  xCodHTe = R077PDE.CodHTe;
+  xCodAva = R077PDE.CodAva;
+  
+  CAva.SQL "SELECT CODITE, NOTAVA FROM R077PDE WHERE NUMEMP = :xNumEmp AND TIPCOL = :xTipCol AND NUMCAD = :xNumCad AND CMPAVA = :xCmpAva AND TIPAVA = :xTipAva AND CODHTE = :xCodHTe AND CODAVA = :xCodAva";
+  CAva.AbrirCursor();
+  Enquanto (CAva.Achou)
+    {
+    xCodIte = CAva.CodIte;
+    xNotAva = CAva.NotAva;
+    
+    xSomaNotas = xSomaNotas + xNotAva;
+    xQtdeNotas = xQtdeNotas + 1; 
+    
+    CAva.Proximo();
+    }
+  CAva.FecharCursor();
+  }
+Senao
+Se (TipoAvaDet = "E") 
+  {
+  xNumEmp = R079EDE.NumEmp;
+  xTipCol = R079EDE.TipCol;
+  xNumCad = R079EDE.NumCad;
+  xCmpAva = R079EDE.CmpAva;
+  xTipAva = R079EDE.TipAva;
+  xCodHPe = R079EDE.CodHPe;
+  xCodAva = R079EDE.CodAva;
+  
+  CAva.SQL "SELECT CODITE, NOTAVA FROM R079EDE WHERE NUMEMP = :xNumEmp AND TIPCOL = :xTipCol AND NUMCAD = :xNumCad AND CMPAVA = :xCmpAva AND TIPAVA = :xTipAva AND CODHPE = :xCodHPe AND CODAVA = :xCodAva";
+  CAva.AbrirCursor();
+  Enquanto (CAva.Achou)
+    {
+    xCodIte = CAva.CodIte;
+    xNotAva = CAva.NotAva;
+    
+    xSomaNotas = xSomaNotas + xNotAva;
+    xQtdeNotas = xQtdeNotas + 1; 
+
+    CAva.Proximo();
+    }
+  CAva.FecharCursor();
+  }
+
+xMedAvaDet = 0;
+Se (xQtdeNotas > 0)
+  xMedAvaDet = (xSomaNotas / xQtdeNotas);
+
+MediaAvaDet = xMedAvaDet;

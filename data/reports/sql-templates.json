@@ -1,0 +1,245 @@
+{
+  "version": "1.0",
+  "description": "SQL query templates for Senior HCM reverse engineering. All queries are SELECT-only.",
+  "generated": "2026-03-19",
+  "templates": [
+    {
+      "id": "employee-roster",
+      "name": "Employee Roster",
+      "description": "Full employee list with company name, org unit, position/career title, and leave status",
+      "database": "vetorh",
+      "sql": "SELECT TOP 100 f.NumEmp, f.NumCad, f.NomFun, e.NomEmp, o.NomLoc, c.TitCar, f.SitAfa, f.DatAdm FROM r034fun f LEFT JOIN r030emp e ON f.NumEmp = e.NumEmp LEFT JOIN r016orn o ON f.TabOrg = o.TabOrg AND f.NumLoc = o.NumLoc LEFT JOIN r024car c ON f.EstCar = c.EstCar AND f.CodCar = c.CodCar WHERE f.NumEmp = $(numEmp) ORDER BY f.NumCad",
+      "joins": ["r034fun", "r030emp", "r016orn", "r024car"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number (NumEmp)",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NumCad": "Employee registration number",
+        "NomFun": "Employee name",
+        "NomEmp": "Company name",
+        "NomLoc": "Org unit / location name",
+        "TitCar": "Position / career title",
+        "SitAfa": "Leave status (1=Active, 7=Terminated, etc.)",
+        "DatAdm": "Admission date"
+      }
+    },
+    {
+      "id": "payroll-summary",
+      "name": "Payroll Summary",
+      "description": "Payroll financial records with event descriptions and payment dates. Joins employee master with payroll values, events table, and payroll calendar.",
+      "database": "vetorh",
+      "sql": "SELECT TOP 200 f.NumEmp, f.NumCad, f.NomFun, v.CodEve, ev.DesEve, v.ValEve, cal.DatPag, cal.PerRef FROM r034fun f INNER JOIN r046ver v ON f.NumEmp = v.NumEmp AND f.TipCol = v.TipCol AND f.NumCad = v.NumCad INNER JOIN r008evc ev ON v.TabEve = ev.TabEve AND v.CodEve = ev.CodEve INNER JOIN r044cal cal ON v.NumEmp = cal.NumEmp AND v.CodCal = cal.CodCal WHERE f.NumEmp = $(numEmp) ORDER BY cal.DatPag DESC, f.NumCad, v.CodEve",
+      "joins": ["r034fun", "r046ver", "r008evc", "r044cal"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NumCad": "Employee registration number",
+        "NomFun": "Employee name",
+        "CodEve": "Payroll event code",
+        "DesEve": "Event description (Portuguese)",
+        "ValEve": "Event value (monetary amount)",
+        "DatPag": "Payment date",
+        "PerRef": "Reference period"
+      }
+    },
+    {
+      "id": "org-chart",
+      "name": "Org Chart (Hierarchy)",
+      "description": "Recursive traversal of organizational hierarchy using r016hie (hierarchy links) and r016orn (org locations). Builds a tree from the root node downwards.",
+      "database": "vetorh",
+      "sql": "WITH OrgTree AS (SELECT o.TabOrg, o.NumLoc, o.NomLoc, CAST(NULL AS INT) AS ParentLoc, 0 AS TreeLevel, CAST(o.NomLoc AS VARCHAR(500)) AS TreePath FROM r016orn o WHERE o.TabOrg = $(tabOrg) AND o.NumLoc NOT IN (SELECT h.NumLoc FROM r016hie h WHERE h.TabOrg = $(tabOrg)) UNION ALL SELECT o.TabOrg, o.NumLoc, o.NomLoc, h.PosLoc, t.TreeLevel + 1, CAST(t.TreePath + ' > ' + o.NomLoc AS VARCHAR(500)) FROM r016hie h INNER JOIN r016orn o ON h.TabOrg = o.TabOrg AND h.NumLoc = o.NumLoc INNER JOIN OrgTree t ON h.TabOrg = t.TabOrg AND h.PosLoc = t.NumLoc WHERE t.TreeLevel < 10) SELECT TabOrg, NumLoc, NomLoc, ParentLoc, TreeLevel, TreePath FROM OrgTree ORDER BY TreePath",
+      "joins": ["r016orn", "r016hie"],
+      "params": [
+        {
+          "name": "tabOrg",
+          "type": "int",
+          "description": "Org chart structure code (TabOrg)",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "TabOrg": "Org chart structure code",
+        "NumLoc": "Location number in org chart",
+        "NomLoc": "Location / unit name",
+        "ParentLoc": "Parent location number",
+        "TreeLevel": "Depth level in hierarchy (0 = root)",
+        "TreePath": "Full path from root to node"
+      }
+    },
+    {
+      "id": "cost-centers",
+      "name": "Cost Centers",
+      "description": "List of cost centers with company association and creation/deactivation dates",
+      "database": "vetorh",
+      "sql": "SELECT c.NumEmp, e.NomEmp, c.CodCcu, c.NomCcu, c.DatCri, c.DatExt FROM r018ccu c LEFT JOIN r030emp e ON c.NumEmp = e.NumEmp WHERE c.NumEmp = $(numEmp) ORDER BY c.CodCcu",
+      "joins": ["r018ccu", "r030emp"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NomEmp": "Company name",
+        "CodCcu": "Cost center code",
+        "NomCcu": "Cost center name",
+        "DatCri": "Creation date",
+        "DatExt": "Deactivation date (NULL if active)"
+      }
+    },
+    {
+      "id": "positions",
+      "name": "Positions / Careers",
+      "description": "Job positions and career structure with titles",
+      "database": "vetorh",
+      "sql": "SELECT c.EstCar, c.CodCar, c.TitCar, c.TitRed FROM r024car c ORDER BY c.EstCar, c.CodCar",
+      "joins": ["r024car"],
+      "params": [],
+      "fields": {
+        "EstCar": "Career structure code",
+        "CodCar": "Career/position code",
+        "TitCar": "Full position title",
+        "TitRed": "Abbreviated position title"
+      }
+    },
+    {
+      "id": "employee-addresses",
+      "name": "Employee Addresses",
+      "description": "Employee addresses via person code link (r034fun.CodPes -> r033end.CodPes). Address types stored in TipEnd field.",
+      "database": "vetorh",
+      "sql": "SELECT TOP 100 f.NumEmp, f.NumCad, f.NomFun, a.TipEnd, a.EndRua, a.EndNum, a.EndCpl, a.CodCid, a.CodBai, a.EndCep FROM r034fun f INNER JOIN r033end a ON f.CodPes = a.CodPes WHERE f.NumEmp = $(numEmp) ORDER BY f.NumCad, a.TipEnd",
+      "joins": ["r034fun", "r033end"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NumCad": "Employee registration number",
+        "NomFun": "Employee name",
+        "TipEnd": "Address type",
+        "EndRua": "Street name",
+        "EndNum": "Street number",
+        "EndCpl": "Address complement (apt, suite, etc.)",
+        "CodCid": "City code",
+        "CodBai": "Neighborhood code",
+        "EndCep": "Postal code (CEP)"
+      }
+    },
+    {
+      "id": "user-accounts",
+      "name": "User Accounts",
+      "description": "System users (r999usu) with optional employee link (r034usu). Shows which users are linked to employee records.",
+      "database": "vetorh",
+      "sql": "SELECT TOP 100 u.CodUsu, u.NomUsu, u.TipCol, u.NumEmp, u.CodFil, u.NumCad, lu.CriUsu FROM r999usu u LEFT JOIN r034usu lu ON u.CodUsu = lu.CodUsu ORDER BY u.CodUsu",
+      "joins": ["r999usu", "r034usu"],
+      "params": [],
+      "fields": {
+        "CodUsu": "User code",
+        "NomUsu": "User name / login",
+        "TipCol": "Employee type",
+        "NumEmp": "Company code (if linked)",
+        "CodFil": "Branch code (if linked)",
+        "NumCad": "Employee registration (if linked)",
+        "CriUsu": "User who created the link"
+      }
+    },
+    {
+      "id": "departments",
+      "name": "Departments / Org Units",
+      "description": "Organizational units (locations in org chart) with hierarchy parent info from r016hie",
+      "database": "vetorh",
+      "sql": "SELECT o.TabOrg, o.NumLoc, o.NomLoc, o.DatCri, o.DatExt, h.PosLoc AS ParentLoc, p.NomLoc AS ParentName FROM r016orn o LEFT JOIN r016hie h ON o.TabOrg = h.TabOrg AND o.NumLoc = h.NumLoc LEFT JOIN r016orn p ON h.TabOrg = p.TabOrg AND h.PosLoc = p.NumLoc WHERE o.TabOrg = $(tabOrg) ORDER BY o.NumLoc",
+      "joins": ["r016orn", "r016hie"],
+      "params": [
+        {
+          "name": "tabOrg",
+          "type": "int",
+          "description": "Org chart structure code (TabOrg)",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "TabOrg": "Org chart structure code",
+        "NumLoc": "Location number",
+        "NomLoc": "Location / department name",
+        "DatCri": "Creation date",
+        "DatExt": "Deactivation date",
+        "ParentLoc": "Parent location number",
+        "ParentName": "Parent location name"
+      }
+    },
+    {
+      "id": "benefits-summary",
+      "name": "Benefits Summary",
+      "description": "Benefits module (bs) - transportation vouchers per employee from r028pvt. The r085xxx tables are budget/planning; r028pvt contains actual voucher allocations which is the most populated benefits-related table (20K+ rows).",
+      "database": "vetorh",
+      "sql": "SELECT TOP 100 f.NumEmp, f.NumCad, f.NomFun, p.CodVtr, p.VlrVtr FROM r034fun f INNER JOIN r028pvt p ON f.NumEmp = p.NumEmp AND f.TipCol = p.TipCol AND f.NumCad = p.NumCad WHERE f.NumEmp = $(numEmp) ORDER BY f.NumCad",
+      "joins": ["r034fun", "r028pvt"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NumCad": "Employee registration number",
+        "NomFun": "Employee name",
+        "CodVtr": "Transportation voucher code",
+        "VlrVtr": "Voucher value"
+      },
+      "notes": "Benefits data in Senior HCM spans r085xxx (budget), r086xxx (safety/accidents), and r028pvt (transportation vouchers). The bs SOAP module (com.senior.g5.rh.bs.*) manages vales, emprestimos, auxilio, and assistencia services."
+    },
+    {
+      "id": "time-records",
+      "name": "Time Records / Appraisal",
+      "description": "Time appraisal records from r066apu (190K+ rows). This is the processed time data after clock punches (r070cri) have been evaluated. Shows daily attendance status per employee.",
+      "database": "vetorh",
+      "sql": "SELECT TOP 200 f.NumEmp, f.NumCad, f.NomFun, a.DataPu, a.HorDat, a.TemExc, a.FalMar, a.OriHor, a.ComApu FROM r034fun f INNER JOIN r066apu a ON f.NumEmp = a.NumEmp AND f.TipCol = a.TipCol AND f.NumCad = a.NumCad WHERE f.NumEmp = $(numEmp) ORDER BY a.DataPu DESC, f.NumCad",
+      "joins": ["r034fun", "r066apu"],
+      "params": [
+        {
+          "name": "numEmp",
+          "type": "int",
+          "description": "Company number",
+          "default": 1
+        }
+      ],
+      "fields": {
+        "NumEmp": "Company code",
+        "NumCad": "Employee registration number",
+        "NomFun": "Employee name",
+        "DataPu": "Appraisal date",
+        "HorDat": "Schedule date/time",
+        "TemExc": "Has exceptions flag",
+        "FalMar": "Missing clock punch flag",
+        "OriHor": "Schedule origin",
+        "ComApu": "Appraisal completed flag"
+      },
+      "notes": "Raw clock punches are in r070cri (encrypted, 73K+ rows). Processed/evaluated results land in r066apu (190K+ rows) and r066sit (155K+ rows for situation details)."
+    }
+  ]
+}

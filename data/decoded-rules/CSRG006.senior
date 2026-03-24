@@ -1,0 +1,89 @@
+/* Esta regra tem o objetivo de consistir a nota da evidência ao calcular a nota da competência.
+    Nesta regra somente será verificado se a nota foi informada, caso não for, mostra uma mensagem na tela informando a evidência que deve ser informada a nota  
+    Também é feito um arredondamento na média calculada para a competência.
+    
+    Tabelas disponíveis para consulta nesta regra:
+      R578AVF - Avaliação de competências - Avaliação por foco
+      R578AVI - Avaliação de competências - Avaliação por foco - Itens avaliados 
+*/
+se (VerWeb = 1) @ Só executa a regra caso for na WEB @
+inicio  
+  Definir Alfa xNomeCampoFormatado;
+  Definir Alfa xMensagem;
+  Definir cursor CUR_R578AVD;
+  Definir Cursor CUR_R577EVD;
+  Definir Numero xNUMEMP;
+  Definir Numero xTIPCOL;
+  Definir Numero xNUMCAD;
+  Definir Numero xCODCIC;
+  Definir Numero xIDEAVA;
+  Definir Numero xSEQAVF;
+  Definir Numero xSEQCPT;
+  Definir Numero xCODCPT;
+  Definir Alfa xREVCPT;
+  Definir Numero xPRFAPL;
+  Definir Numero xSeqEvd;
+  Definir Alfa xDesEvd;
+  
+  xNUMEMP = R578AVI.NUMEMP;
+  xTIPCOL = R578AVI.TIPCOL;
+  xNUMCAD = R578AVI.NUMCAD;
+  xCODCIC = R578AVI.CODCIC;
+  xIDEAVA = R578AVI.IDEAVA;
+  xSEQAVF = R578AVI.SEQAVF;
+  xSEQCPT = R578AVI.SEQCPT;
+  xCODCPT = R578AVI.CODCPT;
+  xREVCPT = R578AVI.REVCPT;
+  xPRFAPL = R578AVI.PRFAPL;
+  
+  /* Faz um cursor para buscar todas as evidências da competência posicionada, é preciso fazer isto para buscar a sequência
+    dos itens da evidência, com isso é possível acessar os valores dos campos da WEB 
+  */
+  CUR_R578AVD.Sql "SELECT SEQEVD FROM R578AVD WHERE NUMEMP = :xNUMEMP  \
+                                                AND TIPCOL = :xTIPCOL  \
+                                                AND NUMCAD = :xNUMCAD  \
+                                                AND CODCIC = :xCODCIC  \
+                                                AND IDEAVA = :xIDEAVA  \
+                                                AND SEQAVF = :xSEQAVF  \
+                                                AND SEQCPT = :xSEQCPT"
+  
+  CUR_R578AVD.AbrirCursor();
+    Enquanto(CUR_R578AVD.Achou)
+    Inicio
+      xSeqEvd = CUR_R578AVD.SeqEvd; @ Pega a sequência da evidência @
+      /*  O método abaixo busca o nome do campo da evidência na web com base na sequência da evidência informada 
+           é necessário utilizar este método pois os campos do formulário da avaliação de competência tem um formato específico composto
+           pelo nome da tabela_Campo_SequenciaCompetencia_SequenciaEvidencia
+      */
+      RetornaNomeCampoFrmtEvidencia("NOTEVD", xSEQCPT,xSeqEvd,xNomeCampoFormatado);
+      @ Se retornou algum nome para o campo, então busca o valor dele na web @
+      se (xNomeCampoFormatado <> ""){      
+        @ Busca o valor do campo NOTEVD (Nota da evidência) @
+        WCheckValDouble(xNomeCampoFormatado , "Nota da evidência" , xNota, "N", 9999.9999); @ -- Pega o valor do campo na WEB e atribui para a variável xNota -- @
+        /* Se não informado a nota da evidência, exibe uma mensagem informando que é necessário informar valor para este campo */
+        se (xNota = 0){
+          /* Busca a descrição da evidência que a nota não foi informada */
+          CUR_R577EVD.Sql "SELECT DESEVD FROM R577EVD WHERE CODCPT = :xCODCPT \
+                                                        AND REVCPT = :xREVCPT \
+                                                        AND PRFAPL = :xPRFAPL \
+                                                        AND SEQEVD = :xSEQEVD";
+          CUR_R577EVD.AbrirCursor();
+            se (CUR_R577EVD.Achou){
+              xDesEvd = CUR_R577EVD.DesEvd;
+            }
+          CUR_R577EVD.FecharCursor();
+          /* Monta a mensagem para ser exibida no formulário da avaliação */
+          Concatena ("É necessário informar a nota para a evidência <b> ", xDesEvd, "</b>.", xMensagem);
+          /* Exibe a mensagem */ 
+          mensagem(erro, xMensagem);           
+        }
+      }  
+      CUR_R578AVD.Proximo();
+    Fim;
+  CUR_R578AVD.fecharCursor();
+  /* Arredonda o valor da média calculada pelo sistema, a variável de sistema MediaAvaDet contém o valor calculado pelo sistema
+       ao atribuir um valor para ela, será considerado a média da variável */
+  xValorMedia = MediaAvaDet; 
+  ArredondarValor(xValorMedia,0);
+  MediaAvaDet = xValorMedia;
+fim;

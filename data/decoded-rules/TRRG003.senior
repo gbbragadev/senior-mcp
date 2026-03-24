@@ -1,0 +1,361 @@
+/*****************************************************************************************
+ * Regra para consistir o Nível de Importância - Pesquisa LR                             *
+ * Consiste também se ao concluir se todas perguntas foram respondidas                   *
+ * Essa regra deve ser setada na definção da pesquisa, e será chamada ao gravar o        *
+ * questionário da pesquisa.                                                             *
+ * Nível de Importância: Distribuir 5 pesos 4, 5 pesos 3, 5 pesos 2 e 5 pesos 1.         *
+ *****************************************************************************************/
+Definir Numero xPeso1;
+Definir Numero xPeso2;
+Definir Numero xPeso3;
+Definir Numero xPeso4;
+Definir Alfa xIdRes;
+Definir Alfa xSqlWhere;
+Definir Alfa str_codpsq;
+Definir Alfa str_seqpsq;
+Definir Alfa str_seqide;
+Definir Alfa str_codque;
+Definir Alfa str_codper;
+Definir Alfa xIdPer;
+Definir Alfa xCampo;
+Definir Alfa xTipPeQ;
+Definir Alfa strAuxPer;
+Definir Cursor Cur_R210PER;
+Definir Cursor Cur_R211PER;
+Definir Cursor Cur_R211RES;
+
+Se (TipOpePes = 2) @ Concluindo @
+{ 
+  Se (VerWeb = 1) @ Se estiver sendo executado pela web @
+  { 
+    @ Faz a consistência ao concluir a pesquisa quando utilizado o formulário Por Pergunta @
+    Se (R211DEF.ForApr = 1)
+    {
+      xCodPsq = R211DEF.CodPsq;
+      xSeqPsq = R211DEF.SeqPsq;
+      xSeqIde = R211IDP.SeqIde;
+      xCodQue = R211PSQ.CodQue;
+      
+      Cur_R211PER.SQL "SELECT * FROM R211PER WHERE CODPSQ = :xCodPsq AND SEQPSQ = :xSeqPsq AND SEQIDE = :xSeqIde AND CODQUE = :xCodQue ORDER BY CODPER";
+      Cur_R211PER.AbrirCursor();
+      Enquanto (Cur_R211PER.Achou)
+      {
+        xCodPer = Cur_R211PER.CodPer;
+        Cur_R210PER.SQL "SELECT * FROM R210PER WHERE CODQUE = :xCodQue AND CODPER = :xCodPer";
+        Cur_R210PER.AbrirCursor();
+        Se (Cur_R210PER.Achou)
+        {
+          xRespondeu = 0;
+          
+          Se ((Cur_R210PER.TipPeQ = "1") ou (Cur_R210PER.TipPeQ = "2") ou (Cur_R210PER.TipPeQ = "4"))
+          {
+            Cur_R211RES.SQL "SELECT * FROM R211RES WHERE CODPSQ = :xCodPsq AND SEQPSQ = :xSeqPsq AND SEQIDE = :xSeqIde AND CODQUE = :xCodQue AND CODPER = :xCodPer";
+            Cur_R211RES.AbrirCursor();
+            Enquanto (Cur_R211RES.Achou)
+            {
+              Se ((Cur_R210PER.TipPeQ = "1") ou (Cur_R210PER.TipPeQ = "2"))
+                Se (Cur_R211RES.ResAss = "S")
+                  xRespondeu = 1;
+                  
+              Se (Cur_R210PER.TipPeQ = "4")
+                Se (Cur_R211RES.ValRes <> 0)
+                  xRespondeu = 1;
+                Senao
+                {
+                  IntParaAlfa(xCodPer, str_codper);
+                  MenLog = "A pergunta " + str_codper + " não foi respondida.";
+                  Cancel(1);
+                }
+                          
+              Cur_R211RES.Proximo();              
+            }
+            Cur_R211RES.FecharCursor();                    
+          }
+          
+          Se (Cur_R210PER.TipPeQ = "3")
+            Se (Cur_R211PER.ValRes <> 0)
+              xRespondeu = 1;
+              
+          Se (Cur_R210PER.TipPeQ = "5")
+            Se ((Cur_R211PER.ResSub <> "") e (Cur_R211PER.ResSub <> " "))
+              xRespondeu = 1;
+             
+          Se (Cur_R210PER.TipPeQ = "6")
+            Se (Cur_R211PER.DatRes <> 0)
+              xRespondeu = 1;
+              
+          Se (xRespondeu = 0)
+          {
+            IntParaAlfa(xCodPer, str_codper);
+            MenLog = "A pesquisa não foi concluída, pois a pergunta " + str_codper + " não foi respondida.";
+            Cancel(1);
+          }   
+        }
+        Cur_R211PER.Proximo();
+      }
+      Cur_R211PER.FecharCursor();
+    }
+    Senao
+    Se (R211DEF.ForApr = 2) @ Faz a consistência ao concluir a pesquisa quando utilizado o Formulário Único @
+    { 
+      WCheckValInteger("QtdPer", "Quantidade de Perguntas", xQtdPer, "S", 0);
+    
+      xPeso1 = 0;
+      xPeso2 = 0;
+      xPeso3 = 0;
+      xPeso4 = 0;
+    
+      xInd = 0;
+    
+      Enquanto (xInd < xQtdPer)
+      {
+        xCodPsq = R211DEF.CodPsq;
+        xSeqPsq = R211DEF.SeqPsq;
+        xSeqIde = R211IDP.SeqIde;
+        xCodQue = R211PSQ.CodQue;
+    
+        IntParaAlfa(xInd, xIdPer);
+      
+        xCampo = "CodPer_" + xIdPer;
+        WCheckValInteger(xCampo, "Código da Pergunta", xCodPer, "S", 0);
+  
+        xAuxPer = xInd + 1;
+        IntParaAlfa(xAuxPer, strAuxPer);
+        xCampo = "PriRes_" + strAuxPer + "_1";  /* Importância */
+        WCheckValDouble(xCampo, "Importância", xValImp, "N", 0);
+      
+        xCampo = "TipPeQ_" + xIdPer;
+        WCheckValString(xCampo, "Tipo da Pergunta", xTipPeQ, "S", 0);
+      
+        Se (xValImp = 1)
+          xPeso1++;
+        Senao
+        Se (xValImp = 2)
+          xPeso2++;
+        Senao
+        Se (xValImp = 3)
+          xPeso3++;
+        Senao
+        Se (xValImp = 4)
+          xPeso4++;
+      
+        xRespondeu = 0;
+
+        IntParaAlfa(xCodPsq, str_codpsq);
+        IntParaAlfa(xSeqPsq, str_seqpsq);
+        IntParaAlfa(xSeqIde, str_seqide);
+        IntParaAlfa(xCodQue, str_codque);
+        IntParaAlfa(xCodPer, str_codper);
+        @ Verifica se a pergunta foi respondida de acordo com o tipo @
+        Se (xTipPeQ = "1")
+        { 
+          xCampo = "CodRes_" + xIdPer;
+          WCheckValInteger(xCampo, "Resposta assinalada", xCodRes, "S", 0);
+          Se (xCodRes > 0)
+            xRespondeu = 1;
+        }
+        Senao
+        Se (xTipPeQ = "2")
+        {  
+          xSqlWhere = "CODPSQ = " + str_codpsq + " AND SEQPSQ = " + str_seqpsq + " AND " +
+                      "SEQIDE = " + str_seqide + " AND CODQUE = " + str_codque + " AND CODPER = " + str_codper;
+          Contador("R211RES", xSqlWhere, xQtdRes);
+          xIndRes = 1; 
+          Enquanto (xIndRes <= xQtdRes)
+          { 
+            IntParaAlfa(xIndRes, xIdRes);
+            Definir Alfa xResAss;
+            xCampo = "ResAss_" + xIdPer + "_" + xIdRes;
+            WCheckValCheckBox(xCampo, "Resposta assinalada", xResAss);
+            Se (xResAss = "S")
+              xRespondeu = 1;
+            xIndRes++;
+          }  
+        }
+        Senao
+        Se (xTipPeQ = "3")
+        {
+          xCampo = "ValRes_" + xIdPer;
+          WCheckValDouble(xCampo, "Valor respondido", xValRes, "S", 0);
+          Se (xValRes <> 0)
+            xRespondeu = 1;
+        }
+        Senao     
+        Se (xTipPeQ = "4")
+        {   
+          xSqlWhere = "CODPSQ = " + str_codpsq + " AND SEQPSQ = " + str_seqpsq + " AND " +
+                      "SEQIDE = " + str_seqide + " AND CODQUE = " + str_codque + " AND CODPER = " + str_codper;
+          Contador("R211RES", xSqlWhere, xQtdRes);
+          xIndRes = 1; 
+          Enquanto (xIndRes <= xQtdRes)
+          { 
+            IntParaAlfa(xIndRes, xIdRes);
+            xCampo = "PriRes_" + xIdPer + "_" + xIdRes;
+            WCheckValDouble(xCampo, "Valor respondido", xPriRes, "S", 0);
+            Se (xPriRes <> 0)
+              xRespondeu = 1;
+            xIndRes++;
+          }
+        }
+        Senao     
+        Se (xTipPeQ = "5")
+        {
+          Definir Alfa xResSub;
+          xCampo = "ResSub_" + xIdPer;
+          WCheckValString(xCampo, "Resposta Subjetiva", xResSub, "S", 0);
+          Se (xResSub <> "")
+            xRespondeu = 1;
+        }
+        Senao     
+        Se (xTipPeQ = "6")
+        {
+          Definir Data xDatRes;
+          xCampo = "DatRes_" + xIdPer;
+          WCheckValData(xCampo, "Data respondida", xDatRes, "S");
+          Se (xDatRes <> 0)
+            xRespondeu = 1;                 
+        } 
+    
+        Se (xRespondeu = 0)
+        {
+          IntParaAlfa(xCodPer, str_codper);
+          MenLog = "A pergunta " + str_codper + " não foi respondida.";
+          Cancel(1);
+        }
+        xInd++;
+      }
+    }
+  
+    Se ((xPeso1 > 5) ou (xPeso2 > 5) ou (xPeso3 > 5) ou (xPeso4 > 5))
+    {
+      MenLog = "Não é possível gravar pois os pesos não estão distribuidos corretamente.";
+    }
+  }
+  Senao
+  @ Se estiver sendo executado pela xWindows @
+  Se (VerWeb = 0)
+  {
+    @ Se estiver concluindo consiste se as perguntas foram respondidas @
+    Se (TipOpePes = 2)
+    {
+      xTemPergunta = RetornaPerguntas("I");
+      Se (xTemPergunta <> -1)
+      {
+        Enquanto (xTemPergunta = 0)
+        {
+          xCodPsq = R211DEF.CodPsq;
+          xSeqPsq = R211DEF.SeqPsq;
+          xSeqIde = R211IDP.SeqIde;
+          xCodQue = R211PSQ.CodQue;
+          xCodPer = R211PER.CodPer;
+          CarregaRespostasPorPergunta(xCodPer);
+  
+          Cur_R210PER.SQL "SELECT TIPPEQ FROM R210PER WHERE CODQUE = :xCodQue AND CODPER = :xCodPer";
+          Cur_R210PER.AbrirCursor();
+          Se (Cur_R210PER.Achou)
+          {
+            xRespondeu = 0;
+            Se ((Cur_R210PER.TipPeQ = "1") ou (Cur_R210PER.TipPeQ = "2") ou (Cur_R210PER.TipPeQ = "4"))
+            {
+              xTemResposta = RetornaRespostasPorPergunta("I");
+              Se (xTemResposta <> -1)
+              {
+                Enquanto (xTemResposta = 0)
+                {
+                  Se ((Cur_R210PER.TipPeQ = "1") ou (Cur_R210PER.TipPeQ = "2"))
+                    Se (R211RES.ResAss = "S")
+                      xRespondeu = 1;
+                  
+                  Se (Cur_R210PER.TipPeQ = "4")
+                    Se (R211RES.ValRes <> 0)
+                      xRespondeu = 1;
+                      
+                  xTemResposta = RetornaRespostasPorPergunta("P");
+                }
+              }
+            }
+                
+            Se (Cur_R210PER.TipPeQ = "3")
+              Se (R211PER.ValRes <> 0)
+                xRespondeu = 1;
+                 
+            Se (Cur_R210PER.TipPeQ = "5")
+              Se ((R211PER.ResSub <> "") e (R211PER.ResSub <> " "))
+                 xRespondeu = 1;
+                 
+            Se (Cur_R210PER.TipPeQ = "6")
+              Se (R211PER.DatRes <> 0)
+                xRespondeu = 1;                 
+          }
+          Cur_R210PER.FecharCursor();
+          
+          Se (xRespondeu = 0)
+          {
+            IntParaAlfa(xCodPer, str_codper);
+            Definir Alfa xMsg;
+            xMsg = "A pergunta " + str_codper + " não foi respondida.";
+            Mensagem(Retorna, xMsg);
+            Cancel(1);
+          }
+          
+          xTemPergunta = RetornaPerguntas("P");
+        }
+      }  
+    }
+  }
+}
+Senao
+Se (TipOpePes = 1) @ Gravando @
+{ 
+  Se (VerWeb = 1) @ Se estiver sendo executado pela web @
+  {
+    @ Faz a consistência ao mudar de pergunta quando utilizado o formulário Por Pergunta @
+    Se (R211DEF.ForApr = 1) @ Por Pergunta @
+    {
+      xRespondeu = 0;
+      xCodPsq = R211PER.CodPsq;
+      xSeqPsq = R211PER.SeqPsq;
+      xSeqIde = R211PER.SeqIde;
+      xCodQue = R211PER.CodQue;
+      xCodPer = R211PER.CodPer;
+          
+      Se ((R210PER.TipPeQ = "1") ou (R210PER.TipPeQ = "2") ou (R210PER.TipPeQ = "4"))
+      {
+        Cur_R211RES.SQL "SELECT * FROM R211RES WHERE CODPSQ = :xCodPsq AND SEQPSQ = :xSeqPsq AND SEQIDE = :xSeqIde AND CODQUE = :xCodQue AND CODPER = :xCodPer";
+        Cur_R211RES.AbrirCursor();
+        Enquanto (Cur_R211RES.Achou)
+        {
+          Se ((R210PER.TipPeQ = "1") ou (R210PER.TipPeQ = "2"))
+            Se (Cur_R211RES.ResAss = "S")
+              xRespondeu = 1;
+              
+          Se (R210PER.TipPeQ = "4")
+            Se (Cur_R211RES.ValRes <> 0)
+              xRespondeu = 1;
+                      
+          Cur_R211RES.Proximo();              
+        }
+        Cur_R211RES.FecharCursor();                    
+      }
+      
+      Se (R210PER.TipPeQ = "3")
+        Se (R211PER.ValRes <> 0)
+          xRespondeu = 1;
+          
+      Se (R210PER.TipPeQ = "5")
+        Se ((R211PER.ResSub <> "") e (R211PER.ResSub <> " "))
+          xRespondeu = 1;
+         
+      Se (R210PER.TipPeQ = "6")
+        Se (R211PER.DatRes <> 0)
+          xRespondeu = 1;
+          
+      Se (xRespondeu = 0)
+      {
+        IntParaAlfa(xCodPer, str_codper);
+        MenLog = "A pergunta " + str_codper + " não foi respondida.";
+        Cancel(1);
+      } 
+    }
+  }
+}

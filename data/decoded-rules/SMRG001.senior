@@ -1,0 +1,27 @@
+/**********************************************************/
+/* Regra Exemplo, deve ser utilizada em Tipos de  Equipa- */
+/* mentos, na Guia de Revisão. Indicar esta regra somente */
+/* nos serviços devem ser cancelados.                     */
+/**********************************************************/
+/* Objetivo:                                              */
+/*                                                        */
+/* . Cancelar as Revisões que estiverem 6 meses antes e 6 */
+/*   meses depois da data calculada para Proxima Revisão  */
+/*   No parâmetro 3, pode ser indicado um serviço especí- */
+/*   fico que se deseja cancelar. Ou indicar 0 para veri- */
+/*   ficar todos (verifica todos exceto o próprio)        */
+/**********************************************************/
+
+se (RetDatRev > 0)
+inicio
+  definir data xDatIni;
+  definir data xDatFim;
+  
+  xDatIni = RetDatRev - 180;
+  xDatFim = RetDatRev + 180;
+
+  CalculaDataRev(R098EQP.TipEqp, R098EQP.CodEqp, 0, xDatIni, xDatFim, R098RTE.TipSvc);
+
+  se ((RetDatRev >= xDatIni) e (RetDatRev <= xDatFim)) inicio 
+     cancel(1); fim; 
+fim;

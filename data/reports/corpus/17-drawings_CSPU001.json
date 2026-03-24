@@ -1,0 +1,1045 @@
+{
+  "filename": "cspu001.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Modelo: Permissões de Telas Completo  Quebra: Nenhuma  Ordenação:  Usuário             Menu  Função: Emitir uma relação de permissões de usuários em telas do sistema.  ",
+  "description": [
+    "Modelo: Permissões de Telas Completo",
+    "",
+    "Quebra: Nenhuma",
+    "",
+    "Ordenação:  Usuário",
+    "            Menu",
+    "",
+    "Função: Emitir uma relação de permissões de usuários em telas do sistema.",
+    "",
+    ""
+  ],
+  "orientation": "Landscape",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "",
+    "selection": "",
+    "initialization": "Definir Alfa EUsuGru;\nDefinir Alfa EExiCol;\nDefinir Alfa EUsuIna;\nDefinir Alfa EUsuExp;\nDefinir Alfa EPerCon;\nDefinir Alfa EPerIns;\nDefinir Alfa EPerAlt;\nDefinir Alfa EPerExc;\nDefinir Alfa EPerAlP;\nDefinir Alfa EAbrUsu;\nDefinir Alfa EAbrMnu;\nDefinir Numero xQtdeRegistros;\nDefinir Alfa xTipoRegistro;\nDefinir Alfa xTipoEntidadeAnterior;\n\nse (usaAbrPerfil = \"Sim\") {\n  AlteraControle (\"DescUsu\", \"Descrição\", \"Grupo\");\n  AlteraControle (\"DescUsuPerfil\", \"Descrição\", \"Usuário\");   \n}\n\nAtualizaPermissoesGerais(EUsuGru, EExiCol, EUsuIna, EUsuExp, EPerCon, EPerIns, EPerAlt, EPerExc, EPerAlP, EAbrUsu, EAbrMnu, xQtdeRegistros);\n\nse ( xQtdeRegistros > 0 ) {\n\n  PosicionarPermissoes(0);\n  xTipoEntidadeAnterior = TipoEntidade;\n  se ((usaAbrPerfil = \"Sim\") E (xTipoEntidadeAnterior = \"U\")) {\n    xTipoRegistro = \"Perfil\";\n  } senao {\n    xTipoRegistro = \"Simples\";\n  }\n  \n}",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 192,
+        "left": 0,
+        "width": 6000,
+        "height": 29
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 569,
+            "height": 14
+          },
+          "caption": "Legenda:     Con. = Consultar     Ins. = Inserir     Alt. = Alterar     Exc. = Excluir     Per. = Alterar Permissões ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho003",
+          "position": {
+            "top": 15,
+            "left": 0,
+            "width": 1124,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 15,
+            "left": 0,
+            "width": 1126,
+            "height": 12
+          },
+          "caption": "DesRodapePa",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 59
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa xTipoRegistro;\nDefinir Alfa vCabecalho;\n\nConcatena (\"Cabecalho\", \"_\", xTipoRegistro, vCabecalho);\n\nListaSecao(vCabecalho);",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 3,
+            "left": 1056,
+            "width": 29,
+            "height": 16
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao025",
+          "position": {
+            "top": 42,
+            "left": 183,
+            "width": 34,
+            "height": 0
+          },
+          "caption": "Menu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 18,
+            "left": 315,
+            "width": 203,
+            "height": 23
+          },
+          "caption": "Permissões de Telas",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 1089,
+            "width": 28,
+            "height": 16
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 42,
+            "width": 430,
+            "height": 16
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 3,
+            "left": 36,
+            "width": 5,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 30,
+            "height": 16
+          },
+          "caption": "EmpAtu",
+          "onPrint": "Se (EmpAtu = 0) \n   Cancel(2);\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_Perfil",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 155,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho004",
+          "position": {
+            "top": 0,
+            "left": 180,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho006",
+          "position": {
+            "top": 0,
+            "left": 969,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho010",
+          "position": {
+            "top": 0,
+            "left": 999,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho011",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerAlt_perfil",
+          "position": {
+            "top": 0,
+            "left": 1032,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vPerAlt;\n\nSe (vPerAlt = \"S\")\nInicio\n  vPerAlt = \"ü\";\n  AlteraControle (\"DesPerAlt_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerAlt = \"û\";\n  AlteraControle (\"DesPerAlt_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerAlt;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho012",
+          "position": {
+            "top": 0,
+            "left": 1059,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerExc_perfil",
+          "position": {
+            "top": 0,
+            "left": 1062,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "û",
+          "onPrint": "Definir Alfa vPerExc;\n\nSe (vPerExc = \"S\")\nInicio\n  vPerExc = \"ü\";\n  AlteraControle (\"DesPerExc_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerExc = \"û\";\n  AlteraControle (\"DesPerExc_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerExc;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho013",
+          "position": {
+            "top": 0,
+            "left": 1089,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerIns_perfil",
+          "position": {
+            "top": 0,
+            "left": 1002,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "û",
+          "onPrint": "Definir Alfa vPerIns;\n\nSe (vPerIns = \"S\") \nInicio\n  vPerIns = \"ü\";\n  AlteraControle (\"DesPerIns_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerIns = \"û\";\n  AlteraControle (\"DesPerIns_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerIns;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerCon_Perfil",
+          "position": {
+            "top": 0,
+            "left": 972,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vPerCon;\n\nSe (vPerCon = \"S\")\nInicio\n  vPerCon = \"ü\";\n  AlteraControle (\"DesPerCon_Perfil\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerCon = \"û\";\n  AlteraControle (\"DesPerCon_Perfil\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerCon;\nCancel(2);\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesAltPer_perfil",
+          "position": {
+            "top": 0,
+            "left": 1092,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vAltPer;\n\nSe (vAltPer = \"S\")\nInicio\n  vAltPer = \"ü\";\n  AlteraControle (\"DesAltPer_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vAltPer = \"û\";\n  AlteraControle (\"DesAltPer_perfil\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vAltPer;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "NomeEntidade_Perfil",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 175,
+            "height": 17
+          },
+          "caption": "NomeEntidade_Perfil",
+          "onPrint": "Definir Alfa vNomEnt;\nValStr = vNomEnt;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "NomeMenu_Perfil",
+          "position": {
+            "top": 0,
+            "left": 444,
+            "width": 439,
+            "height": 17
+          },
+          "caption": "NomeMenu_Perfil",
+          "onPrint": "Definir Alfa vNomMnu;\nValStr = vNomMnu;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho002",
+          "position": {
+            "top": 0,
+            "left": 441,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "NomePerfil",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 175,
+            "height": 17
+          },
+          "caption": "NomePerfil",
+          "onPrint": "Definir Alfa vNomPerfil;\nValStr = vNomPerfil;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Titulo",
+      "bandType": "ADICIONAL",
+      "tag": 502,
+      "position": {
+        "top": 173,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "Definir Numero i;\nDefinir Numero xQtdeRegistros;\nDefinir Alfa xTipoEntidadeAnterior;\nDefinir Alfa xTipoRegistro;\n\nDefinir Alfa vPerCon;\nDefinir Alfa vPerIns;\nDefinir Alfa vPerAlt;\nDefinir Alfa vPerExc;\nDefinir Alfa vAltPer;\nDefinir Alfa vNomEnt;\nDefinir Alfa vTipoEnt;\nDefinir Alfa vNomPerfil;\nDefinir Alfa vNomMnu;\nDefinir Alfa vCabecalho;\nDefinir Alfa vDetalhe;\n\nPara (i = 0; i < xQtdeRegistros; i++)\nInicio\n  PosicionarPermissoes(i);\n  vPerCon = PermissaoConsultar;    \n  vPerIns = PermissaoInserir;        \n  vPerAlt = PermissaoAlterar;    \n  vPerExc = PermissaoExcluir;\n  vAltPer = PermissaoAlterarPermissoes;       \n  vNomEnt = NomeEntidade;\n  vTipoEnt = TipoEntidade;\n  vNomPerfil = PerfilEntidade;\n  vNomMnu = NomeMenu;\n      \n  se ((vTipoEnt <> xTipoEntidadeAnterior) E (usaAbrPerfil = \"Sim\")){\n    xTipoEntidadeAnterior = vTipoEnt;\n    \n    se ((usaAbrPerfil = \"Sim\") E (xTipoEntidadeAnterior = \"U\")) {\n      xTipoRegistro = \"Perfil\";\n    } senao {\n      xTipoRegistro = \"Simples\";\n    }\n  \n    concatena(\"Cabecalho\", \"_\", xTipoRegistro, vCabecalho);  \n    ListaSecao(vCabecalho);\n  }\n  \n  \n  \n  concatena(\"Detalhe\", \"_\", xTipoRegistro, vDetalhe);\n  \n  ListaSecao(vDetalhe);\n  \nFim;",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Detalhe_Simples",
+      "bandType": "OUTRO",
+      "tag": 601,
+      "position": {
+        "top": 98,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "NomeMenu",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 698,
+            "height": 17
+          },
+          "caption": "NomeMenu",
+          "onPrint": "Definir Alfa vNomMnu;\nValStr = vNomMnu;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho005",
+          "position": {
+            "top": 0,
+            "left": 969,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerCon",
+          "position": {
+            "top": 0,
+            "left": 972,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vPerCon;\n\nSe (vPerCon = \"S\")\nInicio\n  vPerCon = \"ü\";\n  AlteraControle (\"DesPerCon\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerCon = \"û\";\n  AlteraControle (\"DesPerCon\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerCon;\nCancel(2);\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho007",
+          "position": {
+            "top": 0,
+            "left": 999,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerIns",
+          "position": {
+            "top": 0,
+            "left": 1002,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "û",
+          "onPrint": "Definir Alfa vPerIns;\n\nSe (vPerIns = \"S\") \nInicio\n  vPerIns = \"ü\";\n  AlteraControle (\"DesPerIns\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerIns = \"û\";\n  AlteraControle (\"DesPerIns\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerIns;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho008",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerAlt",
+          "position": {
+            "top": 0,
+            "left": 1032,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vPerAlt;\n\nSe (vPerAlt = \"S\")\nInicio\n  vPerAlt = \"ü\";\n  AlteraControle (\"DesPerAlt\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerAlt = \"û\";\n  AlteraControle (\"DesPerAlt\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerAlt;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho009",
+          "position": {
+            "top": 0,
+            "left": 1059,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesPerExc",
+          "position": {
+            "top": 0,
+            "left": 1062,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "û",
+          "onPrint": "Definir Alfa vPerExc;\n\nSe (vPerExc = \"S\")\nInicio\n  vPerExc = \"ü\";\n  AlteraControle (\"DesPerExc\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vPerExc = \"û\";\n  AlteraControle (\"DesPerExc\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vPerExc;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho014",
+          "position": {
+            "top": 0,
+            "left": 1089,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesAltPer",
+          "position": {
+            "top": 0,
+            "left": 1092,
+            "width": 25,
+            "height": 17
+          },
+          "caption": "ü",
+          "onPrint": "Definir Alfa vAltPer;\n\nSe (vAltPer = \"S\")\nInicio\n  vAltPer = \"ü\";\n  AlteraControle (\"DesAltPer\", \"Fonte\", \"Wingdings;Negrito;14;Verde\");\nFim;\nSenao\nInicio\n  vAltPer = \"û\";\n  AlteraControle (\"DesAltPer\", \"Fonte\", \"Wingdings;Negrito;14;Vermelho\");\nFim;\n\nValStr = vAltPer;\nCancel(2);",
+          "font": {
+            "name": "Wingdings",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "NomeEntidade",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 175,
+            "height": 17
+          },
+          "caption": "NomeEntidade",
+          "onPrint": "Definir Alfa vNomEnt;\nValStr = vNomEnt;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho015",
+          "position": {
+            "top": 0,
+            "left": 180,
+            "width": 4,
+            "height": 18
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho_Simples",
+      "bandType": "OUTRO",
+      "tag": 602,
+      "position": {
+        "top": 59,
+        "left": 0,
+        "width": 6000,
+        "height": 39
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 21,
+            "left": 1059,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Exc.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 21,
+            "left": 1029,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Alt.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 21,
+            "left": 999,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Ins.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 21,
+            "left": 969,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Con.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescUsu",
+          "position": {
+            "top": 21,
+            "left": 3,
+            "width": 95,
+            "height": 17
+          },
+          "caption": "Usuário / Grupo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 18,
+            "left": 0,
+            "width": 1123,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho016",
+          "position": {
+            "top": 39,
+            "left": 0,
+            "width": 1123,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 21,
+            "left": 1089,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Per.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 21,
+            "left": 186,
+            "width": 198,
+            "height": 17
+          },
+          "caption": "Menu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho_Perfil",
+      "bandType": "OUTRO",
+      "tag": 603,
+      "position": {
+        "top": 116,
+        "left": 0,
+        "width": 6000,
+        "height": 39
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 21,
+            "left": 1059,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Exc.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 21,
+            "left": 1029,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Alt.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 21,
+            "left": 999,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Ins.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 21,
+            "left": 969,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Con.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescUsuPerfil",
+          "position": {
+            "top": 21,
+            "left": 3,
+            "width": 95,
+            "height": 17
+          },
+          "caption": "Usuário / Grupo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho018",
+          "position": {
+            "top": 18,
+            "left": 0,
+            "width": 1123,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho019",
+          "position": {
+            "top": 39,
+            "left": 0,
+            "width": 1123,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 21,
+            "left": 1089,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Per.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 21,
+            "left": 444,
+            "width": 193,
+            "height": 17
+          },
+          "caption": "Menu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 21,
+            "left": 186,
+            "width": 198,
+            "height": 17
+          },
+          "caption": "Perfil",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 17150,
+    "totalBytes": 637188,
+    "parseComplete": true,
+    "bandCount": 7,
+    "fieldCount": 57,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 132,
+        "skippedTo": 204,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 1433,
+        "skippedTo": 3836,
+        "note": "Skipped 2403 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,625 @@
+{
+  "filename": "rsca002.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Quebra: Candidato  Ordenação: Candidato                     Curso de Aperfeiçoamento                     Período Inicial  Função: Emitir uma relação resumida dos cursos de aperfeiçoamento por  candidato.",
+  "description": [
+    "Quebra: Candidato",
+    "",
+    "Ordenação: Candidato",
+    "                    Curso de Aperfeiçoamento",
+    "                    Período Inicial",
+    "",
+    "Função: Emitir uma relação resumida dos cursos de aperfeiçoamento por ",
+    "candidato."
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "",
+    "selection": "Se (R122CEX.PODVIS = 1) {\n  Cancel(1);\n}",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Titulo",
+      "bandType": "CABECALHO",
+      "tag": 1,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 84
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 6,
+            "left": 687,
+            "width": 25,
+            "height": 14
+          },
+          "caption": "Pag.:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 6,
+            "left": 3,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 6,
+            "left": 45,
+            "width": 185,
+            "height": 14
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 6,
+            "left": 708,
+            "width": 29,
+            "height": 14
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 54,
+            "left": 438,
+            "width": 98,
+            "height": 14
+          },
+          "caption": "Grau de Instrução",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 69,
+            "left": 45,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "Curso",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 69,
+            "left": 87,
+            "width": 50,
+            "height": 14
+          },
+          "caption": "Descição",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 51,
+            "left": 3,
+            "width": 57,
+            "height": 14
+          },
+          "caption": "Candidato",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 69,
+            "left": 663,
+            "width": 75,
+            "height": 14
+          },
+          "caption": "Carga Horária",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 69,
+            "left": 552,
+            "width": 44,
+            "height": 14
+          },
+          "caption": "Período",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 3,
+            "left": 234,
+            "width": 404,
+            "height": 22
+          },
+          "caption": "Cursos de  Aperfeiçoamento por Candidato",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_2",
+      "bandType": "DETALHE",
+      "tag": 202,
+      "position": {
+        "top": 103,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 87,
+            "width": 401,
+            "height": 14
+          },
+          "table": "R122CCR",
+          "field": "NOMCUA",
+          "caption": "R122CCR.NOMCUA",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 504,
+            "width": 64,
+            "height": 14
+          },
+          "table": "R122CCR",
+          "field": "PerIni",
+          "caption": "R122CCR.PerIni",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 579,
+            "width": 64,
+            "height": 14
+          },
+          "table": "R122CCR",
+          "field": "PerFim",
+          "caption": "R122CCR.PerFim",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 675,
+            "width": 47,
+            "height": 14
+          },
+          "table": "R122CCR",
+          "field": "CarHor",
+          "caption": "R122CCR.CarHor",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 783,
+            "width": 17,
+            "height": 15
+          },
+          "table": "R122CCR",
+          "field": "NumCan",
+          "caption": "R122CCR.NumCan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 21,
+            "width": 59,
+            "height": 14
+          },
+          "table": "R122CCR",
+          "field": "CodCua",
+          "caption": "R122CCR.CodCua",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 0,
+            "left": 570,
+            "width": 8,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Total_Geral",
+      "bandType": "ADICIONAL",
+      "tag": 501,
+      "position": {
+        "top": 118,
+        "left": 0,
+        "width": 6000,
+        "height": 54
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "Total002",
+          "position": {
+            "top": 21,
+            "left": 108,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Total002",
+          "fieldName": "Detalhe_2.Cadastro011",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total003",
+          "position": {
+            "top": 36,
+            "left": 108,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Total003",
+          "fieldName": "Detalhe_2.Cadastro011",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 21,
+            "left": 24,
+            "width": 81,
+            "height": 14
+          },
+          "caption": "Total de Cursos:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 6,
+            "left": 108,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Total001",
+          "fieldName": "Detalhe_1.Cadastro002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 6,
+            "left": 6,
+            "width": 99,
+            "height": 14
+          },
+          "caption": "Total de Candidatos:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 36,
+            "left": 6,
+            "width": 99,
+            "height": 14
+          },
+          "caption": "Carga Horária Total:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 172,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 790,
+            "height": 12
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_1",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 84,
+        "left": 0,
+        "width": 6000,
+        "height": 19
+      },
+      "canPrint": true,
+      "tableList": [
+        "R122CEX.GRAINS"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 6,
+            "left": 0,
+            "width": 50,
+            "height": 14
+          },
+          "table": "R122CEX",
+          "field": "NumCan",
+          "caption": "R122CEX.NumCan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 6,
+            "left": 54,
+            "width": 280,
+            "height": 14
+          },
+          "table": "R122CEX",
+          "field": "NomCan",
+          "caption": "R122CEX.NomCan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 6,
+            "left": 438,
+            "width": 193,
+            "height": 14
+          },
+          "caption": "Descricao001",
+          "onPrint": "Definir Cursor CGra;\nDefinir Numero xgrains;\n\nxgrains = R122CEX.GRAINS;\nCGra.SQL \"SELECT DESGRA FROM R022GRA WHERE R022GRA.GRAINS = :xgrains\";\nCGra.AbrirCursor();\nSe    (CGra.Achou)\n      ValStr = CGra.DESGRA;\nSenao ValStr = \"\";\nCGra.FecharCursor();\nCancel(2);\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 783,
+            "width": 18,
+            "height": 14
+          },
+          "table": "R122CEX",
+          "field": "GraIns",
+          "caption": "R122CEX.GraIns",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 372,
+            "width": 6,
+            "height": 17
+          },
+          "table": "R122CEX",
+          "field": "PodVis",
+          "caption": "R122CEX.PodVis",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R122CCR",
+    "R122CEX",
+    "R122CEX.GRAINS"
+  ],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 8937,
+    "totalBytes": 517827,
+    "parseComplete": true,
+    "bandCount": 5,
+    "fieldCount": 30,
+    "errorCount": 3,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 133,
+        "skippedTo": 205,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 620,
+        "skippedTo": 3157,
+        "note": "Skipped 2537 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 5943,
+        "skippedTo": 6324,
+        "note": "Skipped 367 bytes (classification+relations)"
+      }
+    ]
+  }
+}

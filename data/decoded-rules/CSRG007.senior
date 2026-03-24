@@ -1,0 +1,120 @@
+/*
+Objetivo: Montar um fluxo de processo básico com foco em Mapa de carreira.
+Com esta regra é montado o fluxo com seções para dividir um nível de outro, 
+e dentro de cada seção possuem caixas representando áreas da empresa, 
+cada caixa possui itens que representam os cargos em cada área, 
+nas seções também possui uma imagem adicionada representando uma seta para indicar a direção do fluxo.
+O resultado final é um Mapa de carreira onde a caixa do centro é o Área/Cargo 
+ que está sendo ocupado no momento e as caixas abaixo representam possíveis caminhos que ele traçou 
+ para chegar a este cargo e as caixas acima da uma visão de quais área/Cargos ele pode ocupar futuramente.
+*/
+
+
+Definir Alfa xCorVermelho; @1	Assessorias (Vermelho)@	
+Definir Alfa xCorVerde;    @2	Diretoria Mercado (Verde)@		
+Definir Alfa xCorAzul;     @3	Diretoria Sistemas (Azul)@		
+Definir Alfa xCorMarrom;   @4	Diretoria Tecnologia e Produto (Marrom)@		
+Definir Alfa xCorLaranja;  @5	Diretoria de Serviços (Laranja)@	
+Definir Alfa xCorAmarelo;  @6 Alvo (Amarelo)@	
+Definir Alfa xAlvo;
+
+Definir Alfa xLink;
+
+concatena(CgiAddr, WnConector, "?ACAO=EXECUTAREGRA&REGRA=007&SIS=CS&CargoAlvo=", xLink);	
+
+@ -- Definição de cores -- @
+
+xCorVermelho = "#FF6161"; 	
+xCorVerde    = "#77D377";    		
+xCorAzul     = "#658AFF";     		
+xCorMarrom   = "#AC5600";   		
+xCorLaranja  = "#FF944B";  	
+xCorAmarelo  = "yellow";  		
+
+
+@ Lê o parâmetro passado pelo HTML (Parâmetro CargoAlvo) @
+WCheckValString ("CargoAlvo", "Alvo", xAlvo, "falso", 1000);
+
+@ -- Se o valor do parâmetro passado por parâmetro no HTML for = a "Analista", então monta o fluxo adicionando o cargo analista como ALVO -- @
+se (xAlvo = "Analista")
+inicio
+  @ -- Monta o LINK com o parametro coordenador, para ao clicar sobre o link, monte o fluxo com o cargo coordenador como ALVO --  @
+  Concatena (xLink, "", "Coordenador", xLink);
+  @ -- Inicia a criação do Fluxo -- @
+  FluxoBasico_Criar("Mapa de Carreira", "Legenda: ");
+    @ -- Adiciona uma seção no Fluxo -- @
+    FluxoBasico_AdicionarSecao("SEC001", 1, 0);
+    @ -- Adiciona uma caixa na seção para a composição do fluxo -- @
+      FluxoBasico_AdicionarCaixa("CX001", xCorAzul, "Diretoria de sistemas", 0);
+        
+        @ -- Adiciona Itens dentro da caixa acima -- @
+        FluxoBasico_AdicionarItem("IT001", "Programador", "", "", "Clique para tornar este cargo como ALVO.");
+        FluxoBasico_AdicionarItem("IT002", "Consultor da Qualidade", "", "", "Clique para tornar este cargo como ALVO.");
+        
+      @ -- Adiciona Caixa dentro da seção acima -- @  
+      FluxoBasico_AdicionarCaixa("CX002", xCorMarrom, "Diretoria de Tecnologia e Produto", 0);
+        FluxoBasico_AdicionarItem("IT003", "Projetista", "", "", "Clique para tornar este cargo como ALVO.");     
+    FluxoBasico_AdicionarSecao("SEC002", 2, 0);
+      @ -- Adiciona uma imagem dentro da secao acima -- @
+      FluxoBasico_AdicionarImagem("IMG001", "imagens/Seta_Cima.png", "", 0);
+    FluxoBasico_AdicionarSecao("SEC003_ALVO", 3, 0);
+      FluxoBasico_AdicionarCaixa("CX003_ALVO", xCorAmarelo, "Diretoria de Sistemas", 0);
+        FluxoBasico_AdicionarItem("IT004", "Analista de sistemas", "font-size:150%;font-weight: bold;", "", "");
+    FluxoBasico_AdicionarSecao("SEC004", 4, 0);
+      FluxoBasico_AdicionarImagem("IMG002", "imagens/Seta_Cima.png", "", 0);  
+    FluxoBasico_AdicionarSecao("SEC005", 5, 0);    
+      FluxoBasico_AdicionarCaixa("CX004", xCorAzul, "Diretoria de Sistemas", 0);
+        
+        FluxoBasico_AdicionarItem("IT005", "Coordenador de Sistemas", "", xLink, "Clique para tornar este cargo como ALVO.");
+        FluxoBasico_AdicionarItem("IT006", "Especialista", "", "", "Clique para tornar este cargo como ALVO.");
+      FluxoBasico_AdicionarCaixa("CX005", xCorLaranja, "Diretoria de Serviços", 0);
+
+        FluxoBasico_AdicionarItem("IT007", "Arquiteto de soluções", "", "", "Clique para tornar este cargo como ALVO.");
+      FluxoBasico_AdicionarCaixa("CX006", xCorMarrom, "Diretoria de Tecnologia e Produto", 0);
+
+        FluxoBasico_AdicionarItem("IT008", "Gerente de Projetos", "", "", "Clique para tornar este cargo como ALVO.");          
+    
+    @ -- Adicionar Legenda no fluxo -- @
+    FluxoBasico_AdicionarLegenda("Alvo", xCorAmarelo);
+    FluxoBasico_AdicionarLegenda("Assessorias", xCorVermelho);
+    FluxoBasico_AdicionarLegenda("Diretoria de Mercado", xCorVerde);
+    FluxoBasico_AdicionarLegenda("Diretoria de Sistemas", xCorAzul);
+    FluxoBasico_AdicionarLegenda("Diretoria Tecnologia e Produto", xCorMarrom);
+    FluxoBasico_AdicionarLegenda("Diretoria de Serviços", xCorLaranja);
+    
+    @ -- Finaliza a criação do fluxo -- @
+    FluxoBasico_Finalizar();
+    
+    
+fim
+senao @ -- Se o valor do parâmetro passado por parâmetro no HTML for = a "Coordenador", então monta o fluxo adicionando o cargo coordenador como ALVO -- @
+se (xAlvo = "Coordenador")
+inicio
+  FluxoBasico_Criar("Mapa de Carreira", "Legenda: ");
+    FluxoBasico_AdicionarSecao("SEC001", 1, 0);
+      FluxoBasico_AdicionarCaixa("CX001", xCorAzul, "Diretoria de Sistemas", 0);
+        Concatena (xLink, "", "Analista", xLink);
+        FluxoBasico_AdicionarItem("IT001", "Analista", "", xLink, "Clique para tornar este cargo como ALVO.");
+      FluxoBasico_AdicionarCaixa("CX002", xCorMarrom, "Diretoria de Tecnologia e Produto", 0);
+        FluxoBasico_AdicionarItem("IT003", "Projetista", "", xLink, "Clique para tornar este cargo como ALVO.");     
+    FluxoBasico_AdicionarSecao("SEC002", 2, 0);
+      FluxoBasico_AdicionarImagem("IMG001", "imagens/Seta_Cima.png", "", 0);
+    FluxoBasico_AdicionarSecao("SEC003_ALVO", 3, 0);
+      FluxoBasico_AdicionarCaixa("CX003_ALVO", xCorAmarelo, "Diretoria de Sistemas", 0);
+        FluxoBasico_AdicionarItem("IT004", "Coordenador de Sistemas", "font-weight: bold", "", "");
+    FluxoBasico_AdicionarSecao("SEC004", 4, 0);
+      FluxoBasico_AdicionarImagem("IMG002", "imagens/Seta_Cima.png", "", 0);  
+    FluxoBasico_AdicionarSecao("SEC005", 5, 0);    
+      FluxoBasico_AdicionarCaixa("CX004", xCorAzul, "Diretoria de Sistemas", 0);
+        FluxoBasico_AdicionarItem("IT005", "Gerente de Produto", "", "", "Clique para tornar este cargo como ALVO.");        
+    
+    FluxoBasico_AdicionarLegenda("Alvo", xCorAmarelo);
+    FluxoBasico_AdicionarLegenda("Assessorias", xCorVermelho);
+    FluxoBasico_AdicionarLegenda("gerente de Produto", xCorVerde);
+    FluxoBasico_AdicionarLegenda("Diretoria de Sistemas", xCorAzul);
+    FluxoBasico_AdicionarLegenda("Diretoria Tecnologia e Produto", xCorMarrom);
+    FluxoBasico_AdicionarLegenda("Diretoria de Serviços", xCorLaranja);
+    
+    
+    FluxoBasico_Finalizar();
+fim;

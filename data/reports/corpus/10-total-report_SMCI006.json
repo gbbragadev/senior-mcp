@@ -1,0 +1,1294 @@
+{
+  "filename": "SMCI006.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Quebra: Nenhuma         Filial         Filial/Mandato  Ordenação: Cadastro            Nome  Função: Emitir a relação das freqüências dos  membros da CIPA nas reuniões do mandato.",
+  "description": [
+    "Quebra: Nenhuma",
+    "        Filial",
+    "        Filial/Mandato",
+    "",
+    "Ordenação: Cadastro",
+    "           Nome",
+    "",
+    "Função: Emitir a relação das freqüências dos ",
+    "membros da CIPA nas reuniões do mandato."
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir Data EDatIni;\nDefinir Data EDatFim;\nDefinir Alfa lStrSQL;\nDefinir Alfa lData;\nDefinir Alfa lStrEmp;\n\nEDatFim = EDatRef;\n\nFDatIni = EDatIni;\nFDatFim = EDatFim;\n\nIntParaAlfa (EmpAtu, lStrEmp);\n\n/* ------------------------------------------------------------------\n   RETIRA ALGUNS CAMPOS DO SELECT PARA QUE POSSA SER FEITO O GROUP BY \n   ------------------------------------------------------------------ */\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100REP.DATREU\");\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100REP.HORREU\");\n\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100REU.DATREU\");\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100REU.HORREU\");\n\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100MAN.DATINI\");\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100MAN.DATFIM\");\n\n/* -----------------------------------------\n   GERA O FILTRO PARA AS REUNIOES DO PERIODO \n   ----------------------------------------- */\nConverteDataToDB(EDatIni, lData);\nlStrSQL = \"R100REU.DATREU >= \" + lData;\n\nConverteDataToDB(EDatFim, lData);\nlStrSQL = lStrSQL + \" AND R100REU.DATREU <= \" + lData + \" AND R100REU.SITREU = 'R' AND R100REU.NUMEMP = \" + lStrEmp;\n\nSe (ETipReu = 'O')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'O' \";\nSenao Se (ETipReu = 'E')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'E' \";\nSenao Se (ETipReu = 'D')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'D' \";\nSenao Se (ETipReu = 'I')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'I' \";\nSenao Se (ETipReu = 'L')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'L' \";\nSenao Se (ETipReu = 'P')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'P' \";\nSenao Se (ETipReu = 'S')\n  lStrSQL = lStrSQL + \" AND R100REU.TIPREU = 'S' \";   \n\n/* --------------------------------------\n   INCLUI CAMPO PARA CONTAGEM DE REUNIOES \n   -------------------------------------- */\nInsClauSQLCampoDireto (\"Detalhe_R100REU\", \"COUNT (*) QTDREU\");\n\n/* ----------------------------\n    INCLUI O PERIODO NO SELECT\n   ---------------------------- */\nInsClauSQLWhere (\"Detalhe_R100REU\", lStrSQL);\n\n\n/* --------------------------------------------------------------\n    INCLUI O GROUP BY PARA APRESENTAÇAO. \n    DEVE-SE TER MUITA ATENÇÃO COM OS CAMPOS INCLUIDOS NO MODELO.\n   -------------------------------------------------------------- */\nlStrSQL = \"R100REP.TIPCOL, R100REP.NUMCAD, R034FUN.NOMFUN, R100MEB.MOTSAI, R100REP.NUMEMP, R100REP.CODFIL, \\\n           R100REP.CIPTPR, R100REP.CODMAN, R100MEB.NUMEMP, R100MEB.CODFIL, \\\n           R100MEB.CODMAN, R100MEB.SEQELE, R100MEB.TIPCOL, R100MEB.NUMCAD, R100MEB.FUNMEB, R100REU.NUMEMP, \\\n           R100REU.CODFIL, R100REU.CODMAN, R034FUN.NUMEMP, R034FUN.TIPCOL, R034FUN.NUMCAD\";\n\nInsClauSQLGroupBy (\"Detalhe_R100REU\", lStrSQL);\n\n\nSe (ETipQue = 'F')\n  AlteraControle (\"Subtitulo_Filial\", \"Salto Página\", \"Sim\");\n\n\nSe (ETipQue = 'M')\n  {\n  AlteraControle (\"Subtitulo_Filial\", \"Salto Página\", \"Sim\");\n  AlteraControle (\"Subtitulo_Mandato\", \"Salto Página\", \"Sim\");\n  }",
+    "selection": "/* S E L E Ç Ã O */\nDefinir Alfa lCodSit;\nDefinir Alfa lDesSit;\nDefinir Alfa LNomFun;\nDefinir Alfa xFuncao;\nDefinir Numero xFunMeb;\nDefinir Numero lQtdReu;\n\nSe ((R100REP.NUMCAD <> FNumCad) ou (R100REP.TIPCOL <> FTipCol))\n  {\n  Se (FNumCad <> 0)\n    ListaSecao (\"Adicional_MEB\");\n\n  FNumCad = R100REP.NUMCAD;\n  FTipCol = R100REP.TIPCOL;\n  FPresen = 0;\n  FFalInj = 0;\n  FFalJus = 0;\n  }\n\n/* ------------------------------------------------ \n   Quantidade de presenças, faltas e justificativas \n   ------------------------------------------------ */\nRetornaCampoNumero (\"Detalhe_R100REU\", \"QtdReu\", lQtdReu); \n\nSe (R100REP.CIPTPR = \"P\")\n  FPresen = lQtdReu;\n\nSe (R100REP.CIPTPR = \"F\")\n  FFalInj = lQtdReu;\n\nSe (R100REP.CIPTPR = \"J\")\n  FFalJus = lQtdReu;\n\nFNumCad = R100REP.NUMCAD;\nFTipCol = R100REP.TIPCOL;\n\nlNomFun = R034FUN.NOMFUN;\nAlteraControle (\"DNomFun\", \"Descrição\", lNomFun);\n\nxFunMeb = R100MEB.FunMeb;\nIntParaAlfa (xFunMeb, xFuncao);\nDescItemLista(\"LCipFme\", xFuncao, xFuncao);\nAlteraControle (\"DListaFuncao\", \"Descrição\", xFuncao);\n\n\n/* -------------------------- \n   Situção do membro da CIPA. \n   -------------------------- */\nlMotSai = R100MEB.MOTSAI;\nIntParaAlfa (lMotSai, lCodSit);\n\nSe (R100MEB.MOTSAI = 0)\n  lDesSit = \"Ativo\";\nSenao\n  DescItemLista(\"LCipMex\", lCodSit, lDesSit);\n\nAlteraControle (\"DDesMot\", \"Descrição\", lDesSit);",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 64
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 63,
+            "width": 634,
+            "height": 14
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 50,
+            "height": 14
+          },
+          "caption": "EmpAtu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao022",
+          "position": {
+            "top": 42,
+            "left": 285,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatIni",
+          "position": {
+            "top": 42,
+            "left": 336,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "FDatIni",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 42,
+            "left": 402,
+            "width": 20,
+            "height": 14
+          },
+          "caption": "a",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatFim",
+          "position": {
+            "top": 42,
+            "left": 423,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "FDatFim",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 21,
+            "left": 0,
+            "width": 767,
+            "height": 19
+          },
+          "caption": "Freqüências da CIPA",
+          "font": {
+            "name": "Arial",
+            "size": 12
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 3,
+            "left": 705,
+            "width": 35,
+            "height": 14
+          },
+          "caption": "Página:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 741,
+            "width": 21,
+            "height": 14
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_R100REU",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 64,
+        "left": 0,
+        "width": 6000,
+        "height": 13
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "/* Consistencia para o ultimo registro na tabela */\n\nUltimoRegistro (\"Detalhe_R100REU\", xFinal);\n\nSe (xFinal = 1)\n  {\n  Se (FNumCad <> 0)\n    ListaSecao (\"Adicional_MEB\");\n  }",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 48,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REP",
+          "field": "NumCad",
+          "caption": "R100REP.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 24,
+            "width": 20,
+            "height": 14
+          },
+          "table": "R100REP",
+          "field": "TipCol",
+          "caption": "R100REP.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 84,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 120,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100MEB",
+          "field": "FunMeb",
+          "caption": "R100MEB.FunMeb",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 0,
+            "left": 156,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100MEB",
+          "field": "MotSai",
+          "caption": "R100MEB.MotSai",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 192,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "NumEmp",
+          "caption": "R100REU.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 228,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "CODFIL",
+          "caption": "R100REU.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 261,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "CodMan",
+          "caption": "R100REU.CodMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 294,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REP",
+          "field": "CipTpr",
+          "caption": "R100REP.CipTpr",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 330,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "REQUERIDO_QTDREU",
+          "caption": "R100REU.REQUERIDO_QTDREU",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Filial",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 77,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 31,
+            "height": 14
+          },
+          "caption": "Filial:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 0,
+            "left": 75,
+            "width": 15,
+            "height": 14
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 36,
+            "width": 38,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "CODFIL",
+          "caption": "R100REU.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 93,
+            "width": 650,
+            "height": 14
+          },
+          "table": "R030FIL",
+          "field": "RazSoc",
+          "caption": "R030FIL.RazSoc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Mandato",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 92,
+        "left": 0,
+        "width": 6000,
+        "height": 36
+      },
+      "canPrint": true,
+      "tableList": [
+        "R100REU.CODFIL",
+        "R100REU.CODMAN"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Data EDatIni;\nDefinir Data EDatFim;\nDefinir Alfa lData;\nDefinir Alfa lStrSQL;\nDefinir Alfa xWhere;\nDefinir Alfa str_numemp;\nDefinir Alfa str_codfil;\nDefinir Alfa str_codman;\n\nFTotReu = 0;\n\n/* ---------------------------------------------------\n   CONTAR O TOTAL DE REUNIÕES DO MANDATO NESTE PERIODO\n   --------------------------------------------------- */\n\n/* Converte as datas de entrada */\nConverteDataToDB(EDatIni, lData);\nlStrSQL = \" AND R100REU.DATREU >= \" + lData;\n\nConverteDataToDB(EDatFim, lData);\nlStrSQL = lStrSQL + \" AND R100REU.DATREU <= \" + lData;\n\n/* Filial e Mandato que estão sendo apresentados */\nlNumEmp = EmpAtu;\nlCodFil = R100REU.CODFIL;\nlCodMan = R100REU.CODMAN;\n\nIntParaAlfa(lNumEmp, str_numemp);\nIntParaAlfa(lCodFil, str_codfil);\nIntParaAlfa(lCodMan, str_codman);\n\nxWhere = \"R100REU.SITREU = 'R' AND R100REU.NUMEMP = \" + str_numemp + \" AND R100REU.CODFIL = \" + str_codfil;\n\nSe (ETipReu = 'O')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'O' \";\nSenao Se (ETipReu = 'E')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'E' \";\nSenao Se (ETipReu = 'D')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'D' \";\nSenao Se (ETipReu = 'I')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'I' \";\nSenao Se (ETipReu = 'L')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'L' \";\nSenao Se (ETipReu = 'P')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'P' \";\nSenao Se (ETipReu = 'S')\n  xWhere = xWhere + \" AND R100REU.TIPREU = 'S' \";       \n\nxWhere = xWhere + \" AND R100REU.CODMAN = \" + str_codman + lStrSQL;\n\n/* Retorna o total de registros */\nContador(\"R100REU\", xWhere, FTotReu);",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 3,
+            "left": 84,
+            "width": 15,
+            "height": 14
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 21,
+            "left": 45,
+            "width": 51,
+            "height": 14
+          },
+          "caption": "Cadastro",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 21,
+            "left": 99,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Nome",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 21,
+            "left": 264,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Função",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 21,
+            "left": 648,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "Situação",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 21,
+            "left": 591,
+            "width": 55,
+            "height": 14
+          },
+          "caption": "Presença",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 21,
+            "left": 522,
+            "width": 64,
+            "height": 14
+          },
+          "caption": "Faltas Just.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 21,
+            "left": 447,
+            "width": 70,
+            "height": 14
+          },
+          "caption": "Faltas Injust.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao021",
+          "position": {
+            "top": 21,
+            "left": 390,
+            "width": 54,
+            "height": 14
+          },
+          "caption": "Reuniões",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 3,
+            "left": 99,
+            "width": 220,
+            "height": 14
+          },
+          "table": "R100MAN",
+          "field": "DesMan",
+          "caption": "R100MAN.DesMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 3,
+            "left": 57,
+            "width": 27,
+            "height": 14
+          },
+          "table": "R100REU",
+          "field": "CodMan",
+          "caption": "R100REU.CodMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 53,
+            "height": 14
+          },
+          "caption": "Mandato:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 21,
+            "left": 6,
+            "width": 25,
+            "height": 14
+          },
+          "caption": "Tipo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 3,
+            "left": 342,
+            "width": 50,
+            "height": 14
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 3,
+            "left": 393,
+            "width": 60,
+            "height": 14
+          },
+          "table": "R100MAN",
+          "field": "DatIni",
+          "caption": "R100MAN.DatIni",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro017",
+          "position": {
+            "top": 3,
+            "left": 621,
+            "width": 6,
+            "height": 14
+          },
+          "table": "R100MAN",
+          "field": "TipCip",
+          "caption": "R100MAN.TipCip",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao023",
+          "position": {
+            "top": 3,
+            "left": 564,
+            "width": 58,
+            "height": 14
+          },
+          "caption": "Tipo CIPA:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescTipCip",
+          "position": {
+            "top": 3,
+            "left": 621,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "DescTipCip",
+          "fieldList": "R100MAN.TipCip - Cadastro017",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 3,
+            "left": 453,
+            "width": 20,
+            "height": 14
+          },
+          "caption": "a",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 3,
+            "left": 474,
+            "width": 60,
+            "height": 14
+          },
+          "table": "R100MAN",
+          "field": "DatFim",
+          "caption": "R100MAN.DatFim",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Filial",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 167,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "Total006",
+          "position": {
+            "top": 0,
+            "left": 465,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total006",
+          "fieldName": "Adicional_MEB.FFalInj",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total007",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total007",
+          "fieldName": "Adicional_MEB.FFalJus",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total008",
+          "position": {
+            "top": 0,
+            "left": 594,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total008",
+          "fieldName": "Adicional_MEB.FPresen",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total005",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total005",
+          "fieldName": "Subtotal_Mandato.FTotMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 0,
+            "left": 30,
+            "width": 81,
+            "height": 14
+          },
+          "caption": "Total por Filial:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Mandato",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 142,
+        "left": 0,
+        "width": 6000,
+        "height": 25
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "FTotMan = FTotReu;",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 6,
+            "left": 6,
+            "width": 105,
+            "height": 14
+          },
+          "caption": "Total por Mandato:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total002",
+          "position": {
+            "top": 6,
+            "left": 465,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total002",
+          "fieldName": "Adicional_MEB.FFalInj",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total003",
+          "position": {
+            "top": 6,
+            "left": 534,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total003",
+          "fieldName": "Adicional_MEB.FFalJus",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total004",
+          "position": {
+            "top": 6,
+            "left": 594,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total004",
+          "fieldName": "Adicional_MEB.FPresen",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotMan",
+          "position": {
+            "top": 6,
+            "left": 393,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "FTotMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Total_Geral",
+      "bandType": "ADICIONAL",
+      "tag": 501,
+      "position": {
+        "top": 185,
+        "left": 0,
+        "width": 6000,
+        "height": 31
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "Total012",
+          "position": {
+            "top": 0,
+            "left": 594,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total012",
+          "fieldName": "Adicional_MEB.FPresen",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total011",
+          "position": {
+            "top": 0,
+            "left": 534,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total011",
+          "fieldName": "Adicional_MEB.FFalJus",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total010",
+          "position": {
+            "top": 0,
+            "left": 465,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total010",
+          "fieldName": "Adicional_MEB.FFalInj",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total009",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 52,
+            "height": 14
+          },
+          "caption": "Total009",
+          "fieldName": "Subtotal_Mandato.FTotMan",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao018",
+          "position": {
+            "top": 0,
+            "left": 48,
+            "width": 64,
+            "height": 14
+          },
+          "caption": "Total Geral:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 216,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 766,
+            "height": 13
+          },
+          "caption": "Desrodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_MEB",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 128,
+        "left": 0,
+        "width": 6000,
+        "height": 14
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSFormula",
+          "name": "FTipCol",
+          "position": {
+            "top": 0,
+            "left": 6,
+            "width": 25,
+            "height": 14
+          },
+          "caption": "FTipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FNumCad",
+          "position": {
+            "top": 0,
+            "left": 33,
+            "width": 63,
+            "height": 14
+          },
+          "caption": "FNumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DDesMot",
+          "position": {
+            "top": 0,
+            "left": 648,
+            "width": 49,
+            "height": 14
+          },
+          "caption": "DDesMot",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotReu",
+          "position": {
+            "top": 0,
+            "left": 402,
+            "width": 40,
+            "height": 14
+          },
+          "caption": "FTotReu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FFalInj",
+          "position": {
+            "top": 0,
+            "left": 474,
+            "width": 43,
+            "height": 14
+          },
+          "caption": "FFalInj",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FFalJus",
+          "position": {
+            "top": 0,
+            "left": 543,
+            "width": 43,
+            "height": 14
+          },
+          "caption": "FFalJus",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FPresen",
+          "position": {
+            "top": 0,
+            "left": 603,
+            "width": 43,
+            "height": 14
+          },
+          "caption": "FPresen",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DNomFun",
+          "position": {
+            "top": 0,
+            "left": 99,
+            "width": 164,
+            "height": 14
+          },
+          "caption": "DNomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DListaFuncao",
+          "position": {
+            "top": 0,
+            "left": 264,
+            "width": 130,
+            "height": 14
+          },
+          "caption": "DListaFuncao",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R030FIL",
+    "R034FUN",
+    "R100MAN",
+    "R100MEB",
+    "R100REP",
+    "R100REU",
+    "R100REU.CODFIL",
+    "R100REU.CODMAN"
+  ],
+  "sqlFragments": [
+    "SELECT PARA QUE POSSA SER FEITO O GROUP BY \n   ------------------------------------------------------------------ */\nDeleteFieldSQL (\"Detalhe_R100REU\", \"R100REP.DATREU\");",
+    "DeleteFieldSQL (\"Detalhe_R100REU\", \"R100REP.HORREU\");",
+    "DeleteFieldSQL (\"Detalhe_R100REU\", \"R100REU.DATREU\");",
+    "DeleteFieldSQL (\"Detalhe_R100REU\", \"R100REU.HORREU\");",
+    "DeleteFieldSQL (\"Detalhe_R100REU\", \"R100MAN.DATINI\");",
+    "DeleteFieldSQL (\"Detalhe_R100REU\", \"R100MAN.DATFIM\");",
+    "SELECT\n   ---------------------------- */\nInsClauSQLWhere (\"Detalhe_R100REU\", lStrSQL);"
+  ],
+  "_stats": {
+    "parsedBytes": 20896,
+    "totalBytes": 590272,
+    "parseComplete": true,
+    "bandCount": 9,
+    "fieldCount": 68,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "pre-band-skip",
+        "offset": 4946,
+        "skippedTo": 6468,
+        "note": "Skipped 1522 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 9699,
+        "skippedTo": 11088,
+        "note": "Skipped 1375 bytes (classification+relations)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,605 @@
+{
+  "version": "1.0",
+  "description": "Top 20 most relevant Senior HCM reports, cross-referenced: model files, menu entries, SOAP services, and DB tables",
+  "generated": "2026-03-19",
+  "methodology": "Cross-referenced r910mnu menu tree (545 entries), GER binary model headers (464 files in Vetorh/Modelos, 1624 in Sapiens/Modelos), SOAP api-map.json (996 services), and sql-templates.json. Priority given to: employee listing, payroll, benefits, timekeeping, org chart, headcount.",
+  "soap_common_params": {
+    "note": "All HCM report services share the same SOAP parameter signature",
+    "request": ["User", "Password", "prRelatorio", "prPrintDest (A=file, I=printer)", "prExecFmt (PDF/XLS/HTML/RTF)", "prDir", "prFileName", "prEntrada (XML filter params)"],
+    "response": ["prRetorno (Base64 blob)", "prLOG", "prError"]
+  },
+  "reports": [
+    {
+      "rank": 1,
+      "id": "employee-roster",
+      "name": "Ficha Cadastral - Employee Roster",
+      "description": "Employee registration card listing all active/inactive employees with company, org unit, position, and admission date",
+      "category": "employee_listing",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRFF001.GER",
+      "model_code": "HRFF001",
+      "menu_path": "COLABORADORESFP > FICHACADASTRALFP > NFR034FUN (Empregados)",
+      "menu_entries": [
+        { "nommnu": "NFR034FUN", "nompai": "FICHACADASTRALFP", "desmnu": "Empregados" },
+        { "nommnu": "NFR034CPL", "nompai": "FICHACADASTRALFP", "desmnu": "Complementar" },
+        { "nommnu": "NFR034TER", "nompai": "FICHACADASTRALFP", "desmnu": "Terceiros" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRFF001",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r030emp", "r016orn", "r024car", "r033end"],
+      "sql_template_ref": "employee-roster",
+      "notes": "Primary employee master report. r034fun is the central employee table. Joins to r030emp (company), r016orn (org unit), r024car (position/career)."
+    },
+    {
+      "rank": 2,
+      "id": "payroll-financial-card",
+      "name": "Ficha Financeira - Payroll Financial Card",
+      "description": "Individual employee payroll ledger showing all events, values, deductions and net pay for a reference period",
+      "category": "payroll",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRFF002.GER",
+      "model_code": "HRFF002",
+      "menu_path": "CALCULOSFP > FICHAFINANCEIRAFP > NFRFICFIN (Cadastro)",
+      "menu_entries": [
+        { "nommnu": "NFRFICFIN", "nompai": "FICHAFINANCEIRAFP", "desmnu": "Cadastro" },
+        { "nommnu": "FUNCAO_GRD_FF_OPE", "nompai": "FICHAFINANCEIRAFP", "desmnu": "Relacao" },
+        { "nommnu": "CONSULTA1FP", "nompai": "FICHAFINANCEIRAFP", "desmnu": "Consultas" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRFF002",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><NumEmp>1</NumEmp><CodCal>1</CodCal></Entrada>"
+      },
+      "db_tables": ["r034fun", "r046ver", "r008evc", "r044cal"],
+      "sql_template_ref": "payroll-summary",
+      "notes": "Core payroll output. r046ver holds payroll event values, r008evc event descriptions, r044cal payroll calendar/dates."
+    },
+    {
+      "rank": 3,
+      "id": "payroll-gerencial-folha",
+      "name": "Gerencial - Folha de Pagamento",
+      "description": "Management payroll summary with totals by company, department and cost center — key BI/dashboard report",
+      "category": "payroll",
+      "model_file": "C:/Senior/Vetorh/Modelos/FPGE005.GER",
+      "model_code": "FPGE005",
+      "menu_path": "CALCULOSFP > RELATORIOSFP > OPERACIONAIS1FP > FUNCAO_GRD_RF_OPE (Relacao Calculo)",
+      "menu_entries": [
+        { "nommnu": "FUNCAO_GRD_RF_OPE", "nompai": "OPERACIONAIS1FP", "desmnu": "Relacao Calculo" },
+        { "nommnu": "FUNCAO_GRD_RL_OPE", "nompai": "OPERACIONAIS1FP", "desmnu": "Relacao Liquidos" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "FPGE005",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r046ver", "r008evc", "r044cal", "r018ccu", "r016orn"],
+      "sql_template_ref": "payroll-summary",
+      "notes": "GE-series (Gerencial/BI) report. Aggregates payroll by org dimension. Title confirmed from GER binary header."
+    },
+    {
+      "rank": 4,
+      "id": "org-chart",
+      "name": "Organograma - Org Chart Hierarchy",
+      "description": "Full hierarchical org chart showing all organizational units, their parent-child relationships, and depth levels",
+      "category": "org_chart",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRGE003.GER",
+      "model_code": "HRGE003",
+      "menu_path": "CONTASCONTBEIS1FP > NFRLOCORN (Organograma)",
+      "menu_entries": [
+        { "nommnu": "NFRLOCORN", "nompai": "CONTASCONTBEIS1FP", "desmnu": "Organograma" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRGE003",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><TabOrg>1</TabOrg></Entrada>"
+      },
+      "db_tables": ["r016orn", "r016hie"],
+      "sql_template_ref": "org-chart",
+      "notes": "r016orn = org locations, r016hie = hierarchy parent-child links. CTE recursive query documented in sql-templates.json."
+    },
+    {
+      "rank": 5,
+      "id": "headcount-employee-profile",
+      "name": "Gerencial - Perfil de Pessoal (Headcount)",
+      "description": "Management headcount profile showing workforce composition by age, gender, tenure, education, and position",
+      "category": "headcount",
+      "model_file": "C:/Senior/Vetorh/Modelos/FPGE004.GER",
+      "model_code": "FPGE004",
+      "menu_path": "CALCULOSFP > GERADORFP > GERADOR_RELATORIOSFP > MDEFINIT_COL (Colaborador)",
+      "menu_entries": [
+        { "nommnu": "MDEFINIT_COL", "nompai": "GERADOR_RELATORIOSFP", "desmnu": "Colaborador" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "FPGE004",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r030emp", "r024car", "r016orn"],
+      "sql_template_ref": "employee-roster",
+      "notes": "Title 'Gerencial - Perfil de Pessoal' confirmed from GER binary. Groups workforce by demographic and job dimensions."
+    },
+    {
+      "rank": 6,
+      "id": "admissions-dismissals",
+      "name": "Gerencial - Relacao Anual de Admitidos e Demitidos",
+      "description": "Annual report of employee admissions and dismissals with turnover analysis",
+      "category": "headcount",
+      "model_file": "C:/Senior/Vetorh/Modelos/FPGE002.GER",
+      "model_code": "FPGE002",
+      "menu_path": "COLABORADORESFP > HISTORICOSFP > NFR038AFA (Afastamentos)",
+      "menu_entries": [
+        { "nommnu": "NFR038AFA", "nompai": "HISTORICOSFP", "desmnu": "Afastamentos" },
+        { "nommnu": "FUNCAO_GRD_HI_COL", "nompai": "HISTORICOSFP", "desmnu": "Listar" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "FPGE002",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><AnoRef>2025</AnoRef></Entrada>"
+      },
+      "db_tables": ["r034fun", "r038his", "r030emp"],
+      "sql_template_ref": null,
+      "notes": "Title confirmed from GER: 'Gerencial - Relacao Anual de Admitidos e Demitidos'. r038his tracks employee history (admissions, transfers, dismissals)."
+    },
+    {
+      "rank": 7,
+      "id": "absenteeism-turnover",
+      "name": "Absenteismo e Turnover - Analitico",
+      "description": "Absenteeism and turnover analytical report — key HR KPI report",
+      "category": "headcount",
+      "model_file": "C:/Senior/Vetorh/Modelos/FPGE003.GER",
+      "model_code": "FPGE003",
+      "menu_path": "CALCULOSFP > RELATORIOSFP > FUNCAO_GRD_ES_OPE (Estatisticos)",
+      "menu_entries": [
+        { "nommnu": "FUNCAO_GRD_ES_OPE", "nompai": "RELATORIOSFP", "desmnu": "Estatisticos" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "FPGE003",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r066apu", "r038his", "r016orn"],
+      "sql_template_ref": "time-records",
+      "notes": "Turnover/absenteeism = r066apu (190K rows, time appraisal) + r038his (employment history). Title fragment 'Absenteismo e Turnover - Anal' confirmed from GER header."
+    },
+    {
+      "rank": 8,
+      "id": "timekeeping-espelho-ponto",
+      "name": "Espelho de Ponto Eletronico",
+      "description": "Electronic timekeeping mirror — official legal document showing all clock punches and appraisals per employee per period (Portaria 1510)",
+      "category": "timekeeping",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRFI003.GER",
+      "model_code": "HRFI003",
+      "menu_path": "CALCULOSFP > RELATORIOSFP > FUNCAO_GRD_00_CPT (Cartao Ponto)",
+      "menu_entries": [
+        { "nommnu": "FUNCAO_GRD_00_CPT", "nompai": "RELATORIOSFP", "desmnu": "Cartao Ponto" }
+      ],
+      "soap_service": "com.senior.g5.rh.hr.relatorios",
+      "soap_module": "ronda",
+      "soap_endpoint": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRFI003",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><NumEmp>1</NumEmp><DatIni>2025-01-01</DatIni><DatFim>2025-01-31</DatFim></Entrada>"
+      },
+      "db_tables": ["r034fun", "r066apu", "r066sit", "r070cri"],
+      "sql_template_ref": "time-records",
+      "notes": "Legal compliance report per Portaria MTE 1510. Title confirmed: 'Espelho de Ponto Eletronico (Espelho Ponto 1510)'. r070cri = raw punches (73K rows, encrypted), r066apu = appraisals (190K rows), r066sit = situations (155K rows)."
+    },
+    {
+      "rank": 9,
+      "id": "timekeeping-afdt",
+      "name": "AFDT - Arquivo Fonte de Dados Tratados",
+      "description": "AFDT legal file — source of treated timekeeping data required by Portaria MTE 1510",
+      "category": "timekeeping",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRFI001.GER",
+      "model_code": "HRFI001",
+      "menu_path": "CALCULOSFP > RELATORIOSFP > (Cartao Ponto group)",
+      "menu_entries": [
+        { "nommnu": "FUNCAO_GRD_00_CPT", "nompai": "RELATORIOSFP", "desmnu": "Cartao Ponto" }
+      ],
+      "soap_service": "com.senior.g5.rh.hr.relatorios",
+      "soap_module": "ronda",
+      "soap_endpoint": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRFI001",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r066apu", "r066sit", "r070cri", "r034fun"],
+      "sql_template_ref": "time-records",
+      "notes": "Title confirmed: 'Fonte de Dados Tratados (AFDT Portaria 1510)'. This is the source data file that feeds the Espelho de Ponto."
+    },
+    {
+      "rank": 10,
+      "id": "bank-of-hours-closure",
+      "name": "Fechamento Banco de Horas",
+      "description": "Bank of hours closure report — summarizes accrued and compensated overtime hours per employee",
+      "category": "timekeeping",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRBH007.GER",
+      "model_code": "HRBH007",
+      "menu_path": "CALCULOSFP > RELATORIOSFP (Banco de Horas)",
+      "menu_entries": [],
+      "soap_service": "com.senior.g5.rh.hr.relatorios",
+      "soap_module": "ronda",
+      "soap_endpoint": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRBH007",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><NumEmp>1</NumEmp><Competencia>202501</Competencia></Entrada>"
+      },
+      "db_tables": ["r034fun", "r066apu", "r066bho"],
+      "sql_template_ref": null,
+      "notes": "Title confirmed from GER: 'Fechamento Banco de Horas'. r066bho likely holds the bank-of-hours balance records."
+    },
+    {
+      "rank": 11,
+      "id": "bank-of-hours-analytical",
+      "name": "Banco de Horas Analitico",
+      "description": "Detailed analytical view of bank of hours movements with daily entries and running balance",
+      "category": "timekeeping",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRBH008.GER",
+      "model_code": "HRBH008",
+      "menu_path": "CALCULOSFP > RELATORIOSFP (Banco de Horas)",
+      "menu_entries": [],
+      "soap_service": "com.senior.g5.rh.hr.relatorios",
+      "soap_module": "ronda",
+      "soap_endpoint": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRBH008",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r066apu", "r066bho"],
+      "sql_template_ref": null,
+      "notes": "Companion to HRBH007. Title confirmed: 'Banco de Horas Analitico'."
+    },
+    {
+      "rank": 12,
+      "id": "monthly-schedule",
+      "name": "Escala Mensal de Servico",
+      "description": "Monthly work schedule showing shift assignments and days off per employee",
+      "category": "timekeeping",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRGR001.GER",
+      "model_code": "HRGR001",
+      "menu_path": "CALCULOSFP > RELATORIOSFP (Escala / Horario)",
+      "menu_entries": [],
+      "soap_service": "com.senior.g5.rh.hr.relatorios",
+      "soap_module": "ronda",
+      "soap_endpoint": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRGR001",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r068esc", "r016orn"],
+      "sql_template_ref": null,
+      "notes": "Title fragment confirmed: 'Escala Mensal de Servi...'. r068esc likely holds work schedule assignments."
+    },
+    {
+      "rank": 13,
+      "id": "vacation-notice",
+      "name": "Aviso de Ferias - Vacation Notice",
+      "description": "Employee vacation notice letter (legal document) with vacation period and dates",
+      "category": "employee_listing",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRPN021.GER",
+      "model_code": "HRPN021",
+      "menu_path": "COLABORADORESFP > FRIAS1FP > RECIBOS1FP (Recibos)",
+      "menu_entries": [
+        { "nommnu": "RECIBOS1FP", "nompai": "FRIAS1FP", "desmnu": "Recibos" },
+        { "nommnu": "LISTAR1FP", "nompai": "FRIAS1FP", "desmnu": "Listar" },
+        { "nommnu": "PROGRAMAO1FP", "nompai": "FRIAS1FP", "desmnu": "Programacao" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRPN021",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><NumEmp>1</NumEmp><NumCad>1</NumCad></Entrada>"
+      },
+      "db_tables": ["r034fun", "r041fer", "r030emp"],
+      "sql_template_ref": null,
+      "notes": "Title confirmed: 'Aviso de F...' (Aviso de Ferias). HRPN prefix = HR Printed Notices. r041fer holds vacation records."
+    },
+    {
+      "rank": 14,
+      "id": "benefits-gerencial",
+      "name": "Gerencial - Beneficios",
+      "description": "Management overview of all benefits costs per employee including transportation vouchers, meal tickets, health plans",
+      "category": "benefits",
+      "model_file": "C:/Senior/Vetorh/Modelos/BSGE001.GER",
+      "model_code": "BSGE001",
+      "menu_path": "BS module benefits reports",
+      "menu_entries": [],
+      "soap_service": "com.senior.g5.rh.bs.relatorios",
+      "soap_module": "bs",
+      "soap_endpoint": "/g5-senior-services/bs_Synccom_senior_g5_rh_bs_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "BSGE001",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r028pvt", "r085xxx", "r030emp"],
+      "sql_template_ref": "benefits-summary",
+      "notes": "Title confirmed: 'Gerencial - Beneficios'. r028pvt = transportation vouchers (20K+ rows), r085xxx = benefits budget tables."
+    },
+    {
+      "rank": 15,
+      "id": "transportation-voucher",
+      "name": "Vale Transporte - Transportation Vouchers",
+      "description": "Employee transportation voucher listing with lines, values, and monthly totals",
+      "category": "benefits",
+      "model_file": "C:/Senior/Vetorh/Modelos/BSBS002.GER",
+      "model_code": "BSBS002",
+      "menu_path": "COLABORADORESFP > VALETRANSPORTE1FP > FUNCAO_GRD_VT_COL (Listar)",
+      "menu_entries": [
+        { "nommnu": "FUNCAO_GRD_VT_COL", "nompai": "VALETRANSPORTE1FP", "desmnu": "Listar" },
+        { "nommnu": "CADASTRO1FP", "nompai": "VALETRANSPORTE1FP", "desmnu": "Cadastro" },
+        { "nommnu": "NFRDIGPVT", "nompai": "VALETRANSPORTE1FP", "desmnu": "Digitar Passes" }
+      ],
+      "soap_service": "com.senior.g5.rh.bs.relatorios",
+      "soap_module": "bs",
+      "soap_endpoint": "/g5-senior-services/bs_Synccom_senior_g5_rh_bs_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "BSBS002",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r034fun", "r028pvt", "r028lvt", "r028mvt"],
+      "sql_template_ref": "benefits-summary",
+      "notes": "Title confirmed: 'Colaboradores x Dependentes Aux.Creche'. r028pvt = vouchers, r028lvt = transit lines, r028mvt = transit modes."
+    },
+    {
+      "rank": 16,
+      "id": "cost-centers",
+      "name": "Centro de Custos - Cost Centers",
+      "description": "Cost center master report listing all cost centers with company, codes, and active/inactive status",
+      "category": "org_chart",
+      "model_file": "C:/Senior/Vetorh/Modelos/HRFF001.GER",
+      "model_code": "HRFF001",
+      "menu_path": "EMPRESASFP > NFR018CCU (C.Custo)",
+      "menu_entries": [
+        { "nommnu": "NFR018CCU", "nompai": "EMPRESASFP", "desmnu": "C.Custo" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "HRFF001",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r018ccu", "r030emp"],
+      "sql_template_ref": "cost-centers",
+      "notes": "NFR018CCU = form code for cost center maintenance. SQL template confirmed: r018ccu joined to r030emp."
+    },
+    {
+      "rank": 17,
+      "id": "positions-careers",
+      "name": "Cargos e Estruturas - Positions & Career Structures",
+      "description": "All job positions and career structure hierarchies with CBO codes and salary bands",
+      "category": "headcount",
+      "model_file": "C:/Senior/Vetorh/Modelos/CSPU009.GER",
+      "model_code": "CSPU009",
+      "menu_path": "TABELASFP > CARGOS2FP > NFR024CAR (Cargos)",
+      "menu_entries": [
+        { "nommnu": "NFR024CAR", "nompai": "CARGOS2FP", "desmnu": "Cargos" },
+        { "nommnu": "NFR024EST", "nompai": "CARGOS2FP", "desmnu": "Estruturas" },
+        { "nommnu": "NFR024CBO", "nompai": "CARGOS2FP", "desmnu": "CBO" }
+      ],
+      "soap_service": "com.senior.g5.rh.cs.relatorios",
+      "soap_module": "cs",
+      "soap_endpoint": "/g5-senior-services/cs_Synccom_senior_g5_rh_cs_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "CSPU009",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r024car", "r024est", "r022qua"],
+      "sql_template_ref": "positions",
+      "notes": "CS module (Cargos e Salarios). r024car = positions, r024est = career structures, r022qua = qualifications."
+    },
+    {
+      "rank": 18,
+      "id": "payroll-movements",
+      "name": "Gerencial - Movimentacao Sintetica",
+      "description": "Synthetic payroll movements summary — total events, gross/deductions/net by month",
+      "category": "payroll",
+      "model_file": "C:/Senior/Vetorh/Modelos/FPGE008.GER",
+      "model_code": "FPGE008",
+      "menu_path": "CALCULOSFP > GERADORFP > GERADOR_RELATORIOSFP > MDEFINIT_GER (Modelos Gerais)",
+      "menu_entries": [
+        { "nommnu": "MDEFINIT_GER", "nompai": "GERADOR_RELATORIOSFP", "desmnu": "Modelos Gerais" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "FPGE008",
+        "prExecFmt": "XLS",
+        "prPrintDest": "A"
+      },
+      "db_tables": ["r046ver", "r008evc", "r044cal", "r034fun", "r016orn", "r018ccu"],
+      "sql_template_ref": "payroll-summary",
+      "notes": "Title fragment confirmed: 'Gerencial - Movimentacao Sint...'. Aggregated payroll totals across cost centers."
+    },
+    {
+      "rank": 19,
+      "id": "informe-rendimentos",
+      "name": "Informe de Rendimentos - Annual Income Statement",
+      "description": "Annual income tax statement (IRPF informe de rendimentos) — legal document issued to each employee",
+      "category": "payroll",
+      "model_file": null,
+      "model_code": "MFRLISREN",
+      "menu_path": "COLABORADORESFP > ANUAIS1FP > MFRLISREN (Informe)",
+      "menu_entries": [
+        { "nommnu": "MFRLISREN", "nompai": "ANUAIS1FP", "desmnu": "Informe" },
+        { "nommnu": "ANUAIS1FP", "nompai": "COLABORADORESFP", "desmnu": "Anuais" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "MFRLISREN",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><AnoCalendario>2024</AnoCalendario></Entrada>"
+      },
+      "db_tables": ["r034fun", "r046ver", "r044cal", "r036dep"],
+      "sql_template_ref": null,
+      "notes": "MFR prefix = Master Form Rubi. This is mandatory Brazilian tax compliance document. r036dep = dependents (for deduction calculation). No .GER model file found — possibly stored in DB or generates directly."
+    },
+    {
+      "rank": 20,
+      "id": "termination-calculations",
+      "name": "Rescisao - Termination Calculations",
+      "description": "Employee termination settlement calculations including FGTS, advance notice, proportional vacation, and 13th salary",
+      "category": "payroll",
+      "model_file": null,
+      "model_code": "MFRCALRCS",
+      "menu_path": "COLABORADORESFP > RESCISES1FP > MFRCALRCS (Calcular)",
+      "menu_entries": [
+        { "nommnu": "MFRCALRCS", "nompai": "RESCISES1FP", "desmnu": "Calcular" },
+        { "nommnu": "LISTAR2FP", "nompai": "RESCISES1FP", "desmnu": "Listar" },
+        { "nommnu": "MFRCALCPL", "nompai": "RESCISES1FP", "desmnu": "Complementar" }
+      ],
+      "soap_service": "com.senior.g5.rh.fp.relatorios",
+      "soap_module": "rubi",
+      "soap_endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "soap_operation": "Relatorios",
+      "required_params": {
+        "prRelatorio": "MFRCALRCS",
+        "prExecFmt": "PDF",
+        "prPrintDest": "A",
+        "prEntrada": "<Entrada><NumEmp>1</NumEmp><NumCad>1</NumCad></Entrada>"
+      },
+      "db_tables": ["r034fun", "r046ver", "r046rcs", "r038his", "r041fer"],
+      "sql_template_ref": null,
+      "notes": "MFR prefix = Master Form Rubi. r046rcs likely holds termination calculation records. Includes FGTS (r026fgt), IRRF, aviso previo computations."
+    }
+  ],
+  "module_service_map": {
+    "rubi": {
+      "module_code": "fp",
+      "service_id": "com.senior.g5.rh.fp.relatorios",
+      "endpoint_pattern": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "operation": "Relatorios",
+      "covers": ["payroll", "employee_listing", "headcount", "vacation"]
+    },
+    "ronda_hr": {
+      "module_code": "hr",
+      "service_id": "com.senior.g5.rh.hr.relatorios",
+      "endpoint_pattern": "/g5-senior-services/ronda_Synccom_senior_g5_rh_hr_relatorios",
+      "operation": "Relatorios",
+      "covers": ["timekeeping", "bank_of_hours", "schedule"]
+    },
+    "bs": {
+      "module_code": "bs",
+      "service_id": "com.senior.g5.rh.bs.relatorios",
+      "endpoint_pattern": "/g5-senior-services/bs_Synccom_senior_g5_rh_bs_relatorios",
+      "operation": "Relatorios",
+      "covers": ["benefits", "transportation_vouchers"]
+    },
+    "cs": {
+      "module_code": "cs",
+      "service_id": "com.senior.g5.rh.cs.relatorios",
+      "endpoint_pattern": "/g5-senior-services/cs_Synccom_senior_g5_rh_cs_relatorios",
+      "operation": "Relatorios",
+      "covers": ["positions", "salary_structures"]
+    },
+    "sapiens": {
+      "service_id": "com.senior.g5.co.ger.relatorio",
+      "endpoint_pattern": "/g5-senior-services/sapiens_Synccom_senior_g5_co_ger_relatorio",
+      "operation": "Executar",
+      "covers": ["accounting", "fiscal", "controllership"]
+    }
+  },
+  "model_file_prefixes": {
+    "FPGE": "Payroll (Folha de Pagamento) - Gerencial/BI",
+    "FPPU": "Payroll - Performance/Admin utilities",
+    "HRFF": "HCM - Ficha Funcional (HR function card / occurrences)",
+    "HRFI": "HCM - Fiscal/Legal compliance (AFDT, ACJEF, espelho)",
+    "HRBH": "HCM - Banco de Horas (Bank of Hours)",
+    "HRGR": "HCM - Grade/Escala (Work Schedules)",
+    "HRPN": "HCM - Printed Notices (Aviso de Ferias, Comunicacoes)",
+    "HRAC": "HCM - Acidentes (Accidents - ronda/access module)",
+    "HRGE": "HCM - Gerencial (Management utilities)",
+    "BSGE": "Benefits (BS) - Gerencial",
+    "BSBS": "Benefits (BS) - Master reports",
+    "BSCL": "Benefits (BS) - Colaborador (Employee-focused)",
+    "CSPU": "Job & Salary (CS) - Performance/Admin",
+    "CCCC": "Sapiens - Contabilidade (Accounting/Balancete)",
+    "SMGE": "Health & Safety (SM) - Gerencial",
+    "SMPN": "Health & Safety (SM) - Printed Notices/Exams",
+    "RSGE": "Recruitment (RS) - Gerencial",
+    "RSCL": "Recruitment (RS) - Colaborador",
+    "TRTU": "Training (TR) - Turmas (Class schedules)",
+    "TREV": "Training (TR) - Eventos (Training events)"
+  },
+  "key_db_tables": {
+    "r034fun": "Employee master (core table — joins everything)",
+    "r030emp": "Company master",
+    "r016orn": "Org locations / departments",
+    "r016hie": "Org hierarchy parent-child links",
+    "r018ccu": "Cost centers",
+    "r024car": "Positions / careers",
+    "r008evc": "Payroll event codes and descriptions",
+    "r044cal": "Payroll calendar (pay dates, periods)",
+    "r046ver": "Payroll event values (main payroll data)",
+    "r038his": "Employee history (admissions, transfers, dismissals)",
+    "r041fer": "Vacation records",
+    "r036dep": "Dependents",
+    "r028pvt": "Transportation voucher allocations (20K+ rows)",
+    "r066apu": "Time appraisal (190K+ rows — processed attendance)",
+    "r066sit": "Time situations (155K+ rows)",
+    "r070cri": "Raw clock punches (73K+ rows, encrypted)",
+    "r026fgt": "FGTS (severance fund) records"
+  }
+}

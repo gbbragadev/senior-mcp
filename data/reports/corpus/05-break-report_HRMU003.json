@@ -1,0 +1,1093 @@
+{
+  "filename": "HRMU003.GER",
+  "title": "",
+  "orientation": "Unknown(undefined)",
+  "sections": {},
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 115
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 3,
+            "left": 702,
+            "width": 30,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 735,
+            "width": 29,
+            "height": 17
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 39,
+            "width": 269,
+            "height": 17
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 30,
+            "height": 17
+          },
+          "caption": "EmpAtu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 18,
+            "left": 216,
+            "width": 327,
+            "height": 24
+          },
+          "caption": "Multas por Tipo de Infração",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatIni",
+          "position": {
+            "top": 54,
+            "left": 609,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FDatIni",
+          "onPrint": "FDatIni = EDatIni;",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 54,
+            "left": 669,
+            "width": 24,
+            "height": 17
+          },
+          "caption": "até",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FDatFim",
+          "position": {
+            "top": 54,
+            "left": 699,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "FDatFim",
+          "onPrint": "FDatFim = EDatFim;",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 69,
+            "left": 21,
+            "width": 37,
+            "height": 15
+          },
+          "caption": "Local",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 54,
+            "left": 6,
+            "width": 52,
+            "height": 16
+          },
+          "caption": "Empresa",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 54,
+            "left": 0,
+            "width": 775,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 99,
+            "left": 54,
+            "width": 43,
+            "height": 14
+          },
+          "caption": "Veículo",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 99,
+            "left": 120,
+            "width": 31,
+            "height": 14
+          },
+          "caption": "Data",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 99,
+            "left": 186,
+            "width": 59,
+            "height": 14
+          },
+          "caption": "Cadastro",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 99,
+            "left": 252,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Motorista",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 99,
+            "left": 492,
+            "width": 41,
+            "height": 14
+          },
+          "caption": "Horário",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 99,
+            "left": 546,
+            "width": 30,
+            "height": 14
+          },
+          "caption": "Valor",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 99,
+            "left": 597,
+            "width": 68,
+            "height": 14
+          },
+          "caption": "Vencimento",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 99,
+            "left": 681,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "Pagamento",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 84,
+            "left": 36,
+            "width": 48,
+            "height": 15
+          },
+          "caption": "Infração",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 54,
+            "left": 555,
+            "width": 48,
+            "height": 15
+          },
+          "caption": "Período:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 294,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 831,
+            "height": 13
+          },
+          "caption": "Desrodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_Veiculos",
+      "bandType": "DETALHE",
+      "tag": 202,
+      "position": {
+        "top": 164,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [
+        "R088IFR.OBSIFR"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "Definir Alfa xObsInf;\n\nxObsInf = R088IFR.ObsIfr;\n\nEstaNulo(xObsInf, xRet);\n\nSe (xRet = 0)\n  ListaSecao(\"Adicional_Obs\");",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 3,
+            "left": 54,
+            "width": 61,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "PlaVei",
+          "caption": "R088IFR.PlaVei",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 3,
+            "left": 120,
+            "width": 58,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "DatInf",
+          "caption": "R088IFR.DatInf",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 3,
+            "left": 252,
+            "width": 240,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 3,
+            "left": 498,
+            "width": 30,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "HorInf",
+          "caption": "R088IFR.HorInf",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 3,
+            "left": 186,
+            "width": 59,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "CadCon",
+          "caption": "R088IFR.CadCon",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 3,
+            "left": 603,
+            "width": 55,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "DatVen",
+          "caption": "R088IFR.DatVen",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 3,
+            "left": 687,
+            "width": 55,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "DatPag",
+          "caption": "R088IFR.DatPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 3,
+            "left": 534,
+            "width": 62,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "ValPag",
+          "caption": "R088IFR.ValPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro021",
+          "position": {
+            "top": 0,
+            "left": 1095,
+            "width": 24,
+            "height": 14
+          },
+          "table": "R038HFI",
+          "field": "CODFIL",
+          "caption": "R038HFI.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro020",
+          "position": {
+            "top": 0,
+            "left": 1125,
+            "width": 18,
+            "height": 14
+          },
+          "table": "R038HCA",
+          "field": "EstCar",
+          "caption": "R038HCA.EstCar",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro019",
+          "position": {
+            "top": 0,
+            "left": 1146,
+            "width": 35,
+            "height": 14
+          },
+          "table": "R038HLO",
+          "field": "NumLoc",
+          "caption": "R038HLO.NumLoc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro024",
+          "position": {
+            "top": 0,
+            "left": 1185,
+            "width": 18,
+            "height": 14
+          },
+          "table": "R038HLO",
+          "field": "TabOrg",
+          "caption": "R038HLO.TabOrg",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro022",
+          "position": {
+            "top": 0,
+            "left": 1209,
+            "width": 24,
+            "height": 14
+          },
+          "table": "R038HES",
+          "field": "CodEsc",
+          "caption": "R038HES.CodEsc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 0,
+            "left": 1239,
+            "width": 23,
+            "height": 14
+          },
+          "table": "R038HCA",
+          "field": "CodCar",
+          "caption": "R038HCA.CodCar",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro017",
+          "position": {
+            "top": 0,
+            "left": 1266,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "TABORG",
+          "caption": "R016HIE.TABORG",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 0,
+            "left": 1293,
+            "width": 34,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "NUMLOC",
+          "caption": "R016HIE.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro018",
+          "position": {
+            "top": 0,
+            "left": 1329,
+            "width": 26,
+            "height": 14
+          },
+          "table": "R016HIE",
+          "field": "CODLOC",
+          "caption": "R016HIE.CODLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial001",
+          "position": {
+            "top": 0,
+            "left": 1356,
+            "width": 28,
+            "height": 13
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro023",
+          "position": {
+            "top": 0,
+            "left": 1386,
+            "width": 14,
+            "height": 16
+          },
+          "table": "R006ESC",
+          "field": "TurEsc",
+          "caption": "R006ESC.TurEsc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro026",
+          "position": {
+            "top": 0,
+            "left": 1404,
+            "width": 22,
+            "height": 14
+          },
+          "table": "R038HCA",
+          "field": "CodCar",
+          "caption": "R038HCA.CodCar",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 1431,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R088IFR",
+          "field": "EmpCon",
+          "caption": "R088IFR.EmpCon",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 1050,
+            "width": 42,
+            "height": 15
+          },
+          "table": "R088ITR",
+          "field": "CodInf",
+          "caption": "R088ITR.CodInf",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Obs",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 185,
+        "left": 0,
+        "width": 6000,
+        "height": 24
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 3,
+            "left": 27,
+            "width": 69,
+            "height": 17
+          },
+          "caption": "Observação:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "Memoran001",
+          "position": {
+            "top": 3,
+            "left": 99,
+            "width": 587,
+            "height": 22
+          },
+          "table": "R088IFR",
+          "field": "ObsIfr",
+          "font": {
+            "name": "Courier New",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Empresa",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 115,
+        "left": 0,
+        "width": 6000,
+        "height": 14
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro025",
+          "position": {
+            "top": 0,
+            "left": 6,
+            "width": 28,
+            "height": 14
+          },
+          "table": "R088IFR",
+          "field": "EmpCon",
+          "caption": "R088IFR.EmpCon",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro027",
+          "position": {
+            "top": 0,
+            "left": 39,
+            "width": 298,
+            "height": 14
+          },
+          "table": "R030EMP",
+          "field": "NomEmp",
+          "caption": "R030EMP.NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Local",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 129,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se (EspNivTot = 0)\n  Cancel(1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSEspecial",
+          "name": "Especial002",
+          "position": {
+            "top": 0,
+            "left": 21,
+            "width": 685,
+            "height": 14
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Local",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 232,
+        "left": 0,
+        "width": 6000,
+        "height": 62
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao018",
+          "position": {
+            "top": 36,
+            "left": 21,
+            "width": 142,
+            "height": 15
+          },
+          "caption": "Valor Total das Infrações:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 36,
+            "left": 486,
+            "width": 110,
+            "height": 15
+          },
+          "caption": "Total001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial003",
+          "position": {
+            "top": 12,
+            "left": 21,
+            "width": 686,
+            "height": 14
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Total Geral",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Infracao",
+      "bandType": "TITULO",
+      "tag": 103,
+      "position": {
+        "top": 144,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 3,
+            "left": 36,
+            "width": 42,
+            "height": 15
+          },
+          "table": "R088ITR",
+          "field": "CodInf",
+          "caption": "R088ITR.CodInf",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 3,
+            "left": 84,
+            "width": 504,
+            "height": 15
+          },
+          "table": "R088ITR",
+          "field": "DesInf",
+          "caption": "R088ITR.DesInf",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Infracao",
+      "bandType": "SUBTOTAL",
+      "tag": 303,
+      "position": {
+        "top": 209,
+        "left": 0,
+        "width": 6000,
+        "height": 23
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "TotValPag",
+          "position": {
+            "top": 3,
+            "left": 486,
+            "width": 110,
+            "height": 15
+          },
+          "caption": "TotValPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 3,
+            "left": 351,
+            "width": 133,
+            "height": 17
+          },
+          "caption": "Valor Total por Infração:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R006ESC",
+    "R016HIE",
+    "R030EMP",
+    "R034FUN",
+    "R038HCA",
+    "R038HES",
+    "R038HFI",
+    "R038HLO",
+    "R088IFR",
+    "R088IFR.OBSIFR",
+    "R088ITR"
+  ],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 16789,
+    "totalBytes": 579986,
+    "parseComplete": true,
+    "bandCount": 9,
+    "fieldCount": 56,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "header",
+        "note": "Header skipped — bands-only fallback"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 11769,
+        "skippedTo": 13731,
+        "note": "Skipped 1948 bytes (classification+relations)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,229 @@
+definir funcao getTokenPlataforma();
+definir funcao enviarArquivoPlataforma();
+definir alfa CAMINHO_IMPEXP;  
+definir funcao obtemCaminhoImpExp(); 
+definir funcao gravarLinha();
+
+definir cursor cCursor;
+definir cursor cUsuarioSuperior;
+definir alfa CR;
+definir alfa SEP;
+definir alfa aAux;
+definir alfa aNumEmp;
+definir alfa aNumCad;
+definir alfa aLinha;
+definir alfa aUsuarioLider;
+definir alfa aAux;
+
+definir alfa arquivo_bpm;
+definir alfa aTabela;
+definir alfa aTabelaDef;
+definir data dhoje; dhoje = datsis;
+definir data dzero; dzero = 0;
+
+nTabOrg = 0;
+nNumLocSup = 0;
+SEP = ";";
+
+retornaascii(13, CR);
+
+obtemCaminhoImpExp();
+
+getTokenPlataforma();
+
+/*
+  COLABORADORES COM O USUÁRIO ASSOCIADO
+*/
+aTabela = "colaborador_usuario";
+aTabelaDef = CAMINHO_IMPEXP + aTabela + ".def";
+arquivo_bpm = CAMINHO_IMPEXP + aTabela + ".csv";
+farquivo_bpm = Abrir(arquivo_bpm, Gravarnl);
+cCursor.sql "select r034fun.numemp, r030emp.nomemp, r034fun.numcad, r034fun.nomfun, r999usu.nomusu \
+            from r034fun, r030emp, r034usu, r999usu \
+            where r034fun.sitafa <> 7 \
+            and r030emp.numemp = r034fun.numemp \
+            and r034usu.numemp = r034fun.numemp and r034usu.tipcol = r034fun.tipcol and r034usu.numcad = r034fun.numcad \
+            and r999usu.codusu = r034usu.codusu \
+            order by r034fun.numemp, r034fun.nomfun";
+            
+cCursor.abrirCursor();
+aLinha = "numemp"+SEP+"nomemp"+SEP+"numcad"+SEP+"nomfun"+SEP+"nomusu";
+gravarLinha();
+enquanto(cCursor.achou){
+    IntParaAlfa(cCursor.numemp, aNumEmp);                     aLinha = aLinha + aNumEmp;  
+    TrocaString(cCursor.nomemp, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    nNumCad = cCursor.numcad; IntParaAlfa(nNumCad, aNumCad);  aLinha = aLinha + SEP + aNumCad;
+    TrocaString(cCursor.nomfun, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    aLinha = aLinha + SEP + cCursor.nomusu;
+    gravarLinha();
+    cCursor.proximo();
+}
+cCursor.fecharCursor();
+enviarArquivoPlataforma();
+
+/*
+  COLABORADORES COM SUPERIOR HIERÁRQUICO POR LOCAL
+*/ 
+aTabela = "colaborador_superior_local";
+aTabelaDef = CAMINHO_IMPEXP + aTabela + ".def";
+arquivo_bpm = CAMINHO_IMPEXP + aTabela + ".csv";
+farquivo_bpm = Abrir(arquivo_bpm, Gravarnl);
+cCursor.sql " select r034fun.numemp, r030emp.nomemp, r034fun.numcad, r034fun.nomfun,\ 
+             r034fun.taborg, r034fun.numloc, r016hie.codloc, r016orn.nomloc, r034fun.codccu, r018ccu.nomccu, r024car.codcar, r024car.titred  \
+             from r034fun, r030emp, r030org, r016hie, r016orn, r018ccu, r024car \
+             where r034fun.numemp = r030emp.numemp \
+             and r030org.numemp = r030emp.numemp \
+             and r030org.datalt = (select max(m.datalt) from r030org m where m.numemp = r030emp.numemp)\
+             and r016hie.taborg = r030org.taborg and r016hie.numloc = r034fun.numloc  \
+             and r016hie.datini = (select max(m.datini) from r016hie m where m.taborg = r030org.taborg and m.numloc = r016hie.numloc)\
+             and r016hie.taborg = r016orn.taborg and r016hie.numloc = r016orn.numloc  \
+             and r034fun.numemp = r018ccu.numemp and r034fun.codccu = r018ccu.codccu  \
+             and r024car.estcar = r034fun.estcar and r024car.codcar = r034fun.codcar \
+             order by r034fun.numemp, r034fun.nomfun";
+
+
+cUsuarioSuperior.sql "select r999usu.nomusu from r034fun, r034usu, r999usu \
+                         where r034usu.numemp = r034fun.numemp and r034usu.tipcol = r034fun.tipcol and r034usu.numcad = r034fun.numcad  \
+                         and r999usu.codusu = r034usu.codusu \
+                         and r034fun.taborg = :nTabOrg and r034fun.numloc = :nNumLocSup";            
+cCursor.abrirCursor();
+aLinha = "numemp"+SEP+"nomemp"+SEP+"numcad"+SEP+"nomfun"+SEP+"codloc"+SEP+"nomloc"+SEP+"codccu"+SEP+"nomccu"+SEP+"codcar"+SEP+"titred"+SEP+"usuariolider";
+gravarLinha();
+enquanto(cCursor.achou){
+    IntParaAlfa(cCursor.numemp, aNumEmp);
+    aLinha = aLinha + aNumEmp;    
+    TrocaString(cCursor.nomemp, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    nNumCad = cCursor.numcad; IntParaAlfa(nNumCad, aNumCad);  aLinha = aLinha + SEP + aNumCad;
+    TrocaString(cCursor.nomfun, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    aLinha = aLinha + SEP + cCursor.codloc;
+    TrocaString(cCursor.nomloc, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    aLinha = aLinha + SEP + cCursor.codccu;
+    TrocaString(cCursor.nomccu, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    aLinha = aLinha + SEP + cCursor.codcar;
+    TrocaString(cCursor.titred, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    
+    nTabOrg = cCursor.taborg;
+    nNumLoc = cCursor.numloc;
+    aUsuarioLider = "";
+    RetNivLoc(cCursor.taborg, cCursor.codloc, datsis, nNivCol);
+    nNivCol--;    
+    RetNumLocNiv (nTabOrg, nNumLoc, datsis, nNivCol, nNumLocSup);
+    
+    enquanto((nNivCol > 0) e (aUsuarioLider = "")){
+        cUsuarioSuperior.abrirCursor();
+        se(cUsuarioSuperior.achou) {
+            aUsuarioLider = cUsuarioSuperior.nomusu;
+        }
+        nNivCol--;
+        RetNumLocNiv (nTabOrg, nNumLoc, datsis, nNivCol, nNumLocSup);
+    } 
+    se(aUsuarioLider = "") {
+        aUsuarioLider = "NÃO ENCONTRADO";
+    }
+    aLinha = aLinha + SEP + aUsuarioLider;
+    gravarLinha();
+    cCursor.proximo();
+}
+cCursor.fecharCursor();
+enviarArquivoPlataforma();
+ 
+/*
+  LOCAIS
+*/
+aTabela = "locais_organograma_empresa";
+aTabelaDef = CAMINHO_IMPEXP + aTabela + ".def";
+arquivo_bpm = CAMINHO_IMPEXP + aTabela + ".csv";
+farquivo_bpm = Abrir(arquivo_bpm, Gravarnl);
+cCursor.sql "select r030emp.numemp, r030emp.nomemp, r016hie.codloc, r016orn.nomloc \
+             from r016orn, r030org, r030emp, r016hie\ 
+             where r030org.numemp = r030emp.numemp  \
+             and r030org.datalt = (select max(m.datalt) from r030org m where m.numemp = r030emp.numemp)  \
+             and r030org.taborg = r016orn.taborg \
+             and r016orn.taborg = r016hie.taborg and r016orn.numloc = r016hie.numloc \
+             and r016hie.datini = (select max(m.datini) from r016hie m where m.taborg = r016orn.taborg and m.numloc = r016orn.numloc) \
+             and (r016orn.datext > :dhoje or r016orn.datext = :dzero)\
+             order by nomemp,codloc";
+            
+cCursor.abrirCursor();
+aLinha = "numemp"+SEP+"nomemp"+SEP+"codloc"+SEP+"nomloc";
+gravarLinha();
+enquanto(cCursor.achou){
+    IntParaAlfa(cCursor.numemp, aNumEmp);                     aLinha = aLinha + aNumEmp;  
+    TrocaString(cCursor.nomemp, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    TrocaString(cCursor.codloc, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    TrocaString(cCursor.nomloc, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    gravarLinha();
+    cCursor.proximo();
+}
+cCursor.fecharCursor();
+enviarArquivoPlataforma();
+
+/*
+  CENTROS DE CUSTO
+*/
+aTabela = "centros_custo_empresa";
+aTabelaDef = CAMINHO_IMPEXP + aTabela + ".def";
+arquivo_bpm = CAMINHO_IMPEXP + aTabela + ".csv";
+farquivo_bpm = Abrir(arquivo_bpm, Gravarnl);
+cCursor.sql "select r018ccu.numemp,r030emp.nomemp, r018ccu.codccu, r018ccu.nomccu \
+             from r018ccu, r030emp\
+             where r018ccu.numemp =r030emp.numemp \
+             and (r018ccu.datext > :dHoje or r018ccu.datext = :dZero) \
+             order by nomemp,codccu";
+            
+cCursor.abrirCursor();
+aLinha = "numemp"+SEP+"nomemp"+SEP+"codccu"+SEP+"nomccu";
+gravarLinha();
+enquanto(cCursor.achou){
+    IntParaAlfa(cCursor.numemp, aNumEmp);                     aLinha = aLinha + aNumEmp;  
+    TrocaString(cCursor.nomemp, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    TrocaString(cCursor.codccu, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    TrocaString(cCursor.nomccu, SEP, "", aAux);               aLinha = aLinha + SEP + aAux;
+    gravarLinha();
+    cCursor.proximo();
+}
+cCursor.fecharCursor();
+enviarArquivoPlataforma();
+
+/*
+    #################       FUNÇÕES       #################
+*/
+
+@Obtém o caminho do diretório de importação e exportação do vetorh@
+funcao obtemCaminhoImpExp(); {
+    RetornaValorCFG("com.senior.vetorh.impexp.default_dir", CAMINHO_IMPEXP);
+    TamanhoAlfa(CAMINHO_IMPEXP, nTam);
+    LerPosicaoAlfa(CAMINHO_IMPEXP, ultimo_char, nTam);
+    Se (ultimo_char <> '\') {
+      CAMINHO_IMPEXP = CAMINHO_IMPEXP + "\\";
+    }
+    CAMINHO_IMPEXP = CAMINHO_IMPEXP + "seniorx\\";
+}
+@Inclui um novo registro no arquivo de exportação [farquivo_bpm]@
+funcao gravarLinha(); {
+    ConverteCodificacaoString(aLinha, "UTF-8", aLinha);
+    Gravarnl(farquivo_bpm, aLinha);
+    aLinha = "";
+}
+
+/*
+Obtém o token de autenticação da plataforma para usar no envio dos arquivos
+É necessário configurar no SeniorConfigCenter as chaves accesskey e secretkey e a url da plataforma.
+*/
+funcao getTokenPlataforma(); {    
+    definir alfa aToken; definir alfa aError; definir alfa aErrorDetail;
+    getAccessToken(aToken, aError, aErrorDetail);
+    se(aError <> ""){
+        mensagemlog(aErrorDetail);
+    }
+}
+
+@Envia o arquivo [arquivo_bpm] para a tabela [aTabela] do BPM na plataforma@
+funcao enviarArquivoPlataforma(); {
+    Fechar(farquivo_bpm);
+    definir alfa aComando;
+    carregarCSVplataforma(arquivo_bpm, aTabela, aTabelaDef, aToken, aComando, aError, aErrorDetail);
+     se(aError <> ""){
+         mensagemlog(aErrorDetail);
+     }    
+}

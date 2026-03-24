@@ -1,0 +1,177 @@
+{
+  "version": "1.0",
+  "description": "SOAP envelope templates for Senior HCM report execution via web services",
+  "generated": "2026-03-19",
+  "baseUrl": "http://localhost:8080",
+  "defaultCredentials": {
+    "user": "senior",
+    "password": "senior"
+  },
+  "templates": [
+    {
+      "id": "sapiens-report",
+      "name": "Sapiens Generic Report Execution",
+      "module": "sapiens",
+      "service": "com.senior.g5.co.ger.relatorio",
+      "operation": "Executar",
+      "endpoint": "/g5-senior-services/sapiens_Synccom_senior_g5_co_ger_relatorio",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Executar>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Executar>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name (e.g., from Sapiens/Modelos/)", "required": true },
+        "format": { "description": "Output format: PDF, XLS, HTML, RTF", "default": "PDF" },
+        "outputDir": { "description": "Output directory path", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename (without extension)", "default": "report_output" }
+      },
+      "responseFields": {
+        "prRetorno": "Report file content (Base64 blob)",
+        "prLOG": "Execution log messages",
+        "prError": "Error message (empty on success)"
+      }
+    },
+    {
+      "id": "hcm-rubi-report",
+      "name": "HCM Payroll (Rubi) Report",
+      "module": "rubi",
+      "service": "com.senior.g5.rh.fp.relatorios",
+      "operation": "Relatorios",
+      "endpoint": "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_relatorios",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Relatorios>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Relatorios>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name (from Vetorh/Modelos/)", "required": true },
+        "format": { "description": "Output format: PDF, XLS, HTML, RTF", "default": "PDF" },
+        "outputDir": { "description": "Output directory path", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename (without extension)", "default": "report_output" }
+      },
+      "notes": "Rubi handles payroll (Folha de Pagamento). Report models have extensions like .ASO, .TAR, .EMP, .VAL."
+    },
+    {
+      "id": "hcm-bs-report",
+      "name": "HCM Benefits (BS) Report",
+      "module": "bs",
+      "service": "com.senior.g5.rh.bs.relatorios",
+      "operation": "Relatorios",
+      "endpoint": "/g5-senior-services/bs_Synccom_senior_g5_rh_bs_relatorios",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Relatorios>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Relatorios>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name", "required": true },
+        "format": { "description": "Output format", "default": "PDF" },
+        "outputDir": { "description": "Output directory", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename", "default": "report_output" }
+      },
+      "notes": "Benefits module. SOAP services include vales, emprestimos, auxilio, assistencia."
+    },
+    {
+      "id": "hcm-rs-report",
+      "name": "HCM Recruitment (RS) Report",
+      "module": "rs",
+      "service": "com.senior.g5.rh.rs.relatorios",
+      "operation": "Relatorios",
+      "endpoint": "/g5-senior-services/rs_Synccom_senior_g5_rh_rs_relatorios",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Relatorios>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Relatorios>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name", "required": true },
+        "format": { "description": "Output format", "default": "PDF" },
+        "outputDir": { "description": "Output directory", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename", "default": "report_output" }
+      },
+      "notes": "Recruitment & Selection module."
+    },
+    {
+      "id": "hcm-cs-report",
+      "name": "HCM Job & Salary (CS) Report",
+      "module": "cs",
+      "service": "com.senior.g5.rh.cs.relatorios",
+      "operation": "Relatorios",
+      "endpoint": "/g5-senior-services/cs_Synccom_senior_g5_rh_cs_relatorios",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Relatorios>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Relatorios>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name", "required": true },
+        "format": { "description": "Output format", "default": "PDF" },
+        "outputDir": { "description": "Output directory", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename", "default": "report_output" }
+      },
+      "notes": "Job & Salary (Cargos e Salarios) module."
+    },
+    {
+      "id": "async-report-start",
+      "name": "Async Report Generation - Start",
+      "module": "sapiens",
+      "service": "com.senior.g5.co.int.geral.relatorio",
+      "operation": "IniciarGeracao",
+      "endpoint": "/g5-senior-services/sapiens_Synccom_senior_g5_co_int_geral_relatorio",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:IniciarGeracao>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:IniciarGeracao>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name", "required": true },
+        "format": { "description": "Output format", "default": "PDF" },
+        "outputDir": { "description": "Output directory", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename", "default": "report_output" }
+      },
+      "responseFields": {
+        "prIdGeracao": "Generation ID for polling status"
+      },
+      "notes": "Returns a generation ID. Use async-report-poll to check completion status."
+    },
+    {
+      "id": "async-report-poll",
+      "name": "Async Report Generation - Poll Status",
+      "module": "sapiens",
+      "service": "com.senior.g5.co.int.geral.relatorio",
+      "operation": "ObterSituacao",
+      "endpoint": "/g5-senior-services/sapiens_Synccom_senior_g5_co_int_geral_relatorio",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:ObterSituacao>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prIdGeracao>$(generationId)</prIdGeracao>\n    </ser:ObterSituacao>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "generationId": { "description": "Generation ID from IniciarGeracao response", "required": true }
+      },
+      "responseFields": {
+        "prSituacao": "Status code (P=Processing, C=Complete, E=Error)",
+        "prRetorno": "Report file content when complete",
+        "prError": "Error message if failed"
+      },
+      "notes": "Poll this endpoint repeatedly until prSituacao returns 'C' (complete). Recommended interval: 2-5 seconds."
+    },
+    {
+      "id": "hcm-sm-report",
+      "name": "HCM Health & Safety (SM) Report",
+      "module": "sm",
+      "service": "com.senior.g5.rh.sm.relatorios",
+      "operation": "Relatorios",
+      "endpoint": "/g5-senior-services/sm_Synccom_senior_g5_rh_sm_relatorios",
+      "envelope": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                  xmlns:ser=\"http://service.senior.com.br\">\n  <soapenv:Header/>\n  <soapenv:Body>\n    <ser:Relatorios>\n      <User>$(user)</User>\n      <Password>$(password)</Password>\n      <prCallMode>0</prCallMode>\n      <prRelatorio>$(reportName)</prRelatorio>\n      <prPrintDest>A</prPrintDest>\n      <prExecFmt>$(format)</prExecFmt>\n      <prDir>$(outputDir)</prDir>\n      <prFileName>$(fileName)</prFileName>\n    </ser:Relatorios>\n  </soapenv:Body>\n</soapenv:Envelope>",
+      "params": {
+        "user": { "description": "Authentication user", "default": "senior" },
+        "password": { "description": "Authentication password", "default": "senior" },
+        "reportName": { "description": "Report model name", "required": true },
+        "format": { "description": "Output format", "default": "PDF" },
+        "outputDir": { "description": "Output directory", "default": "C:/Senior/discovery/reports" },
+        "fileName": { "description": "Output filename", "default": "report_output" }
+      },
+      "notes": "Health & Safety (Medicina e Seguranca) module. Also has com.senior.g5.rh.tr.relatorios for Training."
+    }
+  ],
+  "allReportModules": [
+    { "code": "bs",  "service": "com.senior.g5.rh.bs.relatorios",  "name": "Benefits" },
+    { "code": "cs",  "service": "com.senior.g5.rh.cs.relatorios",  "name": "Job & Salary" },
+    { "code": "jr",  "service": "com.senior.g5.rh.jr.relatorios",  "name": "Legal" },
+    { "code": "plr", "service": "com.senior.g5.rh.plr.relatorios", "name": "Profit Sharing" },
+    { "code": "ql",  "service": "com.senior.g5.rh.ql.relatorios",  "name": "Quality of Life" },
+    { "code": "hr",  "service": "com.senior.g5.rh.hr.relatorios",  "name": "HR General" },
+    { "code": "rs",  "service": "com.senior.g5.rh.rs.relatorios",  "name": "Recruitment" },
+    { "code": "fp",  "service": "com.senior.g5.rh.fp.relatorios",  "name": "Payroll (Rubi)" },
+    { "code": "sm",  "service": "com.senior.g5.rh.sm.relatorios",  "name": "Health & Safety" },
+    { "code": "tr",  "service": "com.senior.g5.rh.tr.relatorios",  "name": "Training" }
+  ]
+}

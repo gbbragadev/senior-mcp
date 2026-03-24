@@ -1,0 +1,5483 @@
+{
+  "filename": "BSGE001.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "Permite verificar os benefícios (R044MOV) lançados em um determinado Ano informado na tela de entrada apresentando o valor, a média e a quantidade de  colaboradores de cada mês bem como o total e a média anual.  Permite também verificar em um gráfico de linhas a evolução de até 5 benefícios que são  informados na tela de entrada e em outros dois gráficos de pizza é possivél vizualizar a quantidade de benefícios por filial/local e o valor total dos benefícios  por filial/local.  O modelo permite exportar dados para o Saga através do layout BSGE001 Beneficios.LYT.  Objetivo.....:   Gerar dados para o SAGA. Ordenação:   Filial e Local Gráfico......:   Linha - Evolução de Benefícios no Ano                       Pizza - Quantidade de Benefícios por Filial/Local                       Pizza - Valor dos Benefícios por Filial/Local                        ",
+  "description": [
+    "Permite verificar os benefícios (R044MOV) lançados em um determinado Ano informado na tela de entrada apresentando o valor, a média e a quantidade de ",
+    "colaboradores de cada mês bem como o total e a média anual.  Permite também verificar em um gráfico de linhas a evolução de até 5 benefícios que são ",
+    "informados na tela de entrada e em outros dois gráficos de pizza é possivél vizualizar a quantidade de benefícios por filial/local e o valor total dos benefícios ",
+    "por filial/local.",
+    "",
+    "O modelo permite exportar dados para o Saga através do layout BSGE001 Beneficios.LYT.",
+    "",
+    "Objetivo.....:   Gerar dados para o SAGA.",
+    "Ordenação:   Filial e Local",
+    "Gráfico......:   Linha - Evolução de Benefícios no Ano",
+    "                      Pizza - Quantidade de Benefícios por Filial/Local",
+    "                      Pizza - Valor dos Benefícios por Filial/Local",
+    "                      ",
+    ""
+  ],
+  "orientation": "Landscape",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir alfa   ESaga;\nDefinir alfa   sqlaux;\nDefinir numero EAno;\nDefinir data   xDataIni;\nDefinir data   xDataFim;\nDefinir alfa   txtDataIni;\nDefinir alfa   txtDataFim;\nDefinir numero xConta;\n\n\nSe  (EAno = 0) \n    inicio\n    Mensagem(retorna, \"Informe o Ano. [OK]\");\n    Cancel(1);\n    fim;\n\n\nSe   (ESaga = \"N\")\n     inicio \n\n     xConta = 0 ;\n\n     Se   (EBenef1 <> 0) \n           xConta = xConta + 1;\n     Se   (EBenef2 <> 0) \n           xConta = xConta + 1;\n     Se   (EBenef3 <> 0) \n           xConta = xConta + 1;\n     Se   (EBenef4 <> 0) \n           xConta = xConta + 1;\n     Se   (EBenef5 <> 0) \n           xConta = xConta + 1;\n\n     Se   (xConta = 0)\n          inicio\n          Mensagem(retorna, \"Informe pelo mesnos dois 'Gráfico - Benefícios' para poder vizualizar o gráfico. [OK]\");\n          Cancel(1);\n          fim;\n     fim;\n\n\nMontaData(1,  1, EAno, xDataIni);\nMontaData(31,12, EAno, xDataFim);\n\nConverteDataBanco(xDataIni, txtDataIni);\nConverteDataBanco(xDataFim, txtDataFim);\n\n\nsqlaux = \"R044MOV.ORIMOV = 'B' AND R044CAL.DATPAG>= \" + txtDataIni + \" AND R044CAL.DATPAG <= \" + txtDataFim;  \nInsClauSQLWhere(\"Detalhe_Beneficios\", sqlaux);\n\n\n@------------------------ Abrangência Histórico Filial ------------------------------@\nsqlaux = \" AND R038HFI.DATALT = (SELECT MAX (DATALT) FROM R038HFI TAB1 WHERE \\\n          (TAB1.NUMEMP = R038HFI.NUMEMP) AND \\\n          (TAB1.TIPCOL = R038HFI.TIPCOL) AND \\\n          (TAB1.NUMCAD = R038HFI.NUMCAD) AND \\\n          (TAB1.NUMEMP = TAB1.EMPATU) AND \\\n          (TAB1.NUMCAD = TAB1.CADATU) AND \\\n          (TAB1.DATALT <= R044CAL.DATPAG)) \";\nInsClauSQLWhere (\"Detalhe_Beneficios\", sqlaux);\n\n\n@-------------------------------------------------------------------------------------@\n@------------------------ Abrangência Histórico Local --------------------------------@\n@-------------------------------------------------------------------------------------@\nsqlaux = \" AND R038HLO.DATALT = (SELECT MAX (DATALT) FROM R038HLO TAB2 WHERE \\\n             (TAB2.NUMEMP = R038HLO.NUMEMP) AND \\\n             (TAB2.TIPCOL = R038HLO.TIPCOL) AND \\\n             (TAB2.NUMCAD = R038HLO.NUMCAD) AND \\\n             (TAB2.DATALT <= R044CAL.DATPAG)) \";\nInsclauSqlWhere(\"Detalhe_Beneficios\", sqlaux);\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "selection": "",
+    "initialization": "Definir alfa xImpGraf;\nDefinir alfa xOrdenacao;\nDefinir alfa xOrdem;\nDefinir alfa xPizza;\n\nOrdenacaoSelecionada(\"Detalhe_Beneficios\", xORdenacao);\n\nSe  (xOrdenacao = \"Filial\")\n     xOrdem = \"F\";\nSenao \n     xOrdem = \"L\";\n \n\nxImpGraf = \"N\";\nxPizza   = \"N\";",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho_Colunas",
+      "bandType": "CABECALHO",
+      "tag": 3,
+      "position": {
+        "top": 21,
+        "left": 0,
+        "width": 6000,
+        "height": 72
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa xPizza;\n\n\nSe  (xPizza = \"S\")\n    inicio\n    AlteraControle(\"Tit1\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit2\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit3\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit4\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit5\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit6\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit7\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit8\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit9\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit10\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit11\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit12\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit13\", \"Imprimir\", \"Falso\");\n    AlteraControle(\"Tit14\", \"Imprimir\", \"Falso\");\n    fim;",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 51,
+            "left": 0,
+            "width": 1096,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 3,
+            "left": 1053,
+            "width": 32,
+            "height": 17
+          },
+          "caption": "numpag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 3,
+            "left": 1017,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 3,
+            "left": 42,
+            "width": 6,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 34,
+            "height": 17
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao023",
+          "position": {
+            "top": 54,
+            "left": 54,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Benefício",
+          "onPrint": "Definir alfa xImpGraf;\n\nSe  (xImpGraf = \"S\")\n     Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 15,
+            "left": 276,
+            "width": 554,
+            "height": 26
+          },
+          "caption": "Benefícios",
+          "onPrint": "Definir alfa ETitRel;\n\nSe  (ETitRel <> \"\")\n    inicio\n    ValStr = ETitRel;\n    Cancel(2);\n    fim;",
+          "font": {
+            "name": "Arial",
+            "size": 18
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Nome_Empresa",
+          "position": {
+            "top": 3,
+            "left": 51,
+            "width": 399,
+            "height": 17
+          },
+          "caption": "NomAti",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 36,
+            "left": 6,
+            "width": 29,
+            "height": 16
+          },
+          "caption": "Ano:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FAno",
+          "position": {
+            "top": 36,
+            "left": 54,
+            "width": 51,
+            "height": 17
+          },
+          "caption": "FAno",
+          "onPrint": "FAno = EAno;",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit1",
+          "position": {
+            "top": 54,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "JAN",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit2",
+          "position": {
+            "top": 54,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FEV",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit3",
+          "position": {
+            "top": 54,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "MAR",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit4",
+          "position": {
+            "top": 54,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "ABR",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit5",
+          "position": {
+            "top": 54,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "MAI",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit6",
+          "position": {
+            "top": 54,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "JUN",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit7",
+          "position": {
+            "top": 54,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "JUL",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit8",
+          "position": {
+            "top": 54,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "AGO",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit9",
+          "position": {
+            "top": 54,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "SET",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit10",
+          "position": {
+            "top": 54,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "OUT",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit11",
+          "position": {
+            "top": 54,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "NOV",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit12",
+          "position": {
+            "top": 54,
+            "left": 903,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "DEZ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit13",
+          "position": {
+            "top": 54,
+            "left": 960,
+            "width": 67,
+            "height": 17
+          },
+          "caption": "Total",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tit14",
+          "position": {
+            "top": 54,
+            "left": 1029,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "Média",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 54,
+            "left": 6,
+            "width": 179,
+            "height": 17
+          },
+          "caption": "Descricao",
+          "onPrint": "Definir alfa xImpGraf;\nDefinir alfa xOrdem;\nDefinir alfa xPizza;\n\n\nSe  (xPizza = \"S\")\n    Cancel(1);\n\nSe  (xImpGraf = \"S\")\n     ValStr = \"Total Geral Benefícios\";\nSenao\n     inicio\n     Se  (xOrdem = \"F\")\n         ValStr = \"Filial\";\n     Senao\n         ValStr = \"Local\";\n     fim;\n\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_Beneficios",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 330,
+        "left": 0,
+        "width": 6000,
+        "height": 81
+      },
+      "canPrint": true,
+      "tableList": [
+        "R044MOV.NUMEMP",
+        "R044MOV.TIPCOL",
+        "R044MOV.NUMCAD",
+        "R044CAL.DATPAG",
+        "R044MOV.VALEVE",
+        "R044MOV.CODEVE",
+        "R044MOV.CODRAT"
+      ],
+      "onBeforePrint": "Definir alfa   ESaga;\nDefinir Numero xValor;\nDefinir numero xdia;\nDefinir numero xmes;\nDefinir numero xano;\nDefinir Numero xCodEve;\nDefinir data   xDataPag;       @--- Usado no Cur_R038HNA e Cur_R038CC ----@\n\nxNumEmp  = R044MOV.NumEmp;\nxTipCol  = R044MOV.TipCol;\nxNumCad  = R044MOV.NumCad;\nxDataPag = R044CAL.DatPag;\n\n\nFValor1  = 0;\nFValor2  = 0;\nFValor3  = 0;\nFValor4  = 0;\nFValor5  = 0;\nFValor6  = 0;\nFValor7  = 0;\nFValor8  = 0;\nFValor9  = 0;\nFValor10 = 0;\nFValor11 = 0;\nFValor12 = 0;\n\nFQtdCol1  = 0;\nFQtdCol2  = 0;\nFQtdCol3  = 0;\nFQtdCol4  = 0;\nFQtdCol5  = 0;\nFQtdCol6  = 0;\nFQtdCol7  = 0;\nFQtdCol8  = 0;\nFQtdCol9  = 0;\nFQtdCol10 = 0;\nFQtdCol11 = 0;\nFQtdCol12 = 0;\n\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\n\nB1Valor1=0;   B2Valor1=0;   B3Valor1=0;   B4Valor1=0;   B5Valor1=0;\nB1Valor2=0;   B2Valor2=0;   B3Valor2=0;   B4Valor2=0;   B5Valor2=0;\nB1Valor3=0;   B2Valor3=0;   B3Valor3=0;   B4Valor3=0;   B5Valor3=0;\nB1Valor4=0;   B2Valor4=0;   B3Valor4=0;   B4Valor4=0;   B5Valor4=0;\nB1Valor5=0;   B2Valor5=0;   B3Valor5=0;   B4Valor5=0;   B5Valor5=0;\nB1Valor6=0;   B2Valor6=0;   B3Valor6=0;   B4Valor6=0;   B5Valor6=0;\nB1Valor7=0;   B2Valor7=0;   B3Valor7=0;   B4Valor7=0;   B5Valor7=0;\nB1Valor8=0;   B2Valor8=0;   B3Valor8=0;   B4Valor8=0;   B5Valor8=0;\nB1Valor9=0;   B2Valor9=0;   B3Valor9=0;   B4Valor9=0;   B5Valor9=0;\nB1Valor10=0;  B2Valor10=0;  B3Valor10=0;  B4Valor10=0;  B5Valor10=0;\nB1Valor11=0;  B2Valor11=0;  B3Valor11=0;  B4Valor11=0;  B5Valor11=0;\nB1Valor12=0;  B2Valor12=0;  B3Valor12=0;  B4Valor12=0;  B5Valor12=0;\n\nB1Qtd1=0;   B2Qtd1=0;   B3Qtd1=0;   B4Qtd1=0;   B5Qtd1=0;\nB1Qtd2=0;   B2Qtd2=0;   B3Qtd2=0;   B4Qtd2=0;   B5Qtd2=0;\nB1Qtd3=0;   B2Qtd3=0;   B3Qtd3=0;   B4Qtd3=0;   B5Qtd3=0;\nB1Qtd4=0;   B2Qtd4=0;   B3Qtd4=0;   B4Qtd4=0;   B5Qtd4=0;\nB1Qtd5=0;   B2Qtd5=0;   B3Qtd5=0;   B4Qtd5=0;   B5Qtd5=0;\nB1Qtd6=0;   B2Qtd6=0;   B3Qtd6=0;   B4Qtd6=0;   B5Qtd6=0;\nB1Qtd7=0;   B2Qtd7=0;   B3Qtd7=0;   B4Qtd7=0;   B5Qtd7=0;\nB1Qtd8=0;   B2Qtd8=0;   B3Qtd8=0;   B4Qtd8=0;   B5Qtd8=0;\nB1Qtd9=0;   B2Qtd9=0;   B3Qtd9=0;   B4Qtd9=0;   B5Qtd9=0;\nB1Qtd10=0;  B2Qtd10=0;  B3Qtd10=0;  B4Qtd10=0;  B5Qtd10=0;\nB1Qtd11=0;  B2Qtd11=0;  B3Qtd11=0;  B4Qtd11=0;  B5Qtd11=0;\nB1Qtd12=0;  B2Qtd12=0;  B3Qtd12=0;  B4Qtd12=0;  B5Qtd12=0;\n\n\n\n\nDesmontaData(R044CAL.DatPag, xdia, xmes, xano);\n\nxValor  = R044MOV.ValEve;\nxCodEve = R044MOV.CodEve;\n\n\nSe    (xmes = 1)   \n      inicio\n      FValor1  = xValor;\n      FQtdCol1 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor1 = xValor;\n           B1Qtd1   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor1 = xValor;\n           B2Qtd1   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor1 = xValor;\n           B3Qtd1   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor1 = xValor;\n           B4Qtd1   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor1 = xValor;\n           B5Qtd1   = 1;\n           fim;   \n      fim;  \nSenao \nSe    (xmes = 2)   \n      inicio\n      FValor2  = xValor;\n      FQtdCol2 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor2 = xValor;\n           B1Qtd2   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor2 = xValor;\n           B2Qtd2   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor2 = xValor;\n           B3Qtd2   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor2 = xValor;\n           B4Qtd2   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor2 = xValor;\n           B5Qtd2   = 1;\n           fim;  \n      fim;\nSenao \nSe    (xmes = 3)    \n      inicio\n      FValor3  = xValor;\n      FQtdCol3 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor3 = xValor;\n           B1Qtd3   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor3 = xValor;\n           B2Qtd3   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor3 = xValor;\n           B3Qtd3   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor3 = xValor;\n           B4Qtd3   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor3 = xValor;\n           B5Qtd3   = 1;\n           fim;  \n      fim;\nSenao \nSe    (xmes = 4)   \n      inicio\n      FValor4  = xValor;\n      FQtdCol4 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor4 = xValor;\n           B1Qtd4   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor4 = xValor;\n           B2Qtd4   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor4 = xValor;\n           B3Qtd4   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor4 = xValor;\n           B4Qtd4   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor4 = xValor;\n           B5Qtd4   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 5)   \n      inicio\n      FValor5  = xValor;\n      FQtdCol5 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor5 = xValor;\n           B1Qtd5   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor5 = xValor;\n           B2Qtd5   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor5 = xValor;\n           B3Qtd5   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor5 = xValor;\n           B4Qtd5   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor5 = xValor;\n           B5Qtd5   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 6)   \n      inicio\n      FValor6  = xValor;\n      FQtdCol6 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor6 = xValor;\n           B1Qtd6   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor6 = xValor;\n           B2Qtd6   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor6 = xValor;\n           B3Qtd6   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor6 = xValor;\n           B4Qtd6   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor6 = xValor;\n           B5Qtd6   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 7)   \n      inicio\n      FValor7  = xValor;\n      FQtdCol7 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor7 = xValor;\n           B1Qtd7   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor7 = xValor;\n           B2Qtd7   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor7 = xValor;\n           B3Qtd7   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor7 = xValor;\n           B4Qtd7   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor7 = xValor;\n           B5Qtd7   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 8)   \n      inicio\n      FValor8  = xValor;\n      FQtdCol8 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor8 = xValor;\n           B1Qtd8   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor8 = xValor;\n           B2Qtd8   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor8 = xValor;\n           B3Qtd8   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor8 = xValor;\n           B4Qtd8   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor8 = xValor;\n           B5Qtd8   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 9)   \n      inicio\n      FValor9  = xValor;\n      FQtdCol9 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor9 = xValor;\n           B1Qtd9   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor9 = xValor;\n           B2Qtd9   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor9 = xValor;\n           B3Qtd9   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor9 = xValor;\n           B4Qtd9   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor9 = xValor;\n           B5Qtd9   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 10)  \n      inicio\n      FValor10  = xValor;\n      FQtdCol10 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor10 = xValor;\n           B1Qtd10   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor10 = xValor;\n           B2Qtd10   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor10 = xValor;\n           B3Qtd10   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor10 = xValor;\n           B4Qtd10   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor10 = xValor;\n           B5Qtd10   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 11)  \n      inicio\n      FValor11  = xValor;\n      FQtdCol11 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor11 = xValor;\n           B1Qtd11   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor11 = xValor;\n           B2Qtd11   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor11 = xValor;\n           B3Qtd11   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor11 = xValor;\n           B4Qtd11   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor11 = xValor;\n           B5Qtd11   = 1;\n           fim;   \n      fim;\nSenao \nSe    (xmes = 12)  \n      inicio\n      FValor12  = xValor;\n      FQtdCol12 = 1;\n\n      Se   (xCodEve = EBenef1)\n           inicio\n           B1Valor12 = xValor;\n           B1Qtd12   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef2)\n           inicio\n           B2Valor12 = xValor;\n           B2Qtd12   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef3)\n           inicio\n           B3Valor12 = xValor;\n           B3Qtd12   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef4)\n           inicio\n           B4Valor12 = xValor;\n           B4Qtd12   = 1;\n           fim;\n      Senao\n      Se   (xCodEve = EBenef5)\n           inicio\n           B5Valor12 = xValor;\n           B5Qtd12   = 1;\n           fim;    \n      fim;\n\n\n@---------- Para o Gráfico ----------------------@\nFMesGrafico = xmes;\nSe       (xCodEve = EBenef1)  FBeneficio1 = xValor;\nSenao Se (xCodEve = EBenef2)  FBeneficio2 = xValor;\nSenao Se (xCodEve = EBenef3)  FBeneficio3 = xValor;\nSenao Se (xCodEve = EBenef4)  FBeneficio4 = xValor;\nSenao Se (xCodEve = EBenef5)  FBeneficio5 = xValor;     \n\n\nSe  (ESaga = \"N\")\n    Cancel(1);",
+      "onAfterPrint": "ListaSecao(\"Adicional_Beneficios\");\n\nListaSecao(\"Adicional_DadosGrafico\");\n",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao033",
+          "position": {
+            "top": 0,
+            "left": 663,
+            "width": 99,
+            "height": 17
+          },
+          "caption": "Código Cálculo........:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_DatPag",
+          "position": {
+            "top": 15,
+            "left": 765,
+            "width": 68,
+            "height": 17
+          },
+          "table": "R044CAL",
+          "field": "DatPag",
+          "caption": "R044CAL.DatPag",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao025",
+          "position": {
+            "top": 15,
+            "left": 663,
+            "width": 99,
+            "height": 17
+          },
+          "caption": "Data Pagamento.....:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Descricao_Evento",
+          "position": {
+            "top": 30,
+            "left": 765,
+            "width": 181,
+            "height": 17
+          },
+          "table": "R008EVC",
+          "field": "DesEve",
+          "caption": "R008EVC.DesEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao030",
+          "position": {
+            "top": 30,
+            "left": 663,
+            "width": 99,
+            "height": 17
+          },
+          "caption": "Evento....................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao031",
+          "position": {
+            "top": 45,
+            "left": 663,
+            "width": 99,
+            "height": 17
+          },
+          "caption": "Valor......................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao032",
+          "position": {
+            "top": 60,
+            "left": 663,
+            "width": 99,
+            "height": 17
+          },
+          "caption": "Referência.............:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_RefEve",
+          "position": {
+            "top": 60,
+            "left": 765,
+            "width": 75,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "RefEve",
+          "caption": "R044MOV.RefEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_NumEmp",
+          "position": {
+            "top": 0,
+            "left": 951,
+            "width": 100,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "NumEmp",
+          "caption": "R044MOV.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_NumLoc",
+          "position": {
+            "top": 18,
+            "left": 951,
+            "width": 88,
+            "height": 17
+          },
+          "table": "R038HLO",
+          "field": "NUMLOC",
+          "caption": "R038HLO.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_CodFil",
+          "position": {
+            "top": 36,
+            "left": 951,
+            "width": 75,
+            "height": 17
+          },
+          "table": "R038HFI",
+          "field": "CODFIL",
+          "caption": "R038HFI.CODFIL",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao026",
+          "position": {
+            "top": 0,
+            "left": 6,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Tipo Colaborador:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao027",
+          "position": {
+            "top": 15,
+            "left": 6,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Colaborador........:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao028",
+          "position": {
+            "top": 30,
+            "left": 6,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Tipo Contrato......:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tipo_Contrato",
+          "position": {
+            "top": 30,
+            "left": 96,
+            "width": 136,
+            "height": 17
+          },
+          "caption": "Tipo_Contrato",
+          "fieldList": "R034FUN.TipCon - Cadastro007",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao029",
+          "position": {
+            "top": 45,
+            "left": 6,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Filial.....................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao034",
+          "position": {
+            "top": 60,
+            "left": 6,
+            "width": 86,
+            "height": 17
+          },
+          "caption": "Local...................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Nome_Colaborador",
+          "position": {
+            "top": 15,
+            "left": 96,
+            "width": 247,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao035",
+          "position": {
+            "top": 0,
+            "left": 351,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Cargo....................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Codigo_Calculo",
+          "position": {
+            "top": 0,
+            "left": 765,
+            "width": 40,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "CodCal",
+          "caption": "R044MOV.CodCal",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Tipo_Colaborador",
+          "position": {
+            "top": 0,
+            "left": 96,
+            "width": 109,
+            "height": 17
+          },
+          "caption": "Tipo_Colaborador",
+          "fieldList": "R044MOV.TipCol - Cad_TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 30,
+            "left": 189,
+            "width": 12,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "TipCon",
+          "caption": "R034FUN.TipCon",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_TipCol",
+          "position": {
+            "top": 0,
+            "left": 186,
+            "width": 13,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "TipCol",
+          "caption": "R044MOV.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao038",
+          "position": {
+            "top": 15,
+            "left": 351,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Natureza Despesa:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao039",
+          "position": {
+            "top": 30,
+            "left": 351,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Centro Custo.........:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao10",
+          "position": {
+            "top": 45,
+            "left": 351,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Caract. Evento......:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_CrtEve",
+          "position": {
+            "top": 45,
+            "left": 534,
+            "width": 31,
+            "height": 17
+          },
+          "table": "R008EVC",
+          "field": "CrtEve",
+          "caption": "R008EVC.CrtEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao036",
+          "position": {
+            "top": 60,
+            "left": 351,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Rateio....................:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Mes_Beneficio",
+          "position": {
+            "top": 0,
+            "left": 813,
+            "width": 96,
+            "height": 17
+          },
+          "caption": "Mes_Beneficio",
+          "onPrint": "ValStr = \"\";\n\nSe       (xmes =  1)  ValStr = \"01_Jan\";\nSenao Se (xmes =  2)  ValStr = \"02_Fev\";\nSenao Se (xmes =  3)  ValStr = \"03_Mar\";\nSenao Se (xmes =  4)  ValStr = \"04_Abr\";\nSenao Se (xmes =  5)  ValStr = \"05_Mai\";\nSenao Se (xmes =  6)  ValStr = \"06_Jun\";\nSenao Se (xmes =  7)  ValStr = \"07_Jul\";\nSenao Se (xmes =  8)  ValStr = \"08_Ago\";\nSenao Se (xmes =  9)  ValStr = \"09_Set\";\nSenao Se (xmes = 10)  ValStr = \"10_Out\";\nSenao Se (xmes = 11)  ValStr = \"11_Nov\";\nSenao Se (xmes = 12)  ValStr = \"12_Dez\";\n\nCancel(2);\n\n    ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Centro_Custo",
+          "position": {
+            "top": 30,
+            "left": 447,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "Centro_Custo",
+          "onPrint": "Definir cursor Cur_R038HCC;\nDefinir Alfa   xDescricao;\n\nxDescricao = \"\";\n\nCur_R038HCC.Sql \"SELECT R018CCU.NOMCCU, R038HCC.DATALT FROM R038HCC, R018CCU WHERE \\\n                 R038HCC.NUMEMP=:xNumEmp AND R038HCC.TIPCOL=:xTipCol AND R038HCC.NUMCAD=:xNumCad AND \\\n                 DATALT<=:xDataPag AND R018CCU.NUMEMP=:xNumEmp AND R018CCU.CodCcu=R038HCC.CodCcu \\\n                 ORDER BY DATALT DESC\";\nCur_R038HCC.AbrirCursor();\nSe  (Cur_R038HCC.Achou)\n     xDescricao = Cur_R038HCC.NOMCCU;\nCur_R038HCC.FecharCursor();\n\nValStr = xDescricao;\nCancel(2);\n\n                 ",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao_Rateio",
+          "position": {
+            "top": 60,
+            "left": 447,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "Descricao_Rateio",
+          "onPrint": "Definir cursor Cur_R020RAT;\nDefinir alfa   xDescricao;\n\nxDescricao = \"\";\n\nxCodRat = R044MOV.CodRat;\n\nSe  (xCodRat <> 0)\n    inicio\n    Cur_R020RAT.Sql \"SELECT DESRAT FROM R020RAT WHERE CODRAT=:xCodRat\";\n    Cur_R020RAT.AbrirCursor();\n    Se  (Cur_R020RAT.Achou)\n         xDescricao = Cur_R020RAT.DesRat;\n    Cur_R020RAT.FecharCursor();\n    fim;\n\nValStr = xDescricao;\n\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_ValEve",
+          "position": {
+            "top": 45,
+            "left": 765,
+            "width": 75,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "ValEve",
+          "caption": "R044MOV.ValEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FRegistro",
+          "position": {
+            "top": 0,
+            "left": 267,
+            "width": 65,
+            "height": 15
+          },
+          "caption": "FRegistro",
+          "onPrint": "FRegistro = 1;",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Crt_Evento",
+          "position": {
+            "top": 45,
+            "left": 447,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "Crt_Evento",
+          "fieldList": "R008EVC.CrtEve - Cad_CrtEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cad_CodEve",
+          "position": {
+            "top": 30,
+            "left": 831,
+            "width": 24,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "CodEve",
+          "caption": "R044MOV.CodEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Natureza_Despesa",
+          "position": {
+            "top": 15,
+            "left": 447,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "Natureza_Despesa",
+          "onPrint": "Definir cursor Cur_R038HNA;\nDefinir alfa   xDescricao;\n\nxDescricao = \"\";\n\nCur_R038HNA.Sql \"SELECT R038HNA.NATDES, R048NAT.NOMNAT, R038HNA.DATALT FROM R038HNA, R048NAT WHERE \\ \n                 NUMEMP=:xNumEmp AND TIPCOL=:xTipCol AND NUMCAD=:xNumCad AND DATALT <=:xDataPag AND \\\n                 R048NAT.NATDES=R038HNA.NATDES ORDER BY DATALT DESC\";\nCur_R038HNA.AbrirCursor();\nSe  (Cur_R038HNA.Achou)\n     xDescricao = cur_R038HNA.NomNat;\nCur_R038HNA.FecharCursor();\n\n\nValStr = xDescricao;\nCancel(2);\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Nome_Cargo",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 214,
+            "height": 17
+          },
+          "caption": "Nome_Cargo",
+          "onPrint": "Definir cursor Cur_R038HCA;\nDefinir Alfa   xDescricao;\n\nxDescricao = \"\";\n\nCur_R038HCA.Sql \"SELECT R038HCA.DATALT, R024CAR.TitCar FROM R038HCA, R024CAR WHERE \\\n                 R038HCA.NUMEMP=:xNumEmp AND R038HCA.TIPCOL=:xTipCol AND \\ \n                 R038HCA.NUMCAD=:xNumCad AND R038HCA.DATALT<=:xDataPag AND \\\n                 R024CAR.ESTCAR=R038HCA.ESTCAR AND R024CAR.CodCar=R038HCA.CodCar \\\n                 ORDER BY R038HCA.DATALT DESC\";\nCur_R038HCA.AbrirCursor();\nSe  (Cur_R038HCA.Achou)\n    xDescricao = Cur_R038HCA.TitCar;\nCur_R038HCA.FecharCursor();\n\nValStr = xDescricao;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Nome_Local",
+          "position": {
+            "top": 60,
+            "left": 96,
+            "width": 253,
+            "height": 17
+          },
+          "table": "R016ORN",
+          "field": "NomLoc",
+          "caption": "R016ORN.NomLoc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Nome_Filial",
+          "position": {
+            "top": 45,
+            "left": 96,
+            "width": 253,
+            "height": 17
+          },
+          "table": "R030FIL",
+          "field": "NomFil",
+          "caption": "R030FIL.NomFil",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 534,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 1090,
+            "height": 14
+          },
+          "caption": "DesRodapePa",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Quebra",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 93,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa ESaga;\n\nSe  (ESaga = \"S\")\n    Cancel(1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 6,
+            "width": 420,
+            "height": 17
+          },
+          "table": "R016ORN",
+          "field": "NomLoc",
+          "caption": "R016ORN.NomLoc",
+          "onPrint": "Definir alfa xOrdem;\n\nSe  (xOrdem <> \"L\")\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 6,
+            "width": 354,
+            "height": 19
+          },
+          "table": "R030FIL",
+          "field": "NomFil",
+          "caption": "R030FIL.NomFil",
+          "onPrint": "Definir alfa xOrdem;\n\nSe  (xOrdem <> \"F\")\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Beneficio",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 114,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Subtitulo_Empresa",
+      "bandType": "TITULO",
+      "tag": 103,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Total_Geral",
+      "bandType": "ADICIONAL",
+      "tag": 501,
+      "position": {
+        "top": 549,
+        "left": 0,
+        "width": 6000,
+        "height": 48
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa ESaga;\n\nSe  (ESaga = \"S\")\n    Cancel(1);\n\nTGMedia1  = 0;\nTGMedia2  = 0;\nTGMedia3  = 0;\nTGMedia4  = 0;\nTGMedia5  = 0;\nTGMedia6  = 0;\nTGMedia7  = 0;\nTGMedia8  = 0;\nTGMedia9  = 0;\nTGMedia10 = 0;\nTGMedia11 = 0;\nTGMedia12 = 0;\n\nSe  (TGQtdCol1 > 0)\n     TGMedia1 = TGValor1 / TGQtdCol1;\n\nSe  (TGQtdCol2 > 0)\n     TGMedia2 = TGValor2 / TGQtdCol2;\n\nSe  (TGQtdCol3 > 0)\n     TGMedia3 = TGValor3 / TGQtdCol3;\n\nSe  (TGQtdCol4 > 0)\n     TGMedia4 = TGValor4 / TGQtdCol4;\n\nSe  (TGQtdCol5 > 0)\n     TGMedia5 = TGValor5 / TGQtdCol5;\n\nSe  (TGQtdCol6 > 0)\n     TGMedia6 = TGValor6 / TGQtdCol6;\n\nSe  (TGQtdCol7 > 0)\n     TGMedia7 = TGValor7 / TGQtdCol7;\n\nSe  (TGQtdCol8 > 0)\n     TGMedia8 = TGValor8 / TGQtdCol8;\n\nSe  (TGQtdCol9 > 0)\n     TGMedia9 = TGValor9 / TGQtdCol9;\n\nSe  (TGQtdCol10 > 0)\n     TGMedia10 = TGValor10 / TGQtdCol10;\n\nSe  (TGQtdCol11 > 0)\n     TGMedia11 = TGValor11 / TGQtdCol11;\n\nSe  (TGQtdCol12 > 0)\n     TGMedia12 = TGValor12 / TGQtdCol12;\n\n\n@----------------------- Total e Média do Ano --------------------------------------@\nTGAnoValor  = TGValor1 + TGValor2 + TGValor3 + TGValor4  + TGValor5  + TGValor6 + \n              TGValor7 + TGValor8 + TGValor9 + TGValor10 + TGValor11 + TGValor12;\n\nTGAnoMedia  = TGAnoValor / 12;\n\n\n@---------- Verifica se é para exibir a Média Mensal --------------------------@\nDefinir alfa EMedMes;\n\nSe   (EMedMes = \"N\")\n     inicio\n     AlteraControle(\"Desc6\",     \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc7\",     \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc8\",     \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia1\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia2\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia3\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia4\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia5\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia6\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia7\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia8\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia9\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia10\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia11\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGMedia12\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol1\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol2\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol3\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol4\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol5\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol6\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol7\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol8\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol9\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol10\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol11\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TGQtdCol12\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"Subtotal_Quebra\", \"Altura\", \"17\");\n     fim;\n\n\n\n\n             \n",
+      "onAfterPrint": "xImpGraf = \"S\";\n\n/* -----------------------------------------------------------------------------\n   Gera uma linha/registro para todos os Meses do ano com benefícios=0 para que \n   todos os meses do ano aparecam no gráfico mesmo não tendo nenhum benefício.\n   -----------------------------------------------------------------------------*/\n\nFMesGrafico = 1;     @---- Janeiro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 2;     @---- Fevereiro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 3;     @---- Março -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 4;     @---- Abril -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 5;     @---- Maio -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 6;     @---- Junho -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 7;     @---- Julho -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 8;     @---- Agosto -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 9;     @---- Setembro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 10;     @---- Outubro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\n\nFMesGrafico = 11;     @---- Novembro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\nFMesGrafico = 12;     @---- Dezembro -----@\nFBeneficio1 = 0;\nFBeneficio2 = 0;\nFBeneficio3 = 0;\nFBeneficio4 = 0;\nFBeneficio5 = 0;\nListaSecao(\"Adicional_DadosGrafico\");\n\n\nListaSecao(\"Adicional_Grafico\");   ",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao021",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 93,
+            "height": 17
+          },
+          "caption": "Total Geral",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia2",
+          "position": {
+            "top": 15,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia3",
+          "position": {
+            "top": 15,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia4",
+          "position": {
+            "top": 15,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia5",
+          "position": {
+            "top": 15,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia6",
+          "position": {
+            "top": 15,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia7",
+          "position": {
+            "top": 15,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia8",
+          "position": {
+            "top": 15,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia9",
+          "position": {
+            "top": 15,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia10",
+          "position": {
+            "top": 15,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia11",
+          "position": {
+            "top": 15,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia12",
+          "position": {
+            "top": 15,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol2",
+          "position": {
+            "top": 30,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol2",
+          "fieldName": "Subtotal_Quebra.TotQtdCol2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol3",
+          "position": {
+            "top": 30,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol3",
+          "fieldName": "Subtotal_Quebra.TotQtdCol3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol4",
+          "position": {
+            "top": 30,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol4",
+          "fieldName": "Subtotal_Quebra.TotQtdCol4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol5",
+          "position": {
+            "top": 30,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol5",
+          "fieldName": "Subtotal_Quebra.TotQtdCol5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol6",
+          "position": {
+            "top": 30,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol6",
+          "fieldName": "Subtotal_Quebra.TotQtdCol6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol7",
+          "position": {
+            "top": 30,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol7",
+          "fieldName": "Subtotal_Quebra.TotQtdCol7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol9",
+          "position": {
+            "top": 30,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol9",
+          "fieldName": "Subtotal_Quebra.TotQtdCol9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol10",
+          "position": {
+            "top": 30,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol10",
+          "fieldName": "Subtotal_Quebra.TotQtdCol10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor12",
+          "position": {
+            "top": 0,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor12",
+          "fieldName": "Subtotal_Quebra.TotValor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol12",
+          "position": {
+            "top": 30,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol12",
+          "fieldName": "Subtotal_Quebra.TotQtdCol12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor1",
+          "position": {
+            "top": 0,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor1",
+          "fieldName": "Subtotal_Quebra.TotValor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor2",
+          "position": {
+            "top": 0,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor2",
+          "fieldName": "Subtotal_Quebra.TotValor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor3",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor3",
+          "fieldName": "Subtotal_Quebra.TotValor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor4",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor4",
+          "fieldName": "Subtotal_Quebra.TotValor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor5",
+          "position": {
+            "top": 0,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor5",
+          "fieldName": "Subtotal_Quebra.TotValor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor6",
+          "position": {
+            "top": 0,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor6",
+          "fieldName": "Subtotal_Quebra.TotValor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor7",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor7",
+          "fieldName": "Subtotal_Quebra.TotValor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor8",
+          "position": {
+            "top": 0,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor8",
+          "fieldName": "Subtotal_Quebra.TotValor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor9",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor9",
+          "fieldName": "Subtotal_Quebra.TotValor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor10",
+          "position": {
+            "top": 0,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor10",
+          "fieldName": "Subtotal_Quebra.TotValor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGValor11",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGValor11",
+          "fieldName": "Subtotal_Quebra.TotValor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol8",
+          "position": {
+            "top": 30,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol8",
+          "fieldName": "Subtotal_Quebra.TotQtdCol8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGAnoMedia",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "TGAnoMedia",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGMedia1",
+          "position": {
+            "top": 15,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGMedia1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc6",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 50,
+            "height": 17
+          },
+          "caption": "Valor:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol11",
+          "position": {
+            "top": 30,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol11",
+          "fieldName": "Subtotal_Quebra.TotQtdCol11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TGQtdCol1",
+          "position": {
+            "top": 30,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TGQtdCol1",
+          "fieldName": "Subtotal_Quebra.TotQtdCol1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc7",
+          "position": {
+            "top": 15,
+            "left": 228,
+            "width": 47,
+            "height": 17
+          },
+          "caption": "Média:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc8",
+          "position": {
+            "top": 30,
+            "left": 225,
+            "width": 50,
+            "height": 17
+          },
+          "caption": "Colab:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TGAnoValor",
+          "position": {
+            "top": 0,
+            "left": 960,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "TGAnoValor",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Quebra",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 468,
+        "left": 0,
+        "width": 6000,
+        "height": 66
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa ESaga;\n\nSe  (ESaga = \"S\")\n    Cancel(1);\n \n\n\nTotMedia1  = 0;\nTotMedia2  = 0;\nTotMedia3  = 0;\nTotMedia4  = 0;\nTotMedia5  = 0;\nTotMedia6  = 0;\nTotMedia7  = 0;\nTotMedia8  = 0;\nTotMedia9  = 0;\nTotMedia10 = 0;\nTotMedia11 = 0;\nTotMedia11 = 0;\nTotMedia12 = 0;\n\nSe  (TotQtdCol1 > 0)\n    TotMedia1 = TotValor1 / TotQtdCol1;\n\nSe  (TotQtdCol2 > 0)\n    TotMedia2 = TotValor2 / TotQtdCol2;\n\nSe  (TotQtdCol3 > 0)\n    TotMedia3 = TotValor3 / TotQtdCol3;\n\nSe  (TotQtdCol4 > 0)\n    TotMedia4 = TotValor4 / TotQtdCol4;\n\nSe  (TotQtdCol5 > 0)\n    TotMedia5 = TotValor5 / TotQtdCol5;\n\nSe  (TotQtdCol6 > 0)\n    TotMedia6 = TotValor6 / TotQtdCol6;\n\nSe  (TotQtdCol7 > 0)\n    TotMedia7 = TotValor7 / TotQtdCol7;\n\nSe  (TotQtdCol8 > 0)\n    TotMedia8 = TotValor8 / TotQtdCol8;\n\nSe  (TotQtdCol9 > 0)\n    TotMedia9 = TotValor9 / TotQtdCol9;\n\nSe  (TotQtdCol10 > 0)\n    TotMedia10 = TotValor10 / TotQtdCol10;\n\nSe  (TotQtdCol11 > 0)\n    TotMedia11 = TotValor11 / TotQtdCol11;\n\nSe  (TotQtdCol12 > 0)\n    TotMedia12 = TotValor12 / TotQtdCol12;\n\n\n@---------------------- Cálcula o Total e a Média do Ano ---------------------------@\nTAnoValor = TotValor1 + TotValor2 + TotValor3 + TotValor4  + TotValor5  + TotValor6 +\n            TotValor7 + TotValor8 + TotValor9 + TotValor10 + TotValor11 + TotValor12;\n\nTAnoMedia = TAnoValor / 12;\n\n\n\n@---------- Verifica se é para exibir a Média Mensal --------------------------@\nDefinir alfa EMedMes;\n\nSe   (EMedMes = \"N\")\n     inicio\n     AlteraControle(\"Desc3\",      \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc4\",      \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc5\",      \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia1\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia2\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia3\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia4\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia5\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia6\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia7\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia8\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia9\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia10\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia11\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotMedia12\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol1\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol2\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol3\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol4\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol5\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol6\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol7\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol8\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol9\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol10\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol11\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TotQtdCol12\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"Subtotal_Quebra\", \"Altura\", \"25\");\n     fim;\n\n\n\n\n             ",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSFormula",
+          "name": "TotMedia2",
+          "position": {
+            "top": 15,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia3",
+          "position": {
+            "top": 15,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia4",
+          "position": {
+            "top": 15,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia5",
+          "position": {
+            "top": 15,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia6",
+          "position": {
+            "top": 15,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia7",
+          "position": {
+            "top": 15,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia8",
+          "position": {
+            "top": 15,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia9",
+          "position": {
+            "top": 15,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia10",
+          "position": {
+            "top": 15,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia11",
+          "position": {
+            "top": 15,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia12",
+          "position": {
+            "top": 15,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol2",
+          "position": {
+            "top": 30,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol2",
+          "fieldName": "Subtotal_Beneficio.TQtdCol2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol3",
+          "position": {
+            "top": 30,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol3",
+          "fieldName": "Subtotal_Beneficio.TQtdCol3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol4",
+          "position": {
+            "top": 30,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol4",
+          "fieldName": "Subtotal_Beneficio.TQtdCol4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol5",
+          "position": {
+            "top": 30,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol5",
+          "fieldName": "Subtotal_Beneficio.TQtdCol5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol6",
+          "position": {
+            "top": 30,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol6",
+          "fieldName": "Subtotal_Beneficio.TQtdCol6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol7",
+          "position": {
+            "top": 30,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol7",
+          "fieldName": "Subtotal_Beneficio.TQtdCol7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol8",
+          "position": {
+            "top": 30,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol8",
+          "fieldName": "Subtotal_Beneficio.TQtdCol8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol9",
+          "position": {
+            "top": 30,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol9",
+          "fieldName": "Subtotal_Beneficio.TQtdCol9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol10",
+          "position": {
+            "top": 30,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol10",
+          "fieldName": "Subtotal_Beneficio.TQtdCol10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol11",
+          "position": {
+            "top": 30,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol11",
+          "fieldName": "Subtotal_Beneficio.TQtdCol11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol12",
+          "position": {
+            "top": 30,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol12",
+          "fieldName": "Subtotal_Beneficio.TQtdCol12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor2",
+          "position": {
+            "top": 0,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor2",
+          "fieldName": "Subtotal_Beneficio.BValor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor3",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor3",
+          "fieldName": "Subtotal_Beneficio.BValor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor4",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor4",
+          "fieldName": "Subtotal_Beneficio.BValor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor5",
+          "position": {
+            "top": 0,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor5",
+          "fieldName": "Subtotal_Beneficio.BValor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor6",
+          "position": {
+            "top": 0,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor6",
+          "fieldName": "Subtotal_Beneficio.BValor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor7",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor7",
+          "fieldName": "Subtotal_Beneficio.BValor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor8",
+          "position": {
+            "top": 0,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor8",
+          "fieldName": "Subtotal_Beneficio.BValor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor9",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor9",
+          "fieldName": "Subtotal_Beneficio.BValor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor11",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor11",
+          "fieldName": "Subtotal_Beneficio.BValor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor12",
+          "position": {
+            "top": 0,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor12",
+          "fieldName": "Subtotal_Beneficio.BValor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor10",
+          "position": {
+            "top": 0,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor10",
+          "fieldName": "Subtotal_Beneficio.BValor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TAnoMedia",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "TAnoMedia",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotValor1",
+          "position": {
+            "top": 0,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotValor1",
+          "fieldName": "Subtotal_Beneficio.BValor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TotMedia1",
+          "position": {
+            "top": 15,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotMedia1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TotQtdCol1",
+          "position": {
+            "top": 30,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TotQtdCol1",
+          "fieldName": "Subtotal_Beneficio.TQtdCol1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc3",
+          "position": {
+            "top": 0,
+            "left": 225,
+            "width": 50,
+            "height": 17
+          },
+          "caption": "Valor:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc4",
+          "position": {
+            "top": 15,
+            "left": 240,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "Média:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc5",
+          "position": {
+            "top": 30,
+            "left": 228,
+            "width": 47,
+            "height": 17
+          },
+          "caption": "Colab:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 0,
+            "left": 54,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Total:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "TAnoValor",
+          "position": {
+            "top": 0,
+            "left": 960,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "TAnoValor",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_Beneficios",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 132,
+        "left": 0,
+        "width": 6000,
+        "height": 198
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSFormula",
+          "name": "FValor4",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor5",
+          "position": {
+            "top": 0,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor6",
+          "position": {
+            "top": 0,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor7",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor8",
+          "position": {
+            "top": 0,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor9",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor10",
+          "position": {
+            "top": 0,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor11",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor3",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor2",
+          "position": {
+            "top": 0,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol2",
+          "position": {
+            "top": 15,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol3",
+          "position": {
+            "top": 15,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol4",
+          "position": {
+            "top": 15,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol5",
+          "position": {
+            "top": 15,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol7",
+          "position": {
+            "top": 15,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol8",
+          "position": {
+            "top": 15,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol9",
+          "position": {
+            "top": 15,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol10",
+          "position": {
+            "top": 15,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol11",
+          "position": {
+            "top": 15,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol6",
+          "position": {
+            "top": 15,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol12",
+          "position": {
+            "top": 15,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FQtdCol12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor12",
+          "position": {
+            "top": 0,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FValor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor1",
+          "position": {
+            "top": 36,
+            "left": 276,
+            "width": 56,
+            "height": 15
+          },
+          "caption": "B1Valor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor2",
+          "position": {
+            "top": 36,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor3",
+          "position": {
+            "top": 36,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor4",
+          "position": {
+            "top": 36,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor5",
+          "position": {
+            "top": 36,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor6",
+          "position": {
+            "top": 36,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor7",
+          "position": {
+            "top": 36,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor8",
+          "position": {
+            "top": 36,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor9",
+          "position": {
+            "top": 36,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor10",
+          "position": {
+            "top": 36,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor11",
+          "position": {
+            "top": 36,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Valor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Valor12",
+          "position": {
+            "top": 36,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B1Valor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor1",
+          "position": {
+            "top": 51,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor1",
+          "position": {
+            "top": 66,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor1",
+          "position": {
+            "top": 81,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor1",
+          "position": {
+            "top": 96,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor2",
+          "position": {
+            "top": 51,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor2",
+          "position": {
+            "top": 66,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor2",
+          "position": {
+            "top": 81,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor2",
+          "position": {
+            "top": 96,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor3",
+          "position": {
+            "top": 51,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor3",
+          "position": {
+            "top": 66,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor3",
+          "position": {
+            "top": 81,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor3",
+          "position": {
+            "top": 96,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor4",
+          "position": {
+            "top": 51,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor4",
+          "position": {
+            "top": 66,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor4",
+          "position": {
+            "top": 81,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor4",
+          "position": {
+            "top": 96,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor5",
+          "position": {
+            "top": 51,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor5",
+          "position": {
+            "top": 66,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor5",
+          "position": {
+            "top": 81,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor5",
+          "position": {
+            "top": 96,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor6",
+          "position": {
+            "top": 51,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor6",
+          "position": {
+            "top": 66,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor6",
+          "position": {
+            "top": 81,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor6",
+          "position": {
+            "top": 96,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor7",
+          "position": {
+            "top": 51,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor7",
+          "position": {
+            "top": 66,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor7",
+          "position": {
+            "top": 81,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor7",
+          "position": {
+            "top": 96,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor8",
+          "position": {
+            "top": 51,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor8",
+          "position": {
+            "top": 66,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor8",
+          "position": {
+            "top": 81,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor8",
+          "position": {
+            "top": 96,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor9",
+          "position": {
+            "top": 51,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor9",
+          "position": {
+            "top": 66,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor9",
+          "position": {
+            "top": 81,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor9",
+          "position": {
+            "top": 96,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor10",
+          "position": {
+            "top": 51,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor10",
+          "position": {
+            "top": 66,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor10",
+          "position": {
+            "top": 81,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor10",
+          "position": {
+            "top": 96,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor11",
+          "position": {
+            "top": 51,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Valor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor11",
+          "position": {
+            "top": 66,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Valor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor11",
+          "position": {
+            "top": 81,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Valor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor11",
+          "position": {
+            "top": 96,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Valor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Valor12",
+          "position": {
+            "top": 51,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B2Valor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Valor12",
+          "position": {
+            "top": 81,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B4Valor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Valor12",
+          "position": {
+            "top": 96,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B5Valor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FQtdCol1",
+          "position": {
+            "top": 15,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FQtdCol1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd1",
+          "position": {
+            "top": 114,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd1",
+          "position": {
+            "top": 129,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd1",
+          "position": {
+            "top": 144,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd1",
+          "position": {
+            "top": 159,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd1",
+          "position": {
+            "top": 174,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd2",
+          "position": {
+            "top": 114,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd2",
+          "position": {
+            "top": 129,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd2",
+          "position": {
+            "top": 144,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd2",
+          "position": {
+            "top": 159,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd2",
+          "position": {
+            "top": 174,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd3",
+          "position": {
+            "top": 114,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd3",
+          "position": {
+            "top": 129,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd3",
+          "position": {
+            "top": 144,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd3",
+          "position": {
+            "top": 159,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd3",
+          "position": {
+            "top": 174,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd4",
+          "position": {
+            "top": 114,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd4",
+          "position": {
+            "top": 129,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd4",
+          "position": {
+            "top": 144,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd4",
+          "position": {
+            "top": 159,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd4",
+          "position": {
+            "top": 174,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd5",
+          "position": {
+            "top": 114,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd5",
+          "position": {
+            "top": 129,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd5",
+          "position": {
+            "top": 144,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd5",
+          "position": {
+            "top": 159,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd5",
+          "position": {
+            "top": 174,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd6",
+          "position": {
+            "top": 114,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd6",
+          "position": {
+            "top": 129,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd6",
+          "position": {
+            "top": 144,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd6",
+          "position": {
+            "top": 159,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd6",
+          "position": {
+            "top": 174,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd7",
+          "position": {
+            "top": 114,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd7",
+          "position": {
+            "top": 129,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd7",
+          "position": {
+            "top": 144,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd7",
+          "position": {
+            "top": 159,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd7",
+          "position": {
+            "top": 174,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd8",
+          "position": {
+            "top": 114,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd8",
+          "position": {
+            "top": 129,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd8",
+          "position": {
+            "top": 144,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd8",
+          "position": {
+            "top": 159,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd8",
+          "position": {
+            "top": 174,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd9",
+          "position": {
+            "top": 114,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd9",
+          "position": {
+            "top": 129,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd9",
+          "position": {
+            "top": 144,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd9",
+          "position": {
+            "top": 159,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd9",
+          "position": {
+            "top": 174,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd10",
+          "position": {
+            "top": 114,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd10",
+          "position": {
+            "top": 129,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd10",
+          "position": {
+            "top": 144,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd10",
+          "position": {
+            "top": 159,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd10",
+          "position": {
+            "top": 174,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd11",
+          "position": {
+            "top": 114,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B1Qtd11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd11",
+          "position": {
+            "top": 129,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B2Qtd11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd11",
+          "position": {
+            "top": 144,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B3Qtd11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd11",
+          "position": {
+            "top": 159,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B4Qtd11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd11",
+          "position": {
+            "top": 174,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "B5Qtd11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B1Qtd12",
+          "position": {
+            "top": 114,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B1Qtd12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B2Qtd12",
+          "position": {
+            "top": 129,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B2Qtd12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Qtd12",
+          "position": {
+            "top": 144,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B3Qtd12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B4Qtd12",
+          "position": {
+            "top": 159,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B4Qtd12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B5Qtd12",
+          "position": {
+            "top": 174,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B5Qtd12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao024",
+          "position": {
+            "top": 36,
+            "left": 18,
+            "width": 232,
+            "height": 17
+          },
+          "caption": "Valor do Benefício 1 informado na entrada =>",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FValor1",
+          "position": {
+            "top": 0,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "FValor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "B3Valor12",
+          "position": {
+            "top": 66,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "B3Valor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 3,
+            "left": 66,
+            "width": 106,
+            "height": 17
+          },
+          "table": "R044MOV",
+          "field": "CodEve",
+          "caption": "R044MOV.CodEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Beneficio",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 411,
+        "left": 0,
+        "width": 6000,
+        "height": 57
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir alfa ESaga;\n\nSe  (ESaga = \"S\")\n    Cancel(1);\n\n@----------- Cálcula a Média do Benefício de cada Mês --------------@\n\nFMedia1  = 0;\nFMedia2  = 0;\nFMedia3  = 0;\nFMedia4  = 0;\nFMedia5  = 0;\nFMedia6  = 0;\nFMedia7  = 0;\nFMedia8  = 0;\nFMedia9  = 0;\nFMedia10 = 0;\nFMedia11 = 0;\nFMedia12 = 0;\n\nSe   (TQtdCol1 > 0)\n     FMedia1 = BValor1 / TQtdCol1;\n\nSe   (TQtdCol2 > 0)\n     FMedia2 = BValor2 / TQtdCol2;\n\nSe   (TQtdCol3 > 0)\n     FMedia3 = BValor3 / TQtdCol3;\n\nSe   (TQtdCol4 > 0)\n     FMedia4 = BValor4 / TQtdCol4;\n\nSe   (TQtdCol5 > 0)\n     FMedia5 = BValor5 / TQtdCol5;\n\nSe   (TQtdCol6 > 0)\n     FMedia6 = BValor6 / TQtdCol6;\n\nSe   (TQtdCol7 > 0)\n     FMedia7 = BValor7 / TQtdCol7;\n\nSe   (TQtdCol8 > 0)\n     FMedia8 = BValor8 / TQtdCol8;\n\nSe   (TQtdCol9 > 0)\n     FMedia9 = BValor9 / TQtdCol9;\n\nSe   (TQtdCol10 > 0)\n     FMedia10 = BValor10 / TQtdCol10;\n\nSe   (TQtdCol11 > 0)\n     FMedia11 = BValor11 / TQtdCol11;\n\nSe   (TQtdCol12 > 0)\n     FMedia12 = BValor12 / TQtdCol12;\n\n\n\n@------------------- Total e Média de Benefício no Ano ------------------------@\nAnoValor = BValor1 + BValor2 + BValor3 + BValor4  + BValor5  + BValor6 + \n           BValor7 + BValor8 + BValor9 + BValor10 + BValor11 + BValor12;\n\nAnoMedia = AnoValor / 12;\n\n\n\n@---------- Verifica se é para exibir a Média Mensal --------------------------@\nDefinir alfa EMedMes;\n\nSe   (EMedMes = \"N\")\n     inicio\n     AlteraControle(\"Desc0\",    \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc1\",    \"Imprimir\", \"Falso\");\n     AlteraControle(\"Desc2\",    \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia1\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia2\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia3\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia4\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia5\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia6\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia7\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia8\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia9\",  \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia10\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia11\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"FMedia12\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol1\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol2\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol3\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol4\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol5\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol6\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol7\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol8\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol9\", \"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol10\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol11\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"TQtdCol12\",\"Imprimir\", \"Falso\");\n     AlteraControle(\"Subtotal_Beneficio\", \"Altura\", \"17\");\n     fim;\n\n\n",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSTotal",
+          "name": "BValor4",
+          "position": {
+            "top": 0,
+            "left": 447,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor4",
+          "fieldName": "Adicional_Beneficios.FValor4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor6",
+          "position": {
+            "top": 0,
+            "left": 561,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor6",
+          "fieldName": "Adicional_Beneficios.FValor6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor7",
+          "position": {
+            "top": 0,
+            "left": 618,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor7",
+          "fieldName": "Adicional_Beneficios.FValor7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor8",
+          "position": {
+            "top": 0,
+            "left": 675,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor8",
+          "fieldName": "Adicional_Beneficios.FValor8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor9",
+          "position": {
+            "top": 0,
+            "left": 732,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor9",
+          "fieldName": "Adicional_Beneficios.FValor9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor10",
+          "position": {
+            "top": 0,
+            "left": 789,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor10",
+          "fieldName": "Adicional_Beneficios.FValor10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor3",
+          "position": {
+            "top": 0,
+            "left": 390,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor3",
+          "fieldName": "Adicional_Beneficios.FValor3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor2",
+          "position": {
+            "top": 0,
+            "left": 333,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor2",
+          "fieldName": "Adicional_Beneficios.FValor2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol2",
+          "position": {
+            "top": 30,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol2",
+          "fieldName": "Adicional_Beneficios.FQtdCol2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol3",
+          "position": {
+            "top": 30,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol3",
+          "fieldName": "Adicional_Beneficios.FQtdCol3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol4",
+          "position": {
+            "top": 30,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol4",
+          "fieldName": "Adicional_Beneficios.FQtdCol4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol5",
+          "position": {
+            "top": 30,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol5",
+          "fieldName": "Adicional_Beneficios.FQtdCol5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol7",
+          "position": {
+            "top": 30,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol7",
+          "fieldName": "Adicional_Beneficios.FQtdCol7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol8",
+          "position": {
+            "top": 30,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol8",
+          "fieldName": "Adicional_Beneficios.FQtdCol8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol9",
+          "position": {
+            "top": 30,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol9",
+          "fieldName": "Adicional_Beneficios.FQtdCol9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol10",
+          "position": {
+            "top": 30,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol10",
+          "fieldName": "Adicional_Beneficios.FQtdCol10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol11",
+          "position": {
+            "top": 30,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol11",
+          "fieldName": "Adicional_Beneficios.FQtdCol11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor5",
+          "position": {
+            "top": 0,
+            "left": 504,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor5",
+          "fieldName": "Adicional_Beneficios.FValor5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol6",
+          "position": {
+            "top": 30,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol6",
+          "fieldName": "Adicional_Beneficios.FQtdCol6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia2",
+          "position": {
+            "top": 15,
+            "left": 333,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia2",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia3",
+          "position": {
+            "top": 15,
+            "left": 390,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia3",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia4",
+          "position": {
+            "top": 15,
+            "left": 447,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia4",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia5",
+          "position": {
+            "top": 15,
+            "left": 504,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia5",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia6",
+          "position": {
+            "top": 15,
+            "left": 561,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia6",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia7",
+          "position": {
+            "top": 15,
+            "left": 618,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia7",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia8",
+          "position": {
+            "top": 15,
+            "left": 675,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia8",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia9",
+          "position": {
+            "top": 15,
+            "left": 732,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia9",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia10",
+          "position": {
+            "top": 15,
+            "left": 789,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia10",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia11",
+          "position": {
+            "top": 15,
+            "left": 846,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia12",
+          "position": {
+            "top": 15,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor12",
+          "position": {
+            "top": 0,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "BValor12",
+          "fieldName": "Adicional_Beneficios.FValor12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor11",
+          "position": {
+            "top": 0,
+            "left": 846,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor11",
+          "fieldName": "Adicional_Beneficios.FValor11",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol12",
+          "position": {
+            "top": 30,
+            "left": 903,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol12",
+          "fieldName": "Adicional_Beneficios.FQtdCol12",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "AnoValor",
+          "position": {
+            "top": 0,
+            "left": 960,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "AnoValor",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "AnoMedia",
+          "position": {
+            "top": 0,
+            "left": 1029,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "AnoMedia",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc1",
+          "position": {
+            "top": 15,
+            "left": 240,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "Média:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FMedia1",
+          "position": {
+            "top": 15,
+            "left": 276,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "FMedia1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "BValor1",
+          "position": {
+            "top": 0,
+            "left": 276,
+            "width": 56,
+            "height": 17
+          },
+          "caption": "BValor1",
+          "fieldName": "Adicional_Beneficios.FValor1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "TQtdCol1",
+          "position": {
+            "top": 30,
+            "left": 273,
+            "width": 55,
+            "height": 17
+          },
+          "caption": "TQtdCol1",
+          "fieldName": "Adicional_Beneficios.FQtdCol1",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc2",
+          "position": {
+            "top": 30,
+            "left": 225,
+            "width": 50,
+            "height": 17
+          },
+          "caption": "Colab:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 54,
+            "width": 169,
+            "height": 16
+          },
+          "table": "R008EVC",
+          "field": "DesEve",
+          "caption": "R008EVC.DesEve",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Desc0",
+          "position": {
+            "top": 0,
+            "left": 240,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "Valor:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R008EVC",
+    "R016ORN",
+    "R030FIL",
+    "R034FUN",
+    "R038HFI",
+    "R038HLO",
+    "R044CAL",
+    "R044CAL.DATPAG",
+    "R044MOV",
+    "R044MOV.CODEVE",
+    "R044MOV.CODRAT",
+    "R044MOV.NUMCAD",
+    "R044MOV.NUMEMP",
+    "R044MOV.TIPCOL",
+    "R044MOV.VALEVE"
+  ],
+  "sqlFragments": [
+    "Where(\"Detalhe_Beneficios\", sqlaux);",
+    "SELECT MAX (DATALT) FROM R038HFI TAB1 WHERE \\\n          (TAB1.NUMEMP = R038HFI.NUMEMP) AND \\\n          (TAB1.TIPCOL = R038HFI.TIPCOL) AND \\\n          (TAB1.NUMCAD = R038HFI.NUMCAD) AND \\\n          (TAB1.NUMEMP = TAB1.EMPATU) AND \\\n          (TAB1.NUMCAD = TAB1.CADATU) AND \\\n          (TAB1.DATALT <= R044CAL.DATPAG)) \";",
+    "Where (\"Detalhe_Beneficios\", sqlaux);",
+    "SELECT MAX (DATALT) FROM R038HLO TAB2 WHERE \\\n             (TAB2.NUMEMP = R038HLO.NUMEMP) AND \\\n             (TAB2.TIPCOL = R038HLO.TIPCOL) AND \\\n             (TAB2.NUMCAD = R038HLO.NUMCAD) AND \\\n             (TAB2.DATALT <= R044CAL.DATPAG)) \";",
+    "Where(\"Detalhe_Beneficios\", sqlaux);"
+  ],
+  "_stats": {
+    "parsedBytes": 127071,
+    "totalBytes": 887504,
+    "parseComplete": true,
+    "bandCount": 10,
+    "fieldCount": 339,
+    "errorCount": 5,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 132,
+        "skippedTo": 204,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 3843,
+        "skippedTo": 6691,
+        "note": "Skipped 2848 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 31982,
+        "skippedTo": 33434,
+        "note": "Skipped 1438 bytes (classification+relations)"
+      },
+      {
+        "section": "band",
+        "offset": 84278,
+        "error": "@0x1686c: readString: unexpected tag 0x2 at offset 92268"
+      },
+      {
+        "section": "band",
+        "error": "Unexpected section marker: \"FINAL SECAO\""
+      }
+    ]
+  }
+}

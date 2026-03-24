@@ -1,0 +1,86 @@
+/*
+>>> Regra para Apurar a Quantificação e a Quantificação Reduzida do Laudo <<<
+
+- Calcula a média das medições e retorna esse calculo no campo Quatificação do Laudo.
+- Se o Agente de Risco utiliza Fator de Redução verifica qual o maior fator de redução 
+entre os EPIs relacionados do PPRA e aplica esse % de redução na quantificação calcula
+através da média das medições, e retorna esse valor no campo Quantificação Reduzida do 
+Laudo.
+
+- Registros Disponíveis: R083AGT, R082AGT e R083LAU
+- Campos de Retorno....: R083LAU.QuaAge e R083LAU.QuaCol
+*/
+
+Definir Cursor QAux;
+Definir Cursor QEpi;
+
+Definir Data xCmpPpa;
+Definir Data xDatLau;
+
+xNumEmp = R083LAU.NumEmp;
+xCmpPpa = R083LAU.CmpPpa;
+xTabOrg = R083LAU.TabOrg;
+xNumLoc = R083LAU.NumLoc;
+xCodGru = R083LAU.CodGru;
+xCodAgt = R083LAU.CodAgt;
+xDatLau = R083LAU.DatLau;
+
+xTotal = 0;
+xQtde = 0;
+
+/* Busca as medições para aplicar uma média sobre os valores */ 
+QAux.SQL "SELECT QUAAGE FROM R083LAM WHERE NUMEMP = :xNumEmp AND CMPPPA = :xCmpPpa \
+AND TABORG = :xTabOrg AND NUMLOC = :xNumLoc AND CODGRU = :xCodGru AND CODAGT = :xCodAgt \
+AND DATLAU = :xDatLau";
+QAux.AbrirCursor();
+Enquanto (QAux.Achou)
+  {
+  xTotal = xTotal + QAux.QuaAge;
+  xQtde = xQtde + 1;
+  QAux.Proximo();
+  }
+QAux.FecharCursor();
+
+Se (xQtde > 0)
+  {
+  /* Retorna o valor da média das medições */
+  R083LAU.QuaAge = (xTotal / xQtde);
+
+  /* Zera o campo da Quantificação Reduzida */
+  R083LAU.QuaCol = 0;
+  }
+
+/* Se o Agente de Risco utiliza Fator de Redução ... */
+Se (R082AGT.UsaFat = "S")
+  {
+  xFatRed = 0;
+
+  /* Busca os EPIs e verifica qual o maior Fator de Redução */ 
+  QAux.SQL "SELECT CODEPI FROM R083EPI WHERE NUMEMP = :xNumEmp AND CMPPPA = :xCmpPpa \
+  AND TABORG = :xTabOrg AND NUMLOC = :xNumLoc AND CODGRU = :xCodGru AND CODAGT = :xCodAgt";
+  QAux.AbrirCursor();
+  Enquanto (QAux.Achou)
+    {
+    xCodEpi = QAux.CodEpi;
+  
+    /* Verifica qual o maior Fator de Redução dos EPIs do PPRA */
+    QEpi.SQL "SELECT FATRED FROM R096EPI WHERE CODEPI = :xCodEpi" 
+    QEpi.AbrirCursor();
+    Se (QEpi.Achou)
+      Se (xFatRed < QEpi.FatRed)
+        xFatRed = QEpi.FatRed;
+    QEpi.FecharCursor();
+
+    QAux.Proximo();
+    }
+  QAux.FecharCursor();
+
+  Se (xFatRed <> 0)
+    {
+    /* Calcula o % do Fator de Redução (Ex.: FatRed = 1,1 então % de redução = 10%) */
+    xPercentualFatRed = ((xFatRed * 100) - 100);
+  
+    /* Aplica o % de redução no valor calculado anteriormente (média das medições) */
+    R083LAU.QuaCol = R083LAU.QuaAge - ((R083LAU.QuaAge * xPercentualFatRed) / 100);
+    }
+  }

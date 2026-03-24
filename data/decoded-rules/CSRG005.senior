@@ -1,0 +1,138 @@
+/***************************************************************************************************************************************
+O objetivo desta regra é apresentar as diferentes formas de acessar os dados dos objetivos da avaliação de resultado na 
+regra por processo 517 dependendo do ambiente em que está sendo executada, CSWeb ou CS. 
+Os campos da tabela R101RES estão disponíveis apenas para consulta, as alterações feitas sobre eles serão desprezadas no final da regra.
+Nesta regra não estão sendo feitas consistências, apenas lendo os dados para variáveis, as consistências poderão ser feitas 
+conforme o valor das variáveis. Para cancelar a gravação dos registros deve-se usar Mensagem(Erro, "Texto da Mensagem"); Cancel(1);
+***************************************************************************************************************************************/
+
+definir alfa yDesObj;
+definir alfa yDesInd;
+definir alfa yDesMet;
+definir alfa yDesRes;
+definir alfa yComChe;
+definir alfa yComEmp;
+
+
+Se (VerWeb = 0)  @ Executando regra pelo CS @
+Inicio
+  yTemObj = RetornaListaObjetivos("I");
+  Se (yTemObj <> -1) @ está na rotina de avaliação de resultados @
+  Inicio
+    Enquanto (yTemObj = 0)
+    Inicio
+      yNumEmp = R101RES.NumEmp;
+      yTipCol = R101RES.TipCol;
+      yNumCad = R101RES.NumCad;
+      yCodCic = R101RES.CodCic;
+      yTipAva = R101RES.TipAva;
+      ySeqAva = R101RES.SeqAva;
+      yIdeObj = R101RES.IdeObj;
+      yDesObj = R101RES.DesObj;
+      ySeqObj = R101RES.SeqObj;
+      yPriObj = R101RES.PriObj;
+      yPesObj = R101RES.PesObj;
+      yTipRes = R101RES.TipRes;
+      yNotObj = R101RES.NotObj;
+      yApuRes = R101RES.ApuRes;
+      yPerObj = R101RES.PerObj;
+      yVlrSt1 = R101RES.VlrSt1;
+      yVlrSt2 = R101RES.VlrSt2;
+      yVlrSt3 = R101RES.VlrSt3;
+      yDirObj = R101RES.DirObj;
+      yDesInd = R101RES.DesInd;
+      yDesMet = R101RES.DesMet;
+      yDesRes = R101RES.DesRes;
+      yComChe = R101RES.ComChe;
+      yComEmp = R101RES.ComEmp;
+      yOriObj = R101RES.OriObj;
+      yTemObj = RetornaListaObjetivos("P");
+      Mensagem(Retorna, yDesObj);
+    Fim;
+  Fim;
+Fim;
+Senao            @ Executando regra pelo CSWEB @
+Inicio
+  Definir alfa xFinal;
+  Definir alfa xCampo;
+  Definir alfa xMensagem;
+  WCheckValInteger("QtdObj", "Qtde Objetivos", yQtdObj, "S", 9999);
+  yObj = 0;
+  xMensagem = "";
+
+  Enquanto (yObj < yQtdObj)
+  Inicio
+    IntParaAlfa (yObj, xFinal);
+    xFinal = "_" + xFinal;
+
+    WCheckValInteger("NumEmp", "Empresa"                                , yNumEmp, "N", 9999);
+    WCheckValInteger("TipCol", "Tipo de colaborador"                    , yTipCol, "N", 9);
+    WCheckValInteger("NumCad", "Colaborador"                            , yNumCad, "N", 999999999);
+    WCheckValInteger("CodCic", "Ciclo"                                  , yCodCic, "N", 999);
+    WCheckValInteger("TipAva", "Tipo de Avaliação"                      , yTipAva, "N", 99);
+    WCheckValInteger("SeqAva", "Seqüência"                              , ySeqAva, "N", 999999999);
+
+    xCampo = "IdeObj" + xFinal;
+    WCheckValInteger(xCampo, "Identificação dos Objetivos"            , yIdeObj, "S", 999);
+
+    xCampo = "DesObj" + xFinal;
+    WCheckValString (xCampo, "Descrição do Objetivo"                  , yDesObj, "S", 300);
+
+    xMensagem = xMensagem + yDesObj;
+
+    xCampo = "SeqObj" + xFinal;
+    WCheckValInteger(xCampo, "Seqüência do Objetivo"                  , ySeqObj, "S", 999);
+
+    xCampo = "PriObj" + xFinal;
+    WCheckValInteger(xCampo, "Prioridade do Objetivo"                 , yPriObj, "S", 99);
+
+    xCampo = "PesObj" + xFinal;
+    WCheckValInteger(xCampo, "Peso do Objetivo"                       , yPesObj, "S", 99);
+
+    xCampo = "TipRes" + xFinal;
+    WCheckValInteger(xCampo, "Tipo do Resultado"                      , yTipRes, "S", 9);
+
+    xCampo = "NotObj" + xFinal;
+    WCheckValDouble (xCampo, "Resultado da avaliação de objetivos"    , yNotObj, "S", 1000);
+
+    xCampo = "ApuRes" + xFinal;
+    WCheckValInteger(xCampo, "Apuração do objetivo"                   , yApuRes, "S", 9);
+
+    xCampo = "PerObj" + xFinal;
+    WCheckValDouble (xCampo, "% Atingido nas avaliações de objetivos" , yPerObj, "S", 1000);
+
+    xCampo = "VlrSt1" + xFinal;
+    WCheckValDouble (xCampo, "Valor do step mínimo"                   , yVlrSt1, "S", 1000);
+
+    xCampo = "VlrSt2" + xFinal;
+    WCheckValDouble (xCampo, "Valor do step target"                   , yVlrSt2, "S", 1000);
+
+    xCampo = "VlrSt3" + xFinal;
+    WCheckValDouble (xCampo, "Valor do step máximo"                   , yVlrSt3, "S", 1000);
+
+    xCampo = "DirObj" + xFinal;
+    WCheckValInteger(xCampo, "Direção para avaliação do objetivo"     , yDirObj, "S", 9);
+
+    xCampo = "DesInd" + xFinal;
+    WCheckValString (xCampo, "Descrição de orientação do indicador"   , yDesInd, "S", 300);
+
+    xCampo = "DesMet" + xFinal;
+    WCheckValString (xCampo, "Descrição de orientação de metas"       , yDesMet, "S", 300);
+
+    xCampo = "DesRes" + xFinal;
+    WCheckValString (xCampo, "Descrição do resultado"                 , yDesRes, "S", 300);
+
+    xCampo = "ComChe" + xFinal;
+    WCheckValString (xCampo, "Comentário do avaliador"                , yComChe, "S", 1500);
+
+    xCampo = "ComEmp" + xFinal;
+    WCheckValString (xCampo, "Comentário do avaliado"                 , yComEmp, "S", 1500);
+
+    xCampo = "OriObj" + xFinal;
+    WCheckValInteger(xCampo, "Identificação da origem do objetivo"    , yOriObj, "S", 9);
+
+    yObj++; 
+  Fim;
+  Mensagem(Erro, xMensagem);
+  Cancel(1);
+Fim;

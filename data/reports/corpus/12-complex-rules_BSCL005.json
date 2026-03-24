@@ -1,0 +1,1064 @@
+{
+  "filename": "BSCL005.GER",
+  "version": 2061,
+  "systemVarVersion": 1001,
+  "caption": "Modelo Gerador",
+  "title": "O relatório lista os históricos de Postos de trabalho dos colaboradores.   Serão listados históricos de Postos de Trabalho: - Válidos dentro das datas informadas. Se o período inicial não for informado, apresenta os históricos válidos até o período final e vice-versa. - De Colaboradores que se encaixem nos filtros de Empresas, tipos de colaboradores, colaboradores informados; - De Colaboradores que se estejam na Filial, Local, Cargo, C. Custo, Turno, Vínculo informados na data de referência.  O relatório não lista os históricos dos colaboradores quando na sua empresa estiver definido que o tipo do colaborador não usa posto. ",
+  "description": [
+    "O relatório lista os históricos de Postos de trabalho dos colaboradores. ",
+    "",
+    "Serão listados históricos de Postos de Trabalho:",
+    "- Válidos dentro das datas informadas. Se o período inicial não for informado, apresenta os históricos válidos até o período final e vice-versa.",
+    "- De Colaboradores que se encaixem nos filtros de Empresas, tipos de colaboradores, colaboradores informados;",
+    "- De Colaboradores que se estejam na Filial, Local, Cargo, C. Custo, Turno, Vínculo informados na data de referência.",
+    "",
+    "O relatório não lista os históricos dos colaboradores quando na sua empresa estiver definido que o tipo do colaborador não usa posto.",
+    ""
+  ],
+  "orientation": "Portrait",
+  "reportType": 0,
+  "formatReport": 0,
+  "sections": {
+    "preambleSelect": "Definir Alfa AuxSQL;\nDefinir Alfa AuxSQLHist;\nDefinir Alfa AuxSQLAbr;\nDefinir Alfa AuxRelac;\nDefinir Alfa xDatRef;\nDefinir Alfa xDatIni;\nDefinir Alfa xDatFim;\nDefinir Alfa EAbrCCu;\nDefinir Alfa ETipAtu;\n\n\n/* Obriga informar uma data de referência */\nSe (EDatRef = 0)\nInicio\n  Mensagem(Retorna,\"A data de referência não pode ser zero.'[Ok]\");\n  Cancel(1);\nFim;\n\n\n/* Converte os campos de Data para String e \n   inicializa a variavel AuxRelac */\nConverteDataBanco(EDatRef, xDatRef);\nAuxRelac = \"\";\n\n\n/* Filtra os históricos dos postos de trabalho que estão ativos dentro do período \n   informado na tela de entrada do modelo pelo usuário. Este tratamento deve ser \n   feito na pré-seleção de modelo, pois no relacionamento (através de variáveis \n   de sistemas) não funciona corretamente quando EDatFim é igual a Zero. */\nSe (EDatFim = 0)\n  EDatFim = 65535;/* EDatFim = 04/06/2080, ou seja, Data Máxima Possível. */\nConverteDataBanco(EDatFim, xDatFim);\nConverteDataBanco(EDatIni, xDatIni);\nAuxSql = AuxRelac + \" ((R038HPO.INIATU >= \" + xDatIni + \") AND (R038HPO.TERATU <= \" + xDatFim + \")) \";  \nInsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@ ---------- Relacionamento com o Histórico de Filial ( FIXO ) ---------- @\n@ Não pode ser utilizado o comando MontarSQLHistorico, motivo: transferencia de filial @\nAuxSQL = AuxRelac + \"(R038HFI.DATALT = (SELECT MAX (DATALT) FROM R038HFI TAB2 WHERE \"\n                  + \"(TAB2.NUMEMP = R038HFI.NUMEMP) AND \"\n                  + \"(TAB2.TIPCOL = R038HFI.TIPCOL) AND \"\n                  + \"(TAB2.NUMCAD = R038HFI.NUMCAD) AND \"\n                  + \"(TAB2.NUMEMP = TAB2.EMPATU) AND \"\n                  + \"(TAB2.NUMCAD = TAB2.CADATU) AND \"\n                  + \"(TAB2.DATALT <= \" + xDatRef + \")))\";\nInsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@ ---- Relacionamento com o Historico de Local ( FIXO )---- @\nMontarSqlHistorico(\"R038HLO\", EDatRef, AuxSQLHist);\nAuxSQL = AuxRelac + AuxSQLHist; \nInsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@ ---- Relacionamento com o Historico de Centro de Custos ( FIXO )---- @\nMontarSqlHistorico(\"R038HCC\", EDatRef, AuxSQLHist);\nAuxSQL = AuxRelac + AuxSQLHist; \nInsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@ ---------- Relacionamento Abrangência Centro de Custo ( DINÂMICO ) ---------- @\nSe (EAbrCCu <> \"\" )\nInicio\n  @ Monta a restrição para campo de abrangência @\n  MontaAbrangencia(\"R038HCC.CodCCu\", EAbrCCu, AuxSQLAbr);\n  \n  AuxSQL = AuxRelac + AuxSQLAbr;\n  InsClauSqlWhere(\"Detalhe_R038HPO\", AuxSQL);\n  AuxRelac = \" AND \";\nFim;\n  \n  \n@ ---- Relacionamento com o Historico de Cargo ( FIXO )---- @\nMontarSqlHistorico(\"R038HCA\", EDatRef, AuxSQLHist); \nAuxSQL = AuxRelac + AuxSQLHist;\nInsClauSqlWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n  \n\n@ ---- Relacionamento com o Historico de Vínculo ( FIXO )---- @\nMontarSqlHistorico(\"R038HVI\", EDatRef, AuxSQLHist); \nAuxSQL = AuxRelac + AuxSQLHist;\nInsClauSqlWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@-- Consistência conforme definição do cadastro de empresas - Tipo de colaborador que usa Posto --@\nAuxSQL = AuxRelac + \" ((R030EMP.NUMEMP = R038HPO.NUMEMP) AND \" +\n                     \"((R038HPO.TIPCOL = 1 AND R030EMP.USAPEM = 1) OR \" + \n                     \" (R038HPO.TIPCOL = 2 AND R030EMP.USAPTE = 1) OR \" + \n                     \" (R038HPO.TIPCOL = 3 AND R030EMP.USAPPA = 1))) \";\nInsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n\n\n@ ---- Relacionamento com o Historico de Escala ( FIXO )---- @\nMontarSqlHistorico(\"R038HES\", EDatRef, AuxSQLHist);\nAuxSQL = AuxRelac + AuxSQLHist;\nInsClauSqlWhere(\"Detalhe_R038HPO\", AuxSQL);\nAuxRelac = \" AND \";\n                     \n\n/* Filtra o Tipo de Atuação, conforme escolhido \n   na tela de entrada do modelo pelo usuário */\nSe (ETipAtu = \"P\")\nInicio\n  AuxSQL = AuxRelac + \" R017TAP.HISPRI = 'S' \";\n  InsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\nFim;\nSenao\nInicio \n  Se (ETipAtu = \"D\")\n  Inicio\n    AuxSQL = AuxRelac + \" R017TAP.HISPRI = 'N' \";\n    InsClauSQLWhere(\"Detalhe_R038HPO\", AuxSQL);\n  Fim;  \nFim;",
+    "selection": "",
+    "initialization": "",
+    "finalization": "",
+    "functionRule": "",
+    "printPage": ""
+  },
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 105
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Definir Alfa xSQL;\n\n/* Carrega a Logomarca da empresa e imprime no cabeçalho do relatório. */\nxSQL = \"R030LOG.NumEmp = \" + Formatar(EmpAtu, \"%4.0f\");\nCarregaImgControle(\"ILogEmp\", 1, \"R030LOG.LogEmp\", xSQL, 1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 6,
+            "left": 732,
+            "width": 31,
+            "height": 15
+          },
+          "caption": "numpag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 6,
+            "left": 687,
+            "width": 44,
+            "height": 15
+          },
+          "caption": "Página:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "TitRel_Descricao",
+          "position": {
+            "top": 30,
+            "left": 156,
+            "width": 539,
+            "height": 24
+          },
+          "caption": "Históricos de postos de trabalho",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 84,
+            "left": 0,
+            "width": 775,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 87,
+            "left": 54,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Início",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 32,
+            "height": 15
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 3,
+            "left": 39,
+            "width": 6,
+            "height": 15
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema007",
+          "position": {
+            "top": 3,
+            "left": 48,
+            "width": 374,
+            "height": 15
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSImagem",
+          "name": "ILogEmp",
+          "position": {
+            "top": 21,
+            "left": 6,
+            "width": 94,
+            "height": 59
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 87,
+            "left": 123,
+            "width": 298,
+            "height": 17
+          },
+          "caption": "Posto de trabalho",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 87,
+            "left": 600,
+            "width": 100,
+            "height": 17
+          },
+          "caption": "Motivo",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 87,
+            "left": 702,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Término",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 87,
+            "left": 426,
+            "width": 170,
+            "height": 17
+          },
+          "caption": "Tipo de atuação",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "UC0037",
+          "position": {
+            "top": 3,
+            "left": 885,
+            "width": 126,
+            "height": 21
+          },
+          "caption": "UC-VET-0038",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_R038HPO",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 186,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [
+        "R017POS.POSTRA",
+        "R017POS.DESRED",
+        "R017TAP.CODTAP",
+        "R017TAP.DESTAP"
+      ],
+      "onBeforePrint": "Definir Alfa AuxStr;\n\n/* Concatena o Código e o nome do Posto de Trabalho \n   para economizar espaço na seção */\nAuxStr = R017POS.PosTra + \" - \" + R017POS.DesRed;\nAlteraControle(\"DescPosto\", \"Descrição\", AuxStr);\n\n/* Concatena o Código e o nome do Tipo da Atuação \n   para economizar espaço na seção */\nIntParaAlfa(R017TAP.CodTap, AuxStr);\nAuxStr = AuxStr + \" - \" + R017TAP.DesTap;\nAlteraControle(\"DescAtuacao\", \"Descrição\", AuxStr);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 54,
+            "width": 65,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "IniAtu",
+          "caption": "R038HPO.IniAtu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescPosto",
+          "position": {
+            "top": 0,
+            "left": 123,
+            "width": 298,
+            "height": 14
+          },
+          "caption": "DescPosto",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 1020,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "MotAlt",
+          "caption": "R038HPO.MotAlt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 702,
+            "width": 65,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "TerAtu",
+          "caption": "R038HPO.TerAtu",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 600,
+            "width": 98,
+            "height": 14
+          },
+          "table": "R076MOT",
+          "field": "NomMot",
+          "caption": "R076MOT.NomMot",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescAtuacao",
+          "position": {
+            "top": 0,
+            "left": 426,
+            "width": 170,
+            "height": 14
+          },
+          "caption": "DescAtuacao",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 15,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R016HIE",
+          "field": "NumLoc",
+          "caption": "R016HIE.NumLoc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial001",
+          "position": {
+            "top": 60,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Esp_CodLoc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "NumEmp",
+          "caption": "R038HPO.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 30,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "TipCol",
+          "caption": "R038HPO.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro017",
+          "position": {
+            "top": 45,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "NumCad",
+          "caption": "R038HPO.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R030EMP",
+          "field": "NumEmp",
+          "caption": "R030EMP.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 15,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HFI",
+          "field": "NumEmp",
+          "caption": "R038HFI.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro019",
+          "position": {
+            "top": 30,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HLO",
+          "field": "NumEmp",
+          "caption": "R038HLO.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro020",
+          "position": {
+            "top": 45,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HCC",
+          "field": "NumEmp",
+          "caption": "R038HCC.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro021",
+          "position": {
+            "top": 60,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HCA",
+          "field": "NumEmp",
+          "caption": "R038HCA.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro022",
+          "position": {
+            "top": 75,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HVI",
+          "field": "NumEmp",
+          "caption": "R038HVI.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 75,
+            "left": 915,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 45,
+            "left": 1020,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HES",
+          "field": "NumEmp",
+          "caption": "R038HES.NumEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro023",
+          "position": {
+            "top": 60,
+            "left": 1020,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R006ESC",
+          "field": "CodEsc",
+          "caption": "R006ESC.CodEsc",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 221,
+        "left": 0,
+        "width": 6000,
+        "height": 14
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 770,
+            "height": 12
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Especial",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 105,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "/* Caso o usuário nao tenha informado \"Nivel de Totais\" na \n   tela de entrada do modelo, a impressão da seção é cancelada */\nSe (EspNivTot = 0)\n  Cancel(1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSEspecial",
+          "name": "Especial002",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 764,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial002",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Especial",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 201,
+        "left": 0,
+        "width": 6000,
+        "height": 20
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "/* Caso o usuário nao tenha informado \"Nivel de Totais\" na \n   tela de entrada do modelo, a impressão da seção é cancelada */\nSe (EspNivTot = 0)\n  Cancel(1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 29,
+            "height": 17
+          },
+          "caption": "Total",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial003",
+          "position": {
+            "top": 0,
+            "left": 33,
+            "width": 421,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Geral",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSTotal",
+          "name": "Total001",
+          "position": {
+            "top": 0,
+            "left": 456,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Total001",
+          "fieldName": "Detalhe_R038HPO.Cadastro017",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Colaborador",
+      "bandType": "TITULO",
+      "tag": 103,
+      "position": {
+        "top": 125,
+        "left": 0,
+        "width": 6000,
+        "height": 45
+      },
+      "canPrint": true,
+      "tableList": [
+        "R038HPO.NUMEMP",
+        "R030EMP.NOMEMP",
+        "R038HPO.NUMCAD",
+        "R034FUN.NOMFUN",
+        "R038HPO.TIPCOL"
+      ],
+      "onBeforePrint": "Definir Alfa AuxStr;\nDefinir Cursor cur_R010SIT;\nDefinir Numero xSitEmp;\nDefinir alfa AuxDesSit;\n\n\n/* Concatena o Código e o nome da Empresa \n   para economizar espaço na seção */\nIntParaAlfa(R038HPO.NumEmp, AuxStr);     \nAuxStr = AuxStr + \" - \" + R030EMP.NomEmp;\nAlteraControle(\"DNomEmp\", \"Descrição\", AuxStr);\n\n/* Concatena o Código e o nome do colaborador \n   para economizar espaço na seção */\nIntParaAlfa(R038HPO.NumCad, AuxStr);     \nAuxStr = AuxStr + \" - \" + R034FUN.NomFun;\nAlteraControle(\"DNomFun\", \"Descrição\", AuxStr);\n\n/* Concatena o Código e a Situação do colaborador \n   para economizar espaço na seção */\nRetSitEmp (R038HPO.NumEmp, R038HPO.TipCol, R038HPO.NumCad, EDatRef);\nxSitEmp = SitEmp;\ncur_R010SIT.SQL \"SELECT DESSIT FROM R010SIT WHERE CODSIT = :xSitEmp\";\n\ncur_R010SIT.AbrirCursor();\n\nse (cur_R010SIT.achou)\n  AuxDesSit = cur_R010SIT.DesSit;\ncur_R010SIT.FecharCursor();\n\n \nIntParaAlfa(xSitEmp, AuxStr);     \nAuxStr = AuxStr + \" - \" + AuxDesSit;\nAlteraControle(\"DSitAfa\", \"Descrição\", AuxStr);",
+      "onAfterPrint": "/* Manda listar o Cabeçalho do \n   Histórico do posto de trabalho */\nListaSecao(\"Adicional_R038HPO\");",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 9,
+            "left": 312,
+            "width": 220,
+            "height": 16
+          },
+          "caption": "Colaborador",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 9,
+            "left": 537,
+            "width": 65,
+            "height": 16
+          },
+          "caption": "Admissão",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 24,
+            "left": 537,
+            "width": 65,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "DatAdm",
+          "caption": "R034FUN.DatAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 9,
+            "left": 243,
+            "width": 65,
+            "height": 16
+          },
+          "caption": "Tipo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro018",
+          "position": {
+            "top": 30,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "TipCol",
+          "caption": "R038HPO.TipCol",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 15,
+            "left": 810,
+            "width": 100,
+            "height": 14
+          },
+          "table": "R038HPO",
+          "field": "NumCad",
+          "caption": "R038HPO.NumCad",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DTipCol",
+          "position": {
+            "top": 24,
+            "left": 243,
+            "width": 65,
+            "height": 14
+          },
+          "caption": "DTipCol",
+          "fieldList": "R038HPO.TipCol - Cadastro018",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DNomFun",
+          "position": {
+            "top": 24,
+            "left": 312,
+            "width": 220,
+            "height": 14
+          },
+          "caption": "DNomFun",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 9,
+            "left": 18,
+            "width": 220,
+            "height": 16
+          },
+          "caption": "Empresa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DNomEmp",
+          "position": {
+            "top": 24,
+            "left": 18,
+            "width": 220,
+            "height": 14
+          },
+          "caption": "DNomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 9,
+            "left": 606,
+            "width": 161,
+            "height": 16
+          },
+          "caption": "Situação",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DSitAfa",
+          "position": {
+            "top": 24,
+            "left": 606,
+            "width": 161,
+            "height": 14
+          },
+          "caption": "DSitAfa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adicional_R038HPO",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 170,
+        "left": 0,
+        "width": 6000,
+        "height": 16
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 0,
+            "left": 54,
+            "width": 713,
+            "height": 16
+          },
+          "caption": "Históricos do Colaborador",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "R006ESC",
+    "R016HIE",
+    "R017POS.DESRED",
+    "R017POS.POSTRA",
+    "R017TAP",
+    "R017TAP.CODTAP",
+    "R017TAP.DESTAP",
+    "R030EMP",
+    "R030EMP.NOMEMP",
+    "R034FUN",
+    "R034FUN.NOMFUN",
+    "R038HCA",
+    "R038HCC",
+    "R038HES",
+    "R038HFI",
+    "R038HLO",
+    "R038HPO",
+    "R038HPO.NUMCAD",
+    "R038HPO.NUMEMP",
+    "R038HPO.TIPCOL",
+    "R038HVI",
+    "R076MOT"
+  ],
+  "sqlFragments": [
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "SELECT MAX (DATALT) FROM R038HFI TAB2 WHERE \"\n                  + \"(TAB2.NUMEMP = R038HFI.NUMEMP) AND \"\n                  + \"(TAB2.TIPCOL = R038HFI.TIPCOL) AND \"\n                  + \"(TAB2.NUMCAD = R038HFI.NUMCAD) AND \"\n                  + \"(TAB2.NUMEMP = TAB2.EMPATU) AND \"\n                  + \"(TAB2.NUMCAD = TAB2.CADATU) AND \"\n                  + \"(TAB2.DATALT <= \" + xDatRef + \")))\";",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);",
+    "Where(\"Detalhe_R038HPO\", AuxSQL);"
+  ],
+  "_stats": {
+    "parsedBytes": 21352,
+    "totalBytes": 515621,
+    "parseComplete": true,
+    "bandCount": 7,
+    "fieldCount": 53,
+    "errorCount": 3,
+    "errors": [
+      {
+        "component": "TSConfigPage",
+        "offset": 133,
+        "skippedTo": 205,
+        "note": "Skipped 72 bytes (opaque)"
+      },
+      {
+        "component": "pre-band-skip",
+        "offset": 5200,
+        "skippedTo": 7640,
+        "note": "Skipped 2440 bytes (entrance+logicalBuffer+breakList+exports+outputDefs)"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 13516,
+        "skippedTo": 16080,
+        "note": "Skipped 2550 bytes (classification+relations)"
+      }
+    ]
+  }
+}

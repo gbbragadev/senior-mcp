@@ -1,0 +1,85 @@
+/*************************************************************************
+ * Regra utilizada para consistir campos e registros do cadastro de PPRA *
+ *************************************************************************
+ *                                                                       *
+ * Utilização:                                                           *
+ *                                                                       *
+ * . Indica os campos ou registros que se quer consistir, a partir da    *
+ *   tabela mestre (R083AGT), caso haja problema, incrementa a variável  *
+ *   xMsg e ao final apresenta a mensagem ao usuário.                    *
+ *                                                                       *
+ *************************************************************************/
+
+Definir Alfa xMsg;
+Definir Alfa xCarAscII;
+Definir Alfa xPulaLinha;
+Definir Data xCmpPpa;
+Definir Alfa xSitAgt;
+Definir Alfa xStrMes;
+Definir Alfa xStrAno;
+Definir Alfa xCodLoc;
+Definir Alfa aCodGru;
+Definir Alfa aCodAgt;
+Definir Cursor Cur_R083LAU;
+Definir Cursor Cur_R083EXA;
+Definir Cursor Cur_R083FGL;
+
+
+/* CAMPOS QUE SERÃO CONSISTIDOS */
+xNumEmp = R083AGT.NumEmp; 
+xCmpPpa = R083AGT.CmpPpa;
+xTabOrg = R083AGT.TabOrg;
+xNumLoc = R083AGT.NumLoc;
+xCodGru = R083AGT.CodGru;
+xCodAgt = R083AGT.CodAgt;
+xSitAgt = R083AGT.SitAgt;
+
+/* GERA CÓDIGO PARA FORÇAR QUEBRA DE LINHA NA MENSAGEM */
+RetornaAscII(13, xCarAscII);
+xPulaLinha = xCarAscII;
+RetornaAscII(10, xCarAscII);
+xPulaLinha = xPulaLinha + xCarAscII;
+
+xMsg = "";
+
+/* CONSISTE CAMPO A CAMPO E SE ALGUM ESTIVER COM PROBLEMA, INCREMENTA *
+ * NA MENSAGEM QUE SERÁ MOSTRADA PARA O USUÁRIO                       */
+/* CONSISTE SITUAÇÂO DO AGENTE */
+EstaNulo (xSitAgt, xRetNulo );
+Se  (xRetNulo = 1)
+    xMsg = xMsg + xPulaLinha + "- Situação do Agente";
+
+/* CONSISTE DEMAIS TABELAS */
+Cur_R083LAU.SQL "SELECT DATLAU FROM R083LAU WHERE NUMEMP = :xNumEmp AND CMPPPA = :xCmpPpa \
+             AND TABORG = :xTabOrg AND NUMLOC = :xNumLoc AND CODGRU = :xCodGru AND CODAGT = :xCodAgt";
+Cur_R083LAU.AbrirCursor();
+Se (Cur_R083LAU.NaoAchou)
+  {    
+     xMsg = xMsg + xPulaLinha + "- Laudo";
+  }
+Cur_R083LAU.FecharCursor();
+
+/* Poderão ser verificadas se outras tabelas necessárias também não foram gravadas para a consistencia do PPRA*/
+
+Se  (xMsg <> "") 
+    {
+    /* SE EXISTIR PROBLEMA, MOSTRA MENSAGEM PARA O USUÁRIO */
+    RetornaMesData(R083AGT.CmpPpa, xMesPPRA);
+    RetornaAnoData(R083AGT.CmpPpa, xAnoPPRA);
+
+    RetornaCodLoc(xNumLoc, xCodLoc);
+    IntParaAlfa(xCodGru, aCodGru);
+    IntParaAlfa(xCodAgt, aCodAgt);
+    IntParaAlfa(xMesPPRA, xStrMes);
+    IntParaAlfa(xAnoPPRA, xStrAno);   
+    xMsg = " possui campo(s) ou registro(s) obrigatório(s) não preenchido(s):" + xMsg;  
+    xMsg = "O PPRA: Competência: " + xStrMes + "/" + xStrAno + ", Local: " + xCodLoc  + ", Atividade: " + aCodGru + ", Agente: " + aCodagt + "," + xMsg;
+    xMsg = xMsg + " [&Continuar, &Retornar]";
+
+    /* O USUÁRIO TEM A OPÇÃO DE RETORNAR OU CONTINUAR A OPERAÇÃO */
+    Se (Mensagem(Retorna, xMsg) = 1)
+       /* CANCEL(1) = ABORTA EXECUÇÃO E RETORNA AO CANDIDATO COM PROBLEMA */
+       Cancel(1);
+    }
+/* CANCEL(0) = CONTINA EXECUÇÃO */
+Cancel(0);

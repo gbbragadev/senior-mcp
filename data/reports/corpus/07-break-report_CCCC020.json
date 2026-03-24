@@ -1,0 +1,1216 @@
+{
+  "filename": "CCCC020.GER",
+  "title": "",
+  "orientation": "Unknown(undefined)",
+  "sections": {},
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 122
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "se ((vImpPag = 1) e (EImpVer = 'S') e (EFolPag = 'F'))\n    vImpPag = 0;\nsenao {\n    vImpPag = 1;\n}",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 15,
+            "left": 303,
+            "width": 187,
+            "height": 23
+          },
+          "caption": "R A Z Ã O",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao023",
+          "position": {
+            "top": 36,
+            "left": 303,
+            "width": 187,
+            "height": 23
+          },
+          "caption": "Aberto por Rateio",
+          "font": {
+            "name": "Arial",
+            "size": 12
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 60,
+            "left": 249,
+            "width": 92,
+            "height": 18
+          },
+          "caption": "Período De:",
+          "font": {
+            "name": "Arial",
+            "size": 10
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDatIni",
+          "position": {
+            "top": 60,
+            "left": 345,
+            "width": 63,
+            "height": 18
+          },
+          "caption": "EDatIni",
+          "font": {
+            "name": "Arial",
+            "size": 10
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 60,
+            "left": 411,
+            "width": 31,
+            "height": 18
+          },
+          "caption": "Até:",
+          "font": {
+            "name": "Arial",
+            "size": 10
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "EDatFim",
+          "position": {
+            "top": 60,
+            "left": 444,
+            "width": 100,
+            "height": 18
+          },
+          "caption": "EDatFim",
+          "font": {
+            "name": "Arial",
+            "size": 10
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro014",
+          "position": {
+            "top": 84,
+            "left": 45,
+            "width": 700,
+            "height": 17
+          },
+          "table": "E070EMP",
+          "field": "NomEmp",
+          "caption": "E070EMP.NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 102,
+            "left": 3,
+            "width": 40,
+            "height": 17
+          },
+          "table": "E640LCT",
+          "field": "CodFil",
+          "caption": "E640LCT.CodFil",
+          "onPrint": "Se  (vOrdenacao = \"Consolidado\")\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 84,
+            "left": 3,
+            "width": 40,
+            "height": 17
+          },
+          "table": "E045PLA",
+          "field": "CodEmp",
+          "caption": "E045PLA.CodEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro015",
+          "position": {
+            "top": 102,
+            "left": 45,
+            "width": 700,
+            "height": 17
+          },
+          "table": "E070FIL",
+          "field": "SigFil",
+          "caption": "E070FIL.SigFil",
+          "onPrint": "Se  (vOrdenacao = \"Consolidado\")\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescConsolidado",
+          "position": {
+            "top": 102,
+            "left": 45,
+            "width": 81,
+            "height": 17
+          },
+          "caption": "Consolidado",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao020",
+          "position": {
+            "top": 42,
+            "left": 591,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "Emissão:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DesFolPag",
+          "position": {
+            "top": 18,
+            "left": 612,
+            "width": 43,
+            "height": 16
+          },
+          "caption": "Página:",
+          "onPrint": "se ((vImpPag = 0) e (EFolPag = 'F'))\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 18,
+            "left": 660,
+            "width": 44,
+            "height": 17
+          },
+          "caption": "NumPag",
+          "onPrint": "se ((vImpPag = 0) e (EFolPag = 'F'))\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema003",
+          "position": {
+            "top": 42,
+            "left": 660,
+            "width": 65,
+            "height": 17
+          },
+          "caption": "DatSis",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 245,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 3,
+            "left": 549,
+            "width": 38,
+            "height": 12
+          },
+          "caption": "Usuário:",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema006",
+          "position": {
+            "top": 3,
+            "left": 591,
+            "width": 154,
+            "height": 13
+          },
+          "caption": "NomUsu",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 0,
+            "width": 452,
+            "height": 13
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_E045PLA",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 263,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [
+        "E045PLA.CTARED",
+        "E640LCT.CTADEB",
+        "E640LCT.CTACRE",
+        "E640LCT.VLRLCT",
+        "E640LCT.NUMLCT"
+      ],
+      "onBeforePrint": "Definir Cursor Cur_E640RAT;\nDefinir Alfa VCodCcu;\n\nvCtaAtu = E045Pla.CtaRed;\nvCtaDeb = E640Lct.CtaDeb;\nvCtaCre = E640Lct.CtaCre;\nVVlrLct = E640Lct.VlrLct;\nVNumLct = E640LCT.NumLct;\nVCodEmp = ECodEmp;\nFVlrCre = 0;\nFVlrDeb = 0;\nVCodCcu = \"\";\n\n\n\nse (VCtaAtu = VCtaDeb)\n    VNumCta = VCtaDeb;\nsenao\n    VNumCta = VCtaCre;\n\nCur_E640RAT.Sql \"Select CodCcu, VlrRat from E640RAT \\\n                 where  CodEmp = :VCodEmp \\\n                 and    NumLct = :VNumLct \\\n                 and    CtaRed = :VNumCta\";\n\nCur_E640RAT.AbrirCursor();\nenquanto(Cur_E640RAT.Achou)\ninicio\n    VCodCcu = Cur_E640RAT.CodCcu; \n    Se (vCtaAtu = vCtaDeb) \n    inicio\n        FCtaPar = vCtaCre;             @ contra-partida @\n        FVlrDeb = Cur_E640RAT.VlrRat;\n        FSalCta = FSalCta + FVlrDeb;   @ saldo atual com os débitos @ \n        /* totalizadores */\n        FTotDeb = FTotDeb + FVlrDeb;\n    fim;\n    senao\n    inicio\n        Se (vCtaAtu = vCtaCre)\n        inicio\n            FCtaPar = vCtaDeb;             @ contra-partida @\n            FVlrCre = Cur_E640RAT.VlrRat;\n            FSalCta = FSalCta - FVlrCre;   @ saldo atual com os créditos @ \n            /* totalizadores */\n            FTotCre = FTotCre + FVlrCre;\n        fim;\n    fim; \n    ListaSecao(\"Adicional_Rateio\"); \n    PrimeiraVez = 1;\n    Cur_E640RAT.Proximo();\nfim;\nCur_E640RAT.FecharCursor();\nse (VCodCcu <> \"\")\n    PrimeiraVez = 0;\nsenao\ninicio\n    Se (vCtaAtu = vCtaDeb) \n    inicio\n        FCtaPar = vCtaCre;             @ contra-partida @\n        FVlrDeb = FVlrDeb + vVlrLct;\n        FSalCta = FSalCta + VVlrLct;   @ saldo atual com os débitos @ \n        /* totalizadores */\n        FTotDeb = FTotDeb + vVlrLct;\n    fim;\n    senao\n    inicio \n        Se (vCtaAtu = vCtaCre)\n        inicio\n            FCtaPar = vCtaDeb;             @ contra-partida @\n            FVlrCre = FVlrCre + vVlrLct;\n            FSalCta = FSalCta - VVlrLct;   @ saldo atual com os créditos @ \n            /* totalizadores */\n            FTotCre = FTotCre + vVlrLct;\n        fim;\n    fim;\n    PrimeiraVez = 0;\n    ListaSecao(\"Adicional_Rateio\"); \nfim;\n\n",
+      "onAfterPrint": "ContaAnterior = E045Pla.CtaRed;\n\n",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 1026,
+            "width": 54,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "CtaDeb",
+          "caption": "E640LCT.CtaDeb",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 1083,
+            "width": 54,
+            "height": 13
+          },
+          "table": "E640LCT",
+          "field": "CtaCre",
+          "caption": "E640LCT.CtaCre",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 351,
+            "width": 70,
+            "height": 15
+          },
+          "table": "E640LCT",
+          "field": "NumLct",
+          "caption": "E640LCT.NumLct",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 279,
+            "width": 68,
+            "height": 15
+          },
+          "table": "E640LCT",
+          "field": "NumLot",
+          "caption": "E640LCT.NumLot",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FCodFil",
+          "position": {
+            "top": 0,
+            "left": 753,
+            "width": 31,
+            "height": 14
+          },
+          "caption": "FCodFil",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro016",
+          "position": {
+            "top": 0,
+            "left": 792,
+            "width": 27,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "CodFil",
+          "caption": "E640LCT.CodFil",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 828,
+            "width": 41,
+            "height": 13
+          },
+          "table": "E045PLA",
+          "field": "CodEmp",
+          "caption": "E045PLA.CodEmp",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 870,
+            "width": 83,
+            "height": 13
+          },
+          "table": "E640LCT",
+          "field": "VlrLct",
+          "caption": "E640LCT.VlrLct",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 963,
+            "width": 54,
+            "height": 14
+          },
+          "table": "E045PLA",
+          "field": "CtaRed",
+          "caption": "E045PLA.CtaRed",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro021",
+          "position": {
+            "top": 0,
+            "left": 1353,
+            "width": 79,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "CplLct",
+          "caption": "E640LCT.CplLct",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro020",
+          "position": {
+            "top": 0,
+            "left": 720,
+            "width": 23,
+            "height": 17
+          },
+          "table": "E640LCT",
+          "field": "CodHpd",
+          "caption": "E640LCT.CodHpd",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 45,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "DatLct",
+          "caption": "E640LCT.DatLct",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 1146,
+            "width": 175,
+            "height": 14
+          },
+          "table": "E045PLA",
+          "field": "ClaCta",
+          "caption": "E045PLA.ClaCta",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Conta",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 182,
+        "left": 0,
+        "width": 6000,
+        "height": 24
+      },
+      "canPrint": true,
+      "tableList": [
+        "E045PLA.CTARED",
+        "E070EMP.CODMPC",
+        "E070EMP.CODEMP",
+        "E070FIL.CODFIL",
+        "E045PLA.CLACTA",
+        "E045PLA.NIVCTA"
+      ],
+      "onBeforePrint": "Definir Alfa VMask01[20];        /* Mascara do plano de conta para nivel 1 */\nDefinir Alfa VMask02[20];        /* Mascara do plano de conta para nivel 2 */\nDefinir Alfa VMask03[20];        /* Mascara do plano de conta para nivel 3 */\nDefinir Alfa VMask04[20];        /* Mascara do plano de conta para nivel 4 */\nDefinir Alfa VMask05[20];        /* Mascara do plano de conta para nivel 5 */\nDefinir Alfa VMask06[20];        /* Mascara do plano de conta para nivel 6 */\nDefinir Alfa VMask07[20];        /* Mascara do plano de conta para nivel 7 */\nDefinir Alfa VMask08[20];        /* Mascara do plano de conta para nivel 8 */\nDefinir Alfa VMask09[20];        /* Mascara do plano de conta para nivel 9 */\nDefinir Alfa VMask10[20];        /* Mascara do plano de conta para nivel 10 */\nDefinir Alfa VMask11[20];        /* Mascara do plano de conta para nivel 11 */\nDefinir Alfa VMask12[20];        /* Mascara do plano de conta para nivel 12 */\nDefinir Alfa VMask13[20];        /* Mascara do plano de conta para nivel 13 */\nDefinir Alfa VMask14[20];        /* Mascara do plano de conta para nivel 14 */\nDefinir Alfa VMask15[20];        /* Mascara do plano de conta para nivel 15 */\n\n\nDefinir Alfa ECodFil;\n\nvCtaRed = E045Pla.CtaRed;\n\n/* Se a conta está zerada, nenhum movimento foi selecionado */\nSe  (vCtaRed = 0)\n    Cancel(1); \n\n/* Busca máscara para as contas (somente uma vez) */\nse (vPrimeiraVez = 1)\n   inicio\n   vPrimeiraVez = 0;\n   vCodMpc = E070EMp.CodMpc;\n   BuscaMascModPlano(vCodMpc,vMask01,vMask02,vMask03,vMask04,vMask05,vMask06,vMask07,vMask08,vMask09);\n   BuscaMascModPlano15n(vCodMpc,vMask10,vMask11,vMask12,vMask13,vMask14,vMask15);\n   fim;\n\n/* busca o saldo anterior */\nFSalAnt = 0;\nSe   (vOrdenacao = \"Consolidado\")\n     BuscaSaldoAnteriorAbr(ECodEmp,ECodFil,vCtaRed,EDatIni,FSalAnt);\nsenao\n     inicio\n     vCodEmp = E070Emp.CodEmp;\n     vCodFil = E070Fil.CodFil;\n     BuscaSaldoAnterior(vCodEmp,vCodFil,vCtaRed,EDatIni,FSalAnt);\n     fim;\n\n    \nFSalCta = FSalAnt;\n\n/* inicializa totalizadores */\nFTotDeb = 0;\nFTotCre = 0;\nFTotSal = 0;\n\n",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao016",
+          "position": {
+            "top": 3,
+            "left": 96,
+            "width": 9,
+            "height": 14
+          },
+          "caption": "--",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 3,
+            "left": 36,
+            "width": 54,
+            "height": 14
+          },
+          "table": "E045PLA",
+          "field": "CtaRed",
+          "caption": "E045PLA.CtaRed",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 33,
+            "height": 14
+          },
+          "caption": "Conta:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 3,
+            "left": 552,
+            "width": 65,
+            "height": 15
+          },
+          "caption": "Saldo Ant:",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "DescClassificacao",
+          "position": {
+            "top": 3,
+            "left": 120,
+            "width": 175,
+            "height": 15
+          },
+          "caption": "DescClassificacao",
+          "onPrint": "Definir Alfa vMask01;\nDefinir Alfa vMask02;\nDefinir Alfa vMask03;\nDefinir Alfa vMask04;\nDefinir Alfa vMask05;\nDefinir Alfa vMask06;\nDefinir Alfa vMask07;\nDefinir Alfa vMask08;\nDefinir Alfa vMask09;\nDefinir Alfa vMask10;\nDefinir Alfa vMask11;\nDefinir Alfa vMask12;\nDefinir Alfa vMask13;\nDefinir Alfa vMask14;\nDefinir Alfa vMask15;\nDefinir Alfa vMaskGen;\nDefinir Alfa vPlaCta;\nDefinir Alfa vValorStr;\nDefinir Numero vNivel;\nDefinir Alfa xClaCta;\nse (vPrimeiraVez = 0)\n   inicio\n   vPrimeiraVez = 1;\n   vCodMpc = E070Emp.CodMpc;\n   BuscaMascModPlano(vCodMpc,vMask01,vMask02,vMask03,vMask04,vMask05,vMask06,vMask07,vMask08,vMask09);\n   BuscaMascModPlano15n(vCodMpc,vMask10,vMask11,vMask12,vMask13,vMask14,vMask15);\n   fim;\n\nvPlaCta = E045PLA.ClaCta;\nvNivel = E045PLA.NivCta;\nvMaskGen = \" \";\nvValorStr = \" \";\nxClaCta = \" \";\n\nLerPosicaoStr(vPlaCta,vRetorno,1);\nxClaCta = vPlaCta;\nCopiarAlfa(xClaCta,1,1); @ Copiando a primeira posição da classificaçao da conta @\n\nse (xClaCta = \"1\")\n   vMaskGen = vMask01;\nsenao\n   se (xClaCta = \"2\")\n      vMaskGen = vMask02;\n   senao\n      se (xClaCta = \"3\")\n         vMaskGen = vMask03;\n      senao\n         se (xClaCta = \"4\")\n            vMaskGen = vMask04;\n         senao\n            se (xClaCta = \"5\")\n               vMaskGen = vMask05;\n            senao\n               se (xClaCta = \"6\")\n                  vMaskGen = vMask06;\n               senao\n                  se (xClaCta = \"7\")\n                     vMaskGen = vMask07;\n                  senao\n                     se (xClaCta = \"8\")\n                        vMaskGen = vMask08;\n                     senao\n                        se (xClaCta = \"9\")\n                          vMaskGen = vMask09;\n                        senao  \n                           se (xClaCta = \"10\")\n                              vMaskGen = vMask10;\n                           senao\n                              se (xClaCta = \"11\")\n                                 vMaskGen = vMask11;\n                              senao\n                                 se (xClaCta = \"12\")\n                                    vMaskGen = vMask12;\n                                 senao\n                                    se (xClaCta = \"13\")\n                                       vMaskGen = vMask13;\n                                    senao\n                                       se (xClaCta = \"14\")\n                                          vMaskGen = vMask14;\n                                       senao\n                                          se (xClaCta = \"15\")\n                                             vMaskGen = vMask15;\nse (vMaskGen = \" \")\n    Cancel(1);\nsenao\n    ConverteMaskContab(vNivel,vPlaCta,vMaskGen, vValorStr);\n\nValStr = vVaLorStr;\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao018",
+          "position": {
+            "top": 3,
+            "left": 297,
+            "width": 9,
+            "height": 14
+          },
+          "caption": "--",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 3,
+            "left": 321,
+            "width": 160,
+            "height": 15
+          },
+          "table": "E045PLA",
+          "field": "AbrCta",
+          "caption": "E045PLA.AbrCta",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalAnt",
+          "position": {
+            "top": 3,
+            "left": 624,
+            "width": 104,
+            "height": 15
+          },
+          "caption": "FSalAnt",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtotal_Conta",
+      "bandType": "SUBTOTAL",
+      "tag": 301,
+      "position": {
+        "top": 161,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [
+        "E045PLA.CTARED"
+      ],
+      "onBeforePrint": "vCtaRed = E045Pla.CtaRed;\n\n/* Se a conta está zerada, nenhum movimento foi selecionado */\nSe  (vCtaRed = 0)\n    Cancel(1); \n\nFTotSal = FSalCta;\n\n",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 3,
+            "left": 375,
+            "width": 65,
+            "height": 15
+          },
+          "caption": "T O T A L :",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotDeb",
+          "position": {
+            "top": 3,
+            "left": 465,
+            "width": 86,
+            "height": 15
+          },
+          "caption": "FTotDeb",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotCre",
+          "position": {
+            "top": 3,
+            "left": 552,
+            "width": 86,
+            "height": 15
+          },
+          "caption": "FTotCre",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FTotSal",
+          "position": {
+            "top": 3,
+            "left": 639,
+            "width": 90,
+            "height": 15
+          },
+          "caption": "FTotSal",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Filial",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 224,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Subtotal_Filial",
+      "bandType": "SUBTOTAL",
+      "tag": 302,
+      "position": {
+        "top": 206,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": false,
+      "tableList": [],
+      "onBeforePrint": "PreenchePagina(8,1,2,\"\",\"Preto\");\n\n",
+      "onAfterPrint": "",
+      "children": []
+    },
+    {
+      "name": "Adicional_Rateio",
+      "bandType": "OUTRO",
+      "tag": 600,
+      "position": {
+        "top": 143,
+        "left": 0,
+        "width": 6000,
+        "height": 18
+      },
+      "canPrint": true,
+      "tableList": [
+        "E640LCT.CODHPD",
+        "E640LCT.CPLLCT"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro017",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 45,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "DatLct",
+          "caption": "E640LCT.DatLct",
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro019",
+          "position": {
+            "top": 0,
+            "left": 330,
+            "width": 70,
+            "height": 15
+          },
+          "table": "E640LCT",
+          "field": "NumLct",
+          "caption": "E640LCT.NumLct",
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FCtaPar",
+          "position": {
+            "top": 0,
+            "left": 216,
+            "width": 50,
+            "height": 15
+          },
+          "caption": "FCtaPar",
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro018",
+          "position": {
+            "top": 0,
+            "left": 270,
+            "width": 55,
+            "height": 15
+          },
+          "table": "E640LCT",
+          "field": "NumLot",
+          "caption": "E640LCT.NumLot",
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao019",
+          "position": {
+            "top": 0,
+            "left": 402,
+            "width": 62,
+            "height": 15
+          },
+          "caption": "DCodCcu",
+          "onPrint": "Definir Alfa VCodCcu;\n\nValStr = VCodCcu;\nCancel(2);\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FVlrDeb",
+          "position": {
+            "top": 0,
+            "left": 465,
+            "width": 85,
+            "height": 15
+          },
+          "caption": "FVlrDeb",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FVlrCre",
+          "position": {
+            "top": 0,
+            "left": 552,
+            "width": 86,
+            "height": 15
+          },
+          "caption": "FVlrCre",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSFormula",
+          "name": "FSalCta",
+          "position": {
+            "top": 0,
+            "left": 639,
+            "width": 90,
+            "height": 15
+          },
+          "caption": "FSalCta",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro022",
+          "position": {
+            "top": 0,
+            "left": 51,
+            "width": 47,
+            "height": 14
+          },
+          "table": "E640LCT",
+          "field": "DatExt",
+          "caption": "E640LCT.DatExt",
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        },
+        {
+          "type": "TSMemoran",
+          "name": "Memoran001",
+          "position": {
+            "top": 0,
+            "left": 102,
+            "width": 110,
+            "height": 14
+          },
+          "onPrint": "se (PrimeiraVez = 1)\n    Cancel(1);\nsenao\ninicio\n    Definir Alfa vCplLct;\n\n    vCodHpd = E640Lct.CodHpd;\n    vCplLct = E640Lct.CplLct;\n\n    MontaHistoricoPadrao(vCodHpd,vCplLct);\n\n    ValStr = vCplLct;\n    Cancel(2); \nfim;\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cabecalho_Colunas",
+      "bandType": "CABECALHO",
+      "tag": 3,
+      "position": {
+        "top": 122,
+        "left": 0,
+        "width": 6000,
+        "height": 21
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDescricao",
+          "name": "Descricao022",
+          "position": {
+            "top": 3,
+            "left": 3,
+            "width": 45,
+            "height": 14
+          },
+          "caption": "Data",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 3,
+            "left": 102,
+            "width": 104,
+            "height": 14
+          },
+          "caption": "Histórico",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 3,
+            "left": 216,
+            "width": 50,
+            "height": 16
+          },
+          "caption": "Contrap.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao017",
+          "position": {
+            "top": 3,
+            "left": 330,
+            "width": 70,
+            "height": 16
+          },
+          "caption": "Lançamento",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 3,
+            "left": 402,
+            "width": 63,
+            "height": 15
+          },
+          "caption": "C. Custos",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 3,
+            "left": 285,
+            "width": 41,
+            "height": 14
+          },
+          "caption": "Lote",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 3,
+            "left": 474,
+            "width": 77,
+            "height": 14
+          },
+          "caption": "Débito",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao015",
+          "position": {
+            "top": 3,
+            "left": 561,
+            "width": 77,
+            "height": 14
+          },
+          "caption": "Crédito",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 3,
+            "left": 651,
+            "width": 78,
+            "height": 14
+          },
+          "caption": "Saldo",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 3,
+            "left": 54,
+            "width": 45,
+            "height": 14
+          },
+          "caption": "Data Ext.",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    }
+  ],
+  "tablesReferenced": [
+    "E045PLA",
+    "E045PLA.CLACTA",
+    "E045PLA.CTARED",
+    "E045PLA.NIVCTA",
+    "E070EMP",
+    "E070EMP.CODEMP",
+    "E070EMP.CODMPC",
+    "E070FIL",
+    "E070FIL.CODFIL",
+    "E640LCT",
+    "E640LCT.CODHPD",
+    "E640LCT.CPLLCT",
+    "E640LCT.CTACRE",
+    "E640LCT.CTADEB",
+    "E640LCT.NUMLCT",
+    "E640LCT.VLRLCT"
+  ],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 24026,
+    "totalBytes": 771568,
+    "parseComplete": true,
+    "bandCount": 9,
+    "fieldCount": 63,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "header",
+        "note": "Header skipped — bands-only fallback"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 11848,
+        "skippedTo": 12903,
+        "note": "Skipped 1041 bytes (classification+relations)"
+      }
+    ]
+  }
+}

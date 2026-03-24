@@ -1,0 +1,701 @@
+{
+  "filename": "plcl002.GER",
+  "title": "",
+  "orientation": "Unknown(undefined)",
+  "sections": {},
+  "bands": [
+    {
+      "name": "Cabecalho",
+      "bandType": "CABECALHO",
+      "tag": 2,
+      "position": {
+        "top": 0,
+        "left": 0,
+        "width": 6000,
+        "height": 90
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSDesenho",
+          "name": "Desenho002",
+          "position": {
+            "top": 72,
+            "left": 555,
+            "width": 95,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho001",
+          "position": {
+            "top": 60,
+            "left": 0,
+            "width": 773,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao007",
+          "position": {
+            "top": 72,
+            "left": 357,
+            "width": 69,
+            "height": 17
+          },
+          "caption": "Situação",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao009",
+          "position": {
+            "top": 72,
+            "left": 555,
+            "width": 33,
+            "height": 17
+          },
+          "caption": "Data",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao010",
+          "position": {
+            "top": 72,
+            "left": 621,
+            "width": 30,
+            "height": 17
+          },
+          "caption": "Hora",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao012",
+          "position": {
+            "top": 72,
+            "left": 735,
+            "width": 32,
+            "height": 17
+          },
+          "caption": "Hora",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao011",
+          "position": {
+            "top": 72,
+            "left": 672,
+            "width": 45,
+            "height": 16
+          },
+          "caption": "Data",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao008",
+          "position": {
+            "top": 60,
+            "left": 555,
+            "width": 95,
+            "height": 14
+          },
+          "caption": "Afastamento",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao013",
+          "position": {
+            "top": 60,
+            "left": 672,
+            "width": 95,
+            "height": 14
+          },
+          "caption": "Retorno",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDesenho",
+          "name": "Desenho003",
+          "position": {
+            "top": 72,
+            "left": 672,
+            "width": 95,
+            "height": 4
+          },
+          "caption": "  ",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao002",
+          "position": {
+            "top": 18,
+            "left": 276,
+            "width": 295,
+            "height": 22
+          },
+          "caption": "Descricao002",
+          "onPrint": "Definir alfa EnomRel;\n\nSe   (ENomRel<>\"\")\n      ValStr = ENomRel;\nSenao ValStr = \"Colaborador - Afastamentos\";\n\nCancel(2);",
+          "font": {
+            "name": "Arial",
+            "size": 14
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema002",
+          "position": {
+            "top": 3,
+            "left": 51,
+            "width": 453,
+            "height": 15
+          },
+          "caption": "NomEmp",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao001",
+          "position": {
+            "top": 3,
+            "left": 711,
+            "width": 31,
+            "height": 17
+          },
+          "caption": "Pág.:",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema004",
+          "position": {
+            "top": 3,
+            "left": 744,
+            "width": 22,
+            "height": 17
+          },
+          "caption": "NumPag",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao004",
+          "position": {
+            "top": 72,
+            "left": 6,
+            "width": 54,
+            "height": 17
+          },
+          "caption": "Cadastro",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao006",
+          "position": {
+            "top": 72,
+            "left": 288,
+            "width": 59,
+            "height": 17
+          },
+          "caption": "Admissão",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSSistema",
+          "name": "Sistema001",
+          "position": {
+            "top": 3,
+            "left": 6,
+            "width": 32,
+            "height": 17
+          },
+          "caption": "empatu",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao003",
+          "position": {
+            "top": 3,
+            "left": 39,
+            "width": 7,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao005",
+          "position": {
+            "top": 72,
+            "left": 72,
+            "width": 35,
+            "height": 17
+          },
+          "caption": "Nome",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Detalhe_1",
+      "bandType": "DETALHE",
+      "tag": 201,
+      "position": {
+        "top": 132,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [
+        "R034FUN.NUMEMP",
+        "R034FUN.TIPCOL",
+        "R034FUN.NUMCAD",
+        "R038AFA.DATTER"
+      ],
+      "onBeforePrint": "",
+      "onAfterPrint": "vNumEmpAnt = R034Fun.NumEmp;\nvTipColAnt = R034Fun.TipCol;\nvNumCadAnt = R034FUN.NumCad;",
+      "children": [
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro010",
+          "position": {
+            "top": 0,
+            "left": 1050,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "TabOrg",
+          "caption": "R016HIE.TabOrg",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro011",
+          "position": {
+            "top": 0,
+            "left": 1119,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R016HIE",
+          "field": "NUMLOC",
+          "caption": "R016HIE.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro012",
+          "position": {
+            "top": 0,
+            "left": 1188,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "TabOrg",
+          "caption": "R034FUN.TabOrg",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro013",
+          "position": {
+            "top": 0,
+            "left": 1257,
+            "width": 65,
+            "height": 17
+          },
+          "table": "R034FUN",
+          "field": "NUMLOC",
+          "caption": "R034FUN.NUMLOC",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSEspecial",
+          "name": "Especial001",
+          "position": {
+            "top": 0,
+            "left": 981,
+            "width": 65,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial001",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro009",
+          "position": {
+            "top": 0,
+            "left": 357,
+            "width": 20,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "SitAfa",
+          "caption": "R038AFA.SitAfa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSDescricao",
+          "name": "Descricao014",
+          "position": {
+            "top": 0,
+            "left": 378,
+            "width": 4,
+            "height": 17
+          },
+          "caption": "-",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro004",
+          "position": {
+            "top": 0,
+            "left": 384,
+            "width": 167,
+            "height": 14
+          },
+          "table": "R010SIT",
+          "field": "DesSit",
+          "caption": "R010SIT.DesSit",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro006",
+          "position": {
+            "top": 0,
+            "left": 555,
+            "width": 60,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "DatAfa",
+          "caption": "R038AFA.DatAfa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro008",
+          "position": {
+            "top": 0,
+            "left": 672,
+            "width": 58,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "DatTer",
+          "caption": "R038AFA.DatTer",
+          "onPrint": "Se   (R038AFA.DatTer=0)\n      Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro007",
+          "position": {
+            "top": 0,
+            "left": 735,
+            "width": 34,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "HorTer",
+          "caption": "R038AFA.HorTer",
+          "onPrint": "Se   (R038AFA.DatTer=0)\n      Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro005",
+          "position": {
+            "top": 0,
+            "left": 621,
+            "width": 30,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "HorAfa",
+          "caption": "R038AFA.HorAfa",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro003",
+          "position": {
+            "top": 0,
+            "left": 288,
+            "width": 61,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "DatAdm",
+          "caption": "R034FUN.DatAdm",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro001",
+          "position": {
+            "top": 0,
+            "left": 3,
+            "width": 57,
+            "height": 14
+          },
+          "table": "R038AFA",
+          "field": "NumCad",
+          "caption": "R038AFA.NumCad",
+          "onPrint": "Se  ((vNumEmpAnt = R034Fun.NumEmp) e (vTipColAnt = R034Fun.TipCol) e (vNumCadAnt = R034FUN.NumCad))\n    Cancel(1);\n    \n\n\n\n\n\n\n\n\n\n",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        },
+        {
+          "type": "TSCadastro",
+          "name": "Cadastro002",
+          "position": {
+            "top": 0,
+            "left": 72,
+            "width": 210,
+            "height": 14
+          },
+          "table": "R034FUN",
+          "field": "NomFun",
+          "caption": "R034FUN.NomFun",
+          "onPrint": "Se  ((vNumEmpAnt = R034Fun.NumEmp) e (vTipColAnt = R034Fun.TipCol) e (vNumCadAnt = R034FUN.NumCad))\n    Cancel(1);",
+          "font": {
+            "name": "Arial",
+            "size": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_1",
+      "bandType": "TITULO",
+      "tag": 101,
+      "position": {
+        "top": 90,
+        "left": 0,
+        "width": 6000,
+        "height": 33
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "Se (EspNivTot = 0)\n     Cancel(1);",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSEspecial",
+          "name": "Especial002",
+          "position": {
+            "top": 12,
+            "left": 6,
+            "width": 705,
+            "height": 17
+          },
+          "tableField": "R016HIE.PosLoc",
+          "caption": "Especial002",
+          "font": {
+            "name": "Arial",
+            "size": 9
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rodape_Cabecalho",
+      "bandType": "RODAPE",
+      "tag": 503,
+      "position": {
+        "top": 147,
+        "left": 0,
+        "width": 6000,
+        "height": 15
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": [
+        {
+          "type": "TSSistema",
+          "name": "Sistema005",
+          "position": {
+            "top": 0,
+            "left": 0,
+            "width": 774,
+            "height": 14
+          },
+          "caption": "DesRodape",
+          "font": {
+            "name": "Arial",
+            "size": 7
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtitulo_Espaco",
+      "bandType": "TITULO",
+      "tag": 102,
+      "position": {
+        "top": 123,
+        "left": 0,
+        "width": 6000,
+        "height": 9
+      },
+      "canPrint": true,
+      "tableList": [],
+      "onBeforePrint": "",
+      "onAfterPrint": "",
+      "children": []
+    }
+  ],
+  "tablesReferenced": [
+    "R010SIT",
+    "R016HIE",
+    "R034FUN",
+    "R034FUN.NUMCAD",
+    "R034FUN.NUMEMP",
+    "R034FUN.TIPCOL",
+    "R038AFA",
+    "R038AFA.DATTER"
+  ],
+  "sqlFragments": [],
+  "_stats": {
+    "parsedBytes": 9622,
+    "totalBytes": 522517,
+    "parseComplete": true,
+    "bandCount": 5,
+    "fieldCount": 36,
+    "errorCount": 2,
+    "errors": [
+      {
+        "component": "header",
+        "note": "Header skipped — bands-only fallback"
+      },
+      {
+        "component": "TSDetail-extra",
+        "offset": 7906,
+        "skippedTo": 8665,
+        "note": "Skipped 745 bytes (classification+relations)"
+      }
+    ]
+  }
+}

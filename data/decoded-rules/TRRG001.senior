@@ -1,0 +1,25 @@
+/*****************************************************************************************
+ * FUNÇÃO.: Regra usada no Auxílio para o Cálculo do Reembolso.                          *
+ * TABELAS: São disponibilizados para a regra os campos das tabelas R166LAN e R166AUX.   *
+ * RETORNO: - Se o retorno for 2 (Cancel(2)) considera que não deve calcular mais nada,  *
+ *          ou seja, o usuario já fez tudo via regra, sendo assim o valor que será       *
+ *          gravado para o reembolso será o conteúdo do campo R166LAN.VlrRee que já vem  *
+ *          calculado pela regra.                                                        *
+ *          - Se for algum outro retorno o valor é calculado normalmente pelo sistema.   *
+ *****************************************************************************************/
+
+/* EXEMPLO: Calcula o Valor do Reembolso com 10% em cima do Valor Lançado */
+Definir Numero ValorLancado;
+Definir Numero ValorReembolso;
+
+/* Inicializa ValorLancado com o conteúdo da R166LAN.VlrLan que vem do sistema */
+ValorLancado = R166LAN.VlrLan;
+
+/* Calcula 5% no Valor Lançado */  
+ValorReembolso = ValorLancado + (ValorLancado * 0.05);
+
+/* R166LAN.VlrRee será retornado para o sistema */
+R166LAN.VlrRee = ValorReembolso;
+
+/* Cancel 2 faz com que o R166LAN.VlrRee seja gravado como Valor de Reembolso */
+Cancel(2);

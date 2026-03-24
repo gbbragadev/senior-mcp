@@ -1,0 +1,127 @@
+@ Regra para ser informada no processo 888-Após salvar informações do Levantamento de Necessidades de Treinamento @
+
+Definir Alfa xCursorSelectRequisitos;                                                                             
+Definir Alfa xCursorInsertReservas;
+Definir Alfa xSelectRequisitos;
+Definir Alfa xInsertReservas;
+Definir Alfa xPosTra;
+Definir Alfa xCodCar;
+Definir Data xDataLNT;
+Definir Cursor xCurR034FUN;
+Definir Cursor xCurR033HAP;
+Definir Cursor xCurR128CUA;
+Definir Cursor xCurR132RPA;
+
+xDataLNT = DataReferenciaLNT;
+
+xSelectRequisitos = "SELECT * \
+                       FROM R145REQ, R145COL \
+                      WHERE R145REQ.NUMEMP = R145COL.NUMEMP \
+                        AND R145REQ.TIPCOL = R145COL.TIPCOL \
+                        AND R145REQ.NUMCAD = R145COL.NUMCAD \
+                        AND R145REQ.DATLNT = R145COL.DATLNT \
+                        AND R145REQ.DATLNT = :DatRef \
+                        AND R145COL.CARLNT = 1 \ - Cargo real do colaborador
+                        AND R145COL.POSLNT = 1 \ - Posto trabalho real do colaborador
+                        AND R145REQ.TIPREQ = 1 \ - Requisitos de aperfei?oamento
+                        AND R145REQ.SITREQ = 1 \ - Requisitos n?o atendidos
+                        AND R145REQ.EXIREQ = 'N' \ - Necess?rio
+                        AND (R145REQ.ORIREQ = 1 OR R145REQ.ORIREQ = 2)";
+                     
+xInsertReservas = "INSERT INTO R132RPA \
+                    (CodCua, NumEmp, TipCol, NumCad, DatRes, OriRes, CodMcu, CodUsu, EmpRes, TipRes, CadRes) \
+                  VALUES \
+                    (:CodCua, :NumEmp, :TipCol, :NumCad, :DatRes, :OriRes, :CodMcu, :CodUsu, :EmpRes, :TipRes, :CadRes)"; 
+
+SQL_Criar(xCursorSelectRequisitos);
+SQL_DefinirComando(xCursorSelectRequisitos, xSelectRequisitos);
+SQL_DefinirData(xCursorSelectRequisitos, "DatRef", xDataLNT);
+SQL_AbrirCursor(xCursorSelectRequisitos);
+Se (SQL_EOF(xCursorSelectRequisitos) = 0)
+Inicio
+  SQL_Criar(xCursorInsertReservas);
+  SQL_DefinirComando(xCursorInsertReservas, xInsertReservas);
+  
+  Enquanto(SQL_EOF(xCursorSelectRequisitos) = 0)
+  Inicio
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "NumEmp", xNumEmp);
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "TipCol", xTipCol);
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "NumCad", xNumCad);
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "CodCua", xCodCua);
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "EstPos", xEstPos);
+    SQL_RetornarAlfa(xCursorSelectRequisitos, "PosTra", xPosTra);
+    SQL_RetornarInteiro(xCursorSelectRequisitos, "EstCar", xEstCar);
+    SQL_RetornarAlfa(xCursorSelectRequisitos, "CodCar", xCodCar);
+    
+    @ Busca o cadastro da pessoa associada ao colaborador @
+    xCurR034FUN.SQL "SELECT CODPES FROM R034FUN WHERE NUMEMP = :xNumEmp AND TIPCOL = :xTipCol AND NUMCAD = :xNumCad";
+    xCurR034FUN.AbrirCursor();
+    Se (xCurR034FUN.Achou)
+    Inicio
+      xCodPes = xCurR034FUN.CodPes;
+    Fim
+    xCurR034FUN.FecharCursor();
+    
+    @ Verifica se o colaborador possui algum hist?rico do curso do requisito @
+    xTemHistoricoCurso = 0;
+    xCurR033HAP.SQL "SELECT CODPES FROM R033HAP WHERE CODPES = :xCodPes AND CODCUA = :xCodCua";
+    xCurR033HAP.AbrirCursor();
+    Se (xCurR033HAP.Achou)
+    Inicio
+      xTemHistoricoCurso = 1;
+    Fim
+    xCurR033HAP.FecharCursor();
+    
+    xCodCuaReserva = xCodCua; @ A pr?ncipio a reserva ser? gerada para o curso do requisito @
+    
+    @ Verifica se o colaborador j? possui hist?rico do curso do requisito @
+    Se (xTemHistoricoCurso > 0)
+    Inicio
+      xCurR128CUA.SQL "SELECT CURREC FROM R128CUA WHERE CODCUA = :xCodCua";
+      xCurR128CUA.AbrirCursor();
+      Se (xCurR128CUA.Achou)
+      Inicio
+        Se (xCurR128CUA.CurRec > 0)
+          xCodCuaReserva = xCurR128CUA.CurRec; @ O curso do requisito tem um curso de reciclagem informado, ent?o gera uma reserva para o curso de reciclagem @   
+      Fim
+      xCurR128CUA.FecharCursor();          
+    Fim
+    
+    @ Verifica se j? existe uma reserva com mesmo curso, colaborador e data @
+    xTemReserva = 0;
+    xCurR132RPA.SQL "SELECT DATRES FROM R132RPA WHERE CODCUA = :xCodCuaReserva AND NUMEMP = :xNumEmp AND TIPCOL = :xTipCol AND NUMCAD = :xNumCad AND DATRES = :xDataLNT";
+    xCurR132RPA.AbrirCursor();
+    Se (xCurR132RPA.Achou)
+    Inicio
+      xTemReserva = 1;
+    Fim
+    xCurR132RPA.FecharCursor();
+    
+    Se (xTemReserva = 0)
+    Inicio
+      /* Cria reserva de treinamento, caso ainda n?o tenha reserva na data */
+      SQL_DefinirInteiro(xCursorInsertReservas, "CodCua", xCodCuaReserva);
+      SQL_DefinirInteiro(xCursorInsertReservas, "NumEmp", xNumEmp);
+      SQL_DefinirInteiro(xCursorInsertReservas, "TipCol", xTipCol);
+      SQL_DefinirInteiro(xCursorInsertReservas, "NumCad", xNumCad);
+      SQL_DefinirData(xCursorInsertReservas, "DatRes", xDataLNT);
+      SQL_DefinirInteiro(xCursorInsertReservas, "OriRes", 9);
+      SQL_DefinirInteiro(xCursorInsertReservas, "CodMcu", 1);
+      RetColabPorCodUsu(CodUsu, xEmpUsu, xTipUsu, xCadUsu);
+      SQL_DefinirInteiro(xCursorInsertReservas, "CodUsu", CodUsu);
+      SQL_DefinirInteiro(xCursorInsertReservas, "EmpRes", xEmpUsu);
+      SQL_DefinirInteiro(xCursorInsertReservas, "TipRes", xTipUsu);
+      SQL_DefinirInteiro(xCursorInsertReservas, "CadRes", xCadUsu);
+      
+      SQL_AbrirCursor(xCursorInsertReservas);
+      SQL_FecharCursor(xCursorInsertReservas);
+    Fim
+
+    SQL_Proximo(xCursorSelectRequisitos);
+  Fim
+  
+  SQL_Destruir(xCursorInsertReservas);
+Fim
+
+SQL_FecharCursor(xCursorSelectRequisitos);
+SQL_Destruir(xCursorSelectRequisitos);

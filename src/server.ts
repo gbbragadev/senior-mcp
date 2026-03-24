@@ -21,7 +21,7 @@ function asBooleanEnv(key: string, defaultValue: boolean): boolean {
 function createMcpServer(): McpServer {
   const server = new McpServer({
     name: 'Senior MCP Server',
-    version: '1.2.0',
+    version: '2.0.0',
   });
 
   const enableKnowledgeTools = asBooleanEnv('MCP_ENABLE_KNOWLEDGE_TOOLS', true);
@@ -33,9 +33,27 @@ function createMcpServer(): McpServer {
     registerKnowledgeTools(server);
   }
 
-  if (!enableKnowledgeTools) {
+  const enableRuleTools = asBooleanEnv('MCP_ENABLE_RULE_TOOLS', true);
+
+  if (enableRuleTools) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { registerRuleTools } =
+      require('./mcp/tools/rule-tools') as typeof import('./mcp/tools/rule-tools');
+    registerRuleTools(server);
+  }
+
+  const enableReportTools = asBooleanEnv('MCP_ENABLE_REPORT_TOOLS', true);
+
+  if (enableReportTools) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { registerReportTools } =
+      require('./mcp/tools/report-tools') as typeof import('./mcp/tools/report-tools');
+    registerReportTools(server);
+  }
+
+  if (!enableKnowledgeTools && !enableRuleTools && !enableReportTools) {
     throw new Error(
-      'No MCP tools enabled. Set MCP_ENABLE_KNOWLEDGE_TOOLS=true.',
+      'No MCP tools enabled. Set MCP_ENABLE_KNOWLEDGE_TOOLS, MCP_ENABLE_RULE_TOOLS, or MCP_ENABLE_REPORT_TOOLS to true.',
     );
   }
 
@@ -54,7 +72,7 @@ async function main(): Promise<void> {
 
   // Health check — no auth required
   app.get('/health', (_req: Request, res: Response) => {
-    res.json({ status: 'ok', service: 'senior-mcp-http', version: '1.2.0' });
+    res.json({ status: 'ok', service: 'senior-mcp-http', version: '2.0.0' });
   });
 
   // Bearer token middleware for /mcp

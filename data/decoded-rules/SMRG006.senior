@@ -1,0 +1,43 @@
+Definir Data xDataHoje;
+Definir Data xDatSol;
+Definir Alfa xStrNumCad;
+
+/* Pega a data de hoje */
+DataHoje(xDataHoje);
+DesMontaData(xDataHoje, xDia, xMes, xAno);
+
+/* Sempre considera exames que ainda não foram gerados */
+Se (R108RES.DatSol < xDataHoje) 
+  Cancel(0);
+
+/* Pega o dígito verificador = última posição do código do cadastro */ 
+Se (R110FIC.TipAtn = 1)
+  xNumCad = R034FUN.NumCad;
+Se (R110FIC.TipAtn = 4)
+  xNumCad = R122CEX.NumCan;
+
+IntParaAlfa(xNumCad, xStrNumCad);
+TamanhoAlfa(xStrNumCad, xTamNumCad);
+CopiarAlfa(xStrNumCad, xTamNumCad, 1);
+AlfaParaInt(xStrNumCad, xDigito);
+
+/* Se o dígito for 0, altera para 10 (mês) */
+Se (xDigito = 0)
+  xDigito = 10;
+
+/* Se o dígito verificador bater com o mês atual, gera o exame para este mês */
+Se (xDigito = xMes)
+  {
+  DesMontaData(R108RES.DatSol, xDia, xMes, xAno);
+
+  /* Verifica se o dia não é maior que o maior dia do mês que é para ser gerado. */
+  BusQtdDiasMes(xDigito, xano, xmaiordia);
+  Se (xDia > xmaiordia)
+    xDia = xmaiordia;
+
+  MontaData(xDia, xDigito, xAno, xDatSol);
+  R108RES.DatSol = xDatSol;
+  Cancel(0);
+  }
+Senao
+  Cancel(1);
