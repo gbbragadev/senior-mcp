@@ -1,11 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+import { resolve } from 'path';
 import { readFileSync, existsSync, readdirSync } from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const DATA_DIR = resolve(__dirname, '../../../data/reports');
 
 function loadJson(relativePath: string): any {

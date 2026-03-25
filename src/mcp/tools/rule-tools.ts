@@ -1,17 +1,42 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
+import { resolve } from 'path';
+import { pathToFileURL } from 'url';
 
-// Dynamic imports for JS compiler modules (allowJs: true in tsconfig)
-// @ts-ignore - JS modules without type declarations
-import { REFERENCE_SECTIONS, BUILTIN_CATALOG, MODULE_CONTEXTS } from '../../compiler/lang-knowledge.js';
-// @ts-ignore
-import { computeDiagnostics, computeSemanticDiagnostics, parseDocument, extractTableRefs, extractTableFieldRefs, extractSqlStatements, extractSystemVars, extractBuiltinCalls, DiagnosticSeverity } from '../../compiler/lang-diagnostics.js';
-// @ts-ignore
-import { searchExamples, listExamples, getExample } from '../../compiler/lang-examples.js';
-// @ts-ignore
-import { generateTemplate, listTemplates } from '../../compiler/lang-templates.js';
-// @ts-ignore
-import { encodeLsp } from '../../compiler/lang-encoder.js';
+// ESM compiler modules live in src/compiler/ (not compiled by tsc).
+// We import them via file:// URLs so Node treats them as ESM.
+const COMPILER_DIR = resolve(__dirname, '../../../src/compiler');
+
+function compilerModule(name: string) {
+  return pathToFileURL(resolve(COMPILER_DIR, name)).href;
+}
+
+let _knowledge: any;
+let _diagnostics: any;
+let _examples: any;
+let _templates: any;
+let _encoder: any;
+
+async function getKnowledge() {
+  if (!_knowledge) _knowledge = await import(compilerModule('lang-knowledge.js'));
+  return _knowledge;
+}
+async function getDiagnostics() {
+  if (!_diagnostics) _diagnostics = await import(compilerModule('lang-diagnostics.js'));
+  return _diagnostics;
+}
+async function getExamples() {
+  if (!_examples) _examples = await import(compilerModule('lang-examples.js'));
+  return _examples;
+}
+async function getTemplates() {
+  if (!_templates) _templates = await import(compilerModule('lang-templates.js'));
+  return _templates;
+}
+async function getEncoder() {
+  if (!_encoder) _encoder = await import(compilerModule('lang-encoder.js'));
+  return _encoder;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -40,10 +65,11 @@ export function registerRuleTools(server: McpServer): void {
     'Return Senior rule language reference for a specific section. Sections: list, syntax, types, builtins, cursor_api, sql_api, system_vars, operators, web_api, patterns, modules.',
     { section: z.string() },
     async ({ section }) => {
+      const { REFERENCE_SECTIONS } = await getKnowledge();
       if (section === 'list') {
         return asJson(Object.keys(REFERENCE_SECTIONS));
       }
-      const text = REFERENCE_SECTIONS[section];
+      const text = (REFERENCE_SECTIONS as Record<string, string>)[section];
       if (!text) {
         return asError(
           `Unknown section "${section}". Available: ${Object.keys(REFERENCE_SECTIONS).join(', ')}`,
@@ -63,23 +89,24 @@ export function registerRuleTools(server: McpServer): void {
     },
     async ({ code, strict }) => {
       try {
-        const diagnostics = computeDiagnostics(code);
+        const diag = await getDiagnostics();
+        const diagnostics = diag.computeDiagnostics(code);
         const errors = diagnostics.filter(
-          (d: any) => d.severity === DiagnosticSeverity.Error,
+          (d: any) => d.severity === diag.DiagnosticSeverity.Error,
         );
         const warnings = diagnostics.filter(
-          (d: any) => d.severity === DiagnosticSeverity.Warning,
+          (d: any) => d.severity === diag.DiagnosticSeverity.Warning,
         );
 
         let semanticErrors: any[] = [];
         let semanticWarnings: any[] = [];
         if (strict) {
-          const semantic = computeSemanticDiagnostics(code);
+          const semantic = diag.computeSemanticDiagnostics(code);
           semanticErrors = semantic.filter(
-            (d: any) => d.severity === DiagnosticSeverity.Error,
+            (d: any) => d.severity === diag.DiagnosticSeverity.Error,
           );
           semanticWarnings = semantic.filter(
-            (d: any) => d.severity === DiagnosticSeverity.Warning,
+            (d: any) => d.severity === diag.DiagnosticSeverity.Warning,
           );
         }
 
@@ -87,13 +114,13 @@ export function registerRuleTools(server: McpServer): void {
         const allWarnings = [...warnings, ...semanticWarnings];
 
         // Analysis extraction
-        const doc = parseDocument(code);
+        const doc = diag.parseDocument(code);
         const analysis: Record<string, any> = {};
-        try { analysis.tableRefs = extractTableRefs(doc); } catch { /* skip */ }
-        try { analysis.tableFieldRefs = extractTableFieldRefs(doc); } catch { /* skip */ }
-        try { analysis.sqlStatements = extractSqlStatements(doc); } catch { /* skip */ }
-        try { analysis.systemVars = extractSystemVars(doc); } catch { /* skip */ }
-        try { analysis.builtinCalls = extractBuiltinCalls(doc); } catch { /* skip */ }
+        try { analysis.tableRefs = diag.extractTableRefs(doc); } catch { /* skip */ }
+        try { analysis.tableFieldRefs = diag.extractTableFieldRefs(doc); } catch { /* skip */ }
+        try { analysis.sqlStatements = diag.extractSqlStatements(doc); } catch { /* skip */ }
+        try { analysis.systemVars = diag.extractSystemVars(doc); } catch { /* skip */ }
+        try { analysis.builtinCalls = diag.extractBuiltinCalls(doc); } catch { /* skip */ }
 
         return asJson({
           valid: allErrors.length === 0,
@@ -118,12 +145,12 @@ export function registerRuleTools(server: McpServer): void {
     },
     async ({ search, pattern, module }) => {
       try {
-        const results = searchExamples(search, { pattern, module });
+        const ex = await getExamples();
+        const results = ex.searchExamples(search, pattern, module);
         if (results && results.length > 0) {
           return asJson(results);
         }
-        // Fallback: list all available examples
-        const all = listExamples();
+        const all = ex.listExamples();
         return asJson({
           message: `No results for "${search}". Available examples:`,
           examples: all,
@@ -145,14 +172,15 @@ export function registerRuleTools(server: McpServer): void {
     },
     async ({ template, table, fields }) => {
       try {
+        const tmpl = await getTemplates();
         if (template === 'list') {
-          return asJson(listTemplates());
+          return asJson(tmpl.listTemplates());
         }
         const opts: Record<string, any> = {};
         if (table) opts.table = table;
         if (fields) opts.fields = fields;
-        const code = generateTemplate(template, opts);
-        return asText(code);
+        const result = tmpl.generateTemplate(template, opts) as { code: string; description: string };
+        return asText(result.code);
       } catch (err: any) {
         return asError(`Template generation failed: ${err.message ?? err}`);
       }
@@ -166,13 +194,15 @@ export function registerRuleTools(server: McpServer): void {
     { module: z.string() },
     async ({ module: mod }) => {
       try {
+        const { MODULE_CONTEXTS } = await getKnowledge();
+        const contexts = MODULE_CONTEXTS as Record<string, any>;
         if (mod === 'list') {
-          return asJson(Object.keys(MODULE_CONTEXTS));
+          return asJson(Object.keys(contexts));
         }
-        const ctx = MODULE_CONTEXTS[mod] ?? MODULE_CONTEXTS[mod.toLowerCase()];
+        const ctx = contexts[mod] ?? contexts[mod.toLowerCase()];
         if (!ctx) {
           return asError(
-            `Unknown module "${mod}". Use "list" to see available modules: ${Object.keys(MODULE_CONTEXTS).join(', ')}`,
+            `Unknown module "${mod}". Use "list" to see available modules: ${Object.keys(contexts).join(', ')}`,
           );
         }
         return asJson(ctx);
@@ -192,10 +222,12 @@ export function registerRuleTools(server: McpServer): void {
     },
     async ({ code, title }) => {
       try {
+        const diag = await getDiagnostics();
+        const enc = await getEncoder();
         // Pre-validate
-        const diagnostics = computeDiagnostics(code);
+        const diagnostics = diag.computeDiagnostics(code);
         const errors = diagnostics.filter(
-          (d: any) => d.severity === DiagnosticSeverity.Error,
+          (d: any) => d.severity === diag.DiagnosticSeverity.Error,
         );
         if (errors.length > 0) {
           return asJson({
@@ -206,18 +238,18 @@ export function registerRuleTools(server: McpServer): void {
         }
 
         const warnings = diagnostics.filter(
-          (d: any) => d.severity === DiagnosticSeverity.Warning,
+          (d: any) => d.severity === diag.DiagnosticSeverity.Warning,
         );
 
-        const buffer = encodeLsp(code, { title: title ?? 'RULE' });
-        const base64 = Buffer.from(buffer).toString('base64');
+        const result = enc.encodeLsp(code, title ?? 'RULE');
+        const base64 = Buffer.from(result.buffer).toString('base64');
 
         return asJson({
           encoded: true,
           format: 'base64',
           data: base64,
-          sizeBytes: buffer.length,
-          warnings,
+          sizeBytes: result.buffer.length,
+          warnings: [...warnings, ...result.warnings],
         });
       } catch (err: any) {
         return asError(`Encoding failed: ${err.message ?? err}`);
