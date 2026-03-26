@@ -18,36 +18,24 @@ function asBooleanEnv(key: string, defaultValue: boolean): boolean {
  * Creates a fresh McpServer with tools registered.
  * Called once per HTTP request in stateless mode.
  */
-async function createMcpServer(): Promise<McpServer> {
+function createMcpServer(): McpServer {
   const server = new McpServer({
     name: 'Senior MCP Server',
-    version: '2.0.0',
+    version: '1.2.0',
   });
 
   const enableKnowledgeTools = asBooleanEnv('MCP_ENABLE_KNOWLEDGE_TOOLS', true);
 
   if (enableKnowledgeTools) {
-    const { registerKnowledgeTools } = await import('./mcp/tools/knowledge-tools.js');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { registerKnowledgeTools } =
+      require('./mcp/tools/knowledge-tools') as typeof import('./mcp/tools/knowledge-tools');
     registerKnowledgeTools(server);
   }
 
-  const enableRuleTools = asBooleanEnv('MCP_ENABLE_RULE_TOOLS', true);
-
-  if (enableRuleTools) {
-    const { registerRuleTools } = await import('./mcp/tools/rule-tools.js');
-    registerRuleTools(server);
-  }
-
-  const enableReportTools = asBooleanEnv('MCP_ENABLE_REPORT_TOOLS', true);
-
-  if (enableReportTools) {
-    const { registerReportTools } = await import('./mcp/tools/report-tools.js');
-    registerReportTools(server);
-  }
-
-  if (!enableKnowledgeTools && !enableRuleTools && !enableReportTools) {
+  if (!enableKnowledgeTools) {
     throw new Error(
-      'No MCP tools enabled. Set MCP_ENABLE_KNOWLEDGE_TOOLS, MCP_ENABLE_RULE_TOOLS, or MCP_ENABLE_REPORT_TOOLS to true.',
+      'No MCP tools enabled. Set MCP_ENABLE_KNOWLEDGE_TOOLS=true.',
     );
   }
 
@@ -66,7 +54,27 @@ async function main(): Promise<void> {
 
   // Health check — no auth required
   app.get('/health', (_req: Request, res: Response) => {
-    res.json({ status: 'ok', service: 'senior-mcp-http', version: '2.0.0' });
+    res.json({ status: 'ok', service: 'senior-mcp-http', version: '1.2.0' });
+  });
+
+  // ── Block OAuth discovery ──────────────────────────────────────────
+  // Claude Code (and MCP SDK clients) try OAuth when they get 401.
+  // Returning clean 404 on these endpoints tells the client "no OAuth
+  // here — use the Bearer token from your config".
+  app.all('/.well-known/oauth-authorization-server', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'OAuth not supported. Use Bearer token.' });
+  });
+  app.all('/.well-known/oauth-protected-resource', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'OAuth not supported. Use Bearer token.' });
+  });
+  app.all('/register', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'OAuth not supported. Use Bearer token.' });
+  });
+  app.all('/authorize', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'OAuth not supported. Use Bearer token.' });
+  });
+  app.all('/token', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'OAuth not supported. Use Bearer token.' });
   });
 
   // Bearer token middleware for /mcp
@@ -93,7 +101,7 @@ async function main(): Promise<void> {
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined, // stateless: no session tracking
     });
-    const mcpServer = await createMcpServer();
+    const mcpServer = createMcpServer();
 
     // Cleanup after response is sent
     res.on('finish', () => {
